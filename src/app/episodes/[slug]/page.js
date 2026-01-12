@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getEpisodesFromRss } from "@/lib/podcast";
 
-export const revalidate = 60 * 60; // 1 hour
+export const revalidate = 3600; // 1 hour
 
 function formatDate(isoOrPubDate) {
   if (!isoOrPubDate) return "";
