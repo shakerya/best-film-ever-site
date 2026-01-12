@@ -1,53 +1,101 @@
-import "server-only";
+// src/lib/tmdb.js
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
-function imgUrl(path, size = "w780") {
-  if (!path) return null;
-  return `https://image.tmdb.org/t/p/${size}${path}`;
+function requireKey() {
+  const key = process.env.TMDB_API_KEY;
+  if (!key) throw new Error("Missing TMDB_API_KEY in environment variables");
+  return key;
 }
 
-export async function searchMovieOnTmdb({ title, year }) {
-  const apiKey = process.env.TMDB_API_KEY;
-  if (!apiKey) throw new Error("Missing TMDB_API_KEY in .env.local");
+function toQuery(params) {
+  const q = new URLSearchParams();
+  for (const [k, v] of Object.entries(params || {})) {
+    if (v === undefined || v === null || v === "") continue;
+    q.set(k, String(v));
+  }
+  return q.toString();
+}
 
-  if (!title || typeof title !== "string") return null;
+async function tmdbFetch(path, params = {}, { cache = "force-cache" } = {}) {
+  const api_key = requireKey();
 
-  const qs = new URLSearchParams({
-    api_key: apiKey,
-    query: title,
+  const qs = toQuery({
+    api_key,
+    language: "en-US",
     include_adult: "false",
+    ...params,
   });
 
-  if (year) qs.set("year", String(year));
+  const url = `${TMDB_BASE}${path}?${qs}`;
 
-  const url = `${TMDB_BASE}/search/movie?${qs.toString()}`;
-
-  const res = await fetch(url, {
-    // cache for 1 day
-    next: { revalidate: 60 * 60 * 24 },
-  });
+  const res = await fetch(url, { cache });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`TMDB search failed: ${res.status} ${res.statusText} ${text}`);
+    throw new Error(`TMDB ${res.status} ${res.statusText} for ${path}. ${text}`.trim());
   }
 
-  const data = await res.json();
-  const results = Array.isArray(data?.results) ? data.results : [];
-  if (!results.length) return null;
+  return res.json();
+}
 
-  // Prefer a result that actually has a poster.
-  const best =
-    results.find((r) => r?.poster_path) ||
-    results[0];
+function pickDirector(crew = []) {
+  // Prefer exact Director credit; fall back to "Directing" dept.
+  const director = crew.find((c) => c.job === "Director");
+  if (director) return director;
+
+  const directing = crew.find((c) => c.department === "Directing");
+  return directing || null;
+}
+
+function topCast(cast = [], n = 8) {
+  return cast
+    .slice()
+    .sort((a, b) => (a.order ?? 999) - (b.order ?? 999))
+    .slice(0, n);
+}
+
+export function tmdbImageUrl(path, size = "w500") {
+  if (!path) return "";
+  return `https://image.tmdb.org/t/p/${size}${path}`;
+}
+
+export async function searchMovie(query, { year } = {}) {
+  const data = await tmdbFetch(
+    "/search/movie",
+    { query, year },
+    { cache: "no-store" } // searches should not be cached aggressively
+  );
+  return Array.isArray(data?.results) ? data.results : [];
+}
+
+export async function getMovieDetails(movieId) {
+  return tmdbFetch(`/movie/${movieId}`, {}, { cache: "force-cache" });
+}
+
+export async function getMovieCredits(movieId) {
+  return tmdbFetch(`/movie/${movieId}/credits`, {}, { cache: "force-cache" });
+}
+
+export async function getMovieImages(movieId) {
+  // Backdrops/posters to make the page look premium
+  return tmdbFetch(`/movie/${movieId}/images`, { include_image_language: "en,null" }, { cache: "force-cache" });
+}
+
+export async function getMovieBundle(movieId) {
+  const [details, credits, images] = await Promise.all([
+    getMovieDetails(movieId),
+    getMovieCredits(movieId),
+    getMovieImages(movieId),
+  ]);
+
+  const director = pickDirector(credits?.crew || []);
+  const cast = topCast(credits?.cast || [], 10);
 
   return {
-    tmdbId: best.id,
-    tmdbTitle: best.title,
-    releaseDate: best.release_date || null,
-    posterUrl: imgUrl(best.poster_path, "w780"),
-    backdropUrl: imgUrl(best.backdrop_path, "w1280"),
-    tmdbUrl: best.id ? `https://www.themoviedb.org/movie/${best.id}` : null,
+    details,
+    director,
+    cast,
+    images,
   };
 }

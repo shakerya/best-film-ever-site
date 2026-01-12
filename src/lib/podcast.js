@@ -53,6 +53,42 @@ function normalizeHttps(url) {
   return u;
 }
 
+function pickImageUrl(item, channel) {
+  // Common podcast RSS patterns:
+
+  // 1) Episode-specific iTunes image: <itunes:image href="..."/>
+  const itunesImg = item?.["itunes:image"];
+  if (itunesImg?.["@_href"]) return itunesImg["@_href"];
+
+  // 2) media:thumbnail url="..."
+  const thumb = item?.["media:thumbnail"];
+  if (thumb?.["@_url"]) return thumb["@_url"];
+  for (const t of toArray(thumb)) {
+    if (t?.["@_url"]) return t["@_url"];
+  }
+
+  // 3) media:content that is an image
+  const media = item?.["media:content"];
+  for (const m of toArray(media)) {
+    const type = String(m?.["@_type"] ?? "");
+    const url = m?.["@_url"];
+    if (url && type.startsWith("image/")) return url;
+  }
+
+  // 4) RSS <image><url>...</url></image> (sometimes per-item, usually channel)
+  const itemImageUrl = item?.image?.url;
+  if (itemImageUrl) return itemImageUrl;
+
+  // 5) Channel-level iTunes image fallback
+  const chItunes = channel?.["itunes:image"];
+  if (chItunes?.["@_href"]) return chItunes["@_href"];
+
+  const chImageUrl = channel?.image?.url;
+  if (chImageUrl) return chImageUrl;
+
+  return "";
+}
+
 export async function getEpisodesFromRss() {
   const rssUrl = process.env.PODCAST_RSS_URL;
   if (!rssUrl) throw new Error("Missing PODCAST_RSS_URL in .env.local");
@@ -87,6 +123,8 @@ export async function getEpisodesFromRss() {
 
       const duration = String(item?.["itunes:duration"] ?? "").trim();
 
+      const imageUrl = normalizeHttps(pickImageUrl(item, channel));
+
       return {
         guid: String(item?.guid?.["#text"] ?? item?.guid ?? ""),
         title,
@@ -97,6 +135,10 @@ export async function getEpisodesFromRss() {
         descriptionText: stripHtml(descriptionHtml),
         audioUrl,
         duration,
+
+        // NEW: used by the homepage list UI
+        image: imageUrl,
+        posterUrl: imageUrl, // EpisodesClient checks posterUrl first
       };
     })
     .filter((ep) => ep.title);
