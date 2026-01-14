@@ -11,32 +11,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata = {
-  // OK for now. When you add a custom domain, update this to that domain.
-  metadataBase: new URL("https://best-film-ever-site.vercel.app"),
+// If you ever add a custom domain, set NEXT_PUBLIC_SITE_URL to it in Vercel.
+// Example: https://bestfilmever.com
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://best-film-ever-site.vercel.app"; // fallback (ok to leave)
 
+export const metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Best Film Ever",
     template: "%s · Best Film Ever",
   },
-  description: "A movie-style episode index for the Best Film Ever podcast. Built by Aashrey Kapoor.",
-
-  applicationName: "Best Film Ever",
-  authors: [{ name: "Aashrey Kapoor", url: "https://x.com/aashrey_" }],
+  description:
+    "Browse Best Film Ever podcast episodes like a movie library — posters first, details when you click in.",
   creator: "Aashrey Kapoor",
-  publisher: "Aashrey Kapoor",
-
+  authors: [{ name: "Aashrey Kapoor", url: "https://x.com/aashrey_" }],
   openGraph: {
     type: "website",
+    url: siteUrl,
     title: "Best Film Ever",
-    description: "A movie-style episode index for the Best Film Ever podcast. Built by Aashrey Kapoor.",
-    siteName: "Best Film Ever",
+    description:
+      "Browse Best Film Ever podcast episodes like a movie library — posters first, details when you click in.",
   },
-
   twitter: {
     card: "summary_large_image",
-    title: "Best Film Ever",
-    description: "A movie-style episode index for the Best Film Ever podcast. Built by Aashrey Kapoor.",
     creator: "@aashrey_",
   },
 };
@@ -44,8 +43,30 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-zinc-950 text-white`}
+      >
         {children}
+
+        <footer className="mx-auto max-w-6xl px-6 py-10 text-xs text-white/55">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              Made by{" "}
+              <a
+                href="https://x.com/aashrey_"
+                target="_blank"
+                rel="noreferrer"
+                className="text-white/75 hover:text-white transition underline underline-offset-4 decoration-white/20 hover:decoration-white/50"
+              >
+                Aashrey Kapoor
+              </a>
+            </div>
+
+            <div className="text-white/40">
+              Data from TMDB and the podcast RSS feed.
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
