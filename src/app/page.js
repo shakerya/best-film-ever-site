@@ -20,12 +20,17 @@ function decodeEntities(s) {
     .replaceAll("&gt;", ">");
 }
 
-function prettyDate(iso) {
+function prettyDateStable(iso) {
   if (!iso) return "";
   try {
     const d = new Date(iso);
     if (Number.isNaN(d.getTime())) return "";
-    return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(d);
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone: "UTC",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(d);
   } catch {
     return "";
   }
@@ -95,16 +100,16 @@ async function tmdbSearchFirstMovie(query) {
   };
 }
 
-function letterboxdFromTmdbId(tmdbId) {
-  if (!tmdbId) return "";
-  return `https://letterboxd.com/tmdb/${tmdbId}`;
-}
-
 function PosterTile({ ep, movie }) {
   const epTitle = decodeEntities(ep.title);
   const displayTitle = movie?.movieTitle ? movie.movieTitle : titleToMovieQuery(epTitle) || epTitle;
 
-  const sub = [prettyDate(ep.isoDate), ep.duration ? `• ${ep.duration}` : ""].filter(Boolean).join(" ");
+  const sub = [
+    prettyDateStable(ep.isoDate),
+    ep.durationPretty ? `• ${ep.durationPretty}` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const posterUrl =
     movie?.posterUrl ||
@@ -112,6 +117,7 @@ function PosterTile({ ep, movie }) {
     ep.movie?.posterUrl ||
     ep.tmdb?.posterUrl ||
     ep.imageUrl ||
+    ep.image ||
     "";
 
   return (
@@ -150,12 +156,12 @@ function FeaturedCard({ ep, movie }) {
   const epTitle = decodeEntities(ep.title);
   const displayTitle = movie?.movieTitle ? movie.movieTitle : titleToMovieQuery(epTitle) || epTitle;
 
-  const posterUrl = movie?.posterUrl || ep.posterUrl || ep.movie?.posterUrl || ep.tmdb?.posterUrl || ep.imageUrl || "";
+  const posterUrl = movie?.posterUrl || ep.posterUrl || ep.movie?.posterUrl || ep.tmdb?.posterUrl || ep.image || "";
 
   const meta = [
-    prettyDate(ep.isoDate),
+    prettyDateStable(ep.isoDate),
     movie?.year ? `• ${movie.year}` : "",
-    ep.duration ? `• ${ep.duration}` : "",
+    ep.durationPretty ? `• ${ep.durationPretty}` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -203,8 +209,11 @@ function FeaturedCard({ ep, movie }) {
 }
 
 export default async function Home({ searchParams }) {
-  const q = String(searchParams?.q ?? "").trim();
-  const pageRaw = Number.parseInt(String(searchParams?.p ?? "1"), 10);
+  // Next 16: searchParams can be a Promise in some cases
+  const sp = await searchParams;
+
+  const q = String(sp?.q ?? "").trim();
+  const pageRaw = Number.parseInt(String(sp?.p ?? "1"), 10);
   const page = Number.isFinite(pageRaw) ? pageRaw : 1;
 
   const all = await getEpisodesFromRss();
@@ -260,7 +269,6 @@ export default async function Home({ searchParams }) {
         <header className="flex flex-col gap-6">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <div className="text-xs tracking-[0.25em] text-white/60">UNOFFICIAL FAN INDEX</div>
               <h1 className="mt-2 text-5xl font-semibold leading-none">Best Film Ever</h1>
               <p className="mt-3 max-w-2xl text-white/70">
                 Browse episodes like a movie library — posters first, details when you click in.
@@ -376,7 +384,6 @@ export default async function Home({ searchParams }) {
             </div>
           </div>
 
-          {/* Tiny helper note */}
           <div className="mt-8 text-xs text-white/40">
             Posters are fetched from TMDB based on the movie name in the episode title. Episode pages are the “detail
             view” (audio, Letterboxd/TMDB, notes, and more).

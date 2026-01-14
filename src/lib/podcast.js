@@ -54,8 +54,6 @@ function normalizeHttps(url) {
 }
 
 function pickImageUrl(item, channel) {
-  // Common podcast RSS patterns:
-
   // 1) Episode-specific iTunes image: <itunes:image href="..."/>
   const itunesImg = item?.["itunes:image"];
   if (itunesImg?.["@_href"]) return itunesImg["@_href"];
@@ -75,7 +73,7 @@ function pickImageUrl(item, channel) {
     if (url && type.startsWith("image/")) return url;
   }
 
-  // 4) RSS <image><url>...</url></image> (sometimes per-item, usually channel)
+  // 4) RSS <image><url>...</url></image>
   const itemImageUrl = item?.image?.url;
   if (itemImageUrl) return itemImageUrl;
 
@@ -89,11 +87,56 @@ function pickImageUrl(item, channel) {
   return "";
 }
 
+// ---- Duration parsing/formatting ----
+// itunes:duration can be:
+// - seconds as a number string: "12348"
+// - "HH:MM:SS" or "H:MM:SS"
+// - "MM:SS"
+function parseItunesDurationToSeconds(raw) {
+  const s = String(raw ?? "").trim();
+  if (!s) return 0;
+
+  // Pure seconds
+  if (/^\d+$/.test(s)) return Number(s) || 0;
+
+  // Colon formats
+  if (s.includes(":")) {
+    const parts = s.split(":").map((p) => p.trim());
+    if (parts.some((p) => p === "" || !/^\d+$/.test(p))) return 0;
+
+    const nums = parts.map((p) => Number(p));
+    if (nums.some((n) => !Number.isFinite(n))) return 0;
+
+    if (nums.length === 2) {
+      const [mm, ss] = nums;
+      return mm * 60 + ss;
+    }
+    if (nums.length === 3) {
+      const [hh, mm, ss] = nums;
+      return hh * 3600 + mm * 60 + ss;
+    }
+  }
+
+  return 0;
+}
+
+function formatDurationPretty(seconds) {
+  const sec = Number(seconds);
+  if (!Number.isFinite(sec) || sec <= 0) return "";
+
+  const totalMinutes = Math.floor(sec / 60);
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+
+  if (h <= 0) return `${m}m`;
+  return `${h}h ${String(m).padStart(2, "0")}m`;
+}
+
 export async function getEpisodesFromRss() {
   const rssUrl = process.env.PODCAST_RSS_URL;
   if (!rssUrl) throw new Error("Missing PODCAST_RSS_URL in .env.local");
 
-  // KEY: no-store prevents Next from trying (and failing) to cache a >2MB RSS response
+  // no-store prevents Next from trying (and failing) to cache a >2MB RSS response
   const res = await fetch(rssUrl, { cache: "no-store" });
   if (!res.ok) throw new Error(`RSS fetch failed: ${res.status} ${res.statusText}`);
 
@@ -121,7 +164,9 @@ export async function getEpisodesFromRss() {
 
       const audioUrl = normalizeHttps(pickAudioUrl(item));
 
-      const duration = String(item?.["itunes:duration"] ?? "").trim();
+      const durationRaw = String(item?.["itunes:duration"] ?? "").trim();
+      const durationSeconds = parseItunesDurationToSeconds(durationRaw);
+      const durationPretty = formatDurationPretty(durationSeconds);
 
       const imageUrl = normalizeHttps(pickImageUrl(item, channel));
 
@@ -134,11 +179,15 @@ export async function getEpisodesFromRss() {
         descriptionHtml: String(descriptionHtml ?? ""),
         descriptionText: stripHtml(descriptionHtml),
         audioUrl,
-        duration,
 
-        // NEW: used by the homepage list UI
+        // Duration fields
+        durationRaw,
+        durationSeconds,
+        durationPretty,
+
+        // Used by homepage list UI
         image: imageUrl,
-        posterUrl: imageUrl, // EpisodesClient checks posterUrl first
+        posterUrl: imageUrl,
       };
     })
     .filter((ep) => ep.title);

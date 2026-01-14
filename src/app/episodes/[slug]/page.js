@@ -11,7 +11,7 @@ function formatDateStable(isoOrPubDate) {
   if (!isoOrPubDate) return "";
   const d = new Date(isoOrPubDate);
   if (Number.isNaN(d.getTime())) return "";
-  // Force a stable timezone so SSR != client
+  // Force stable timezone so SSR != client
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
     month: "short",
@@ -119,20 +119,15 @@ function buildCandidateQueries(title) {
 
   const variants = new Set();
 
-  // Base
   variants.add(raw);
 
-  // Remove after colon (common subtitles)
   if (raw.includes(":")) variants.add(raw.split(":")[0].trim());
 
-  // Remove after dash
   if (raw.includes(" - ")) variants.add(raw.split(" - ")[0].trim());
   if (raw.includes(" – ")) variants.add(raw.split(" – ")[0].trim());
 
-  // Remove leading "The " (often helps)
   if (/^the\s+/i.test(raw)) variants.add(raw.replace(/^the\s+/i, "").trim());
 
-  // Remove punctuation-heavy
   variants.add(
     raw
       .replace(/[“”"]/g, "")
@@ -140,7 +135,6 @@ function buildCandidateQueries(title) {
       .trim()
   );
 
-  // Normalize spacing
   return Array.from(variants)
     .map((s) => s.trim())
     .filter(Boolean)
@@ -156,7 +150,6 @@ async function findBestTmdbMatch({ title, year }) {
 
   const yr = year && /^\d{4}$/.test(year) ? year : "";
 
-  // Search: try year first, then no-year
   let allResults = [];
   for (const q of candidateQueries) {
     try {
@@ -168,16 +161,15 @@ async function findBestTmdbMatch({ title, year }) {
     }
   }
 
-  // De-dupe by id
   const byId = new Map();
   for (const r of allResults) {
     if (!r?.id) continue;
     if (!byId.has(r.id)) byId.set(r.id, r);
   }
+
   const unique = Array.from(byId.values());
   if (!unique.length) return null;
 
-  // Score candidates
   let best = null;
   let bestScore = -1;
 
@@ -186,7 +178,6 @@ async function findBestTmdbMatch({ title, year }) {
     const relYear = (r.release_date || "").slice(0, 4);
     const yearScore = yr && relYear ? (yr === relYear ? 0.25 : 0) : 0;
 
-    // mild popularity nudge, but keep similarity dominant
     const pop = Number(r.popularity || 0);
     const popScore = Number.isFinite(pop) ? Math.min(0.10, pop / 1000) : 0;
 
@@ -198,8 +189,6 @@ async function findBestTmdbMatch({ title, year }) {
     }
   }
 
-  // Guard: if similarity is awful, treat as no-match
-  // (prevents random matches for specials)
   const similarity = best ? jaccard(title, best.title || "") : 0;
   if (similarity < 0.28) return null;
 
@@ -244,34 +233,77 @@ function ButtonGhost({ href, children, title }) {
 }
 
 function CastStripItem({ person }) {
-  const img = person?.profile_path ? tmdbImageUrl(person.profile_path, "w185") : "";
+  // Bigger + higher-res headshots
+  const img = person?.profile_path ? tmdbImageUrl(person.profile_path, "w342") : "";
   const name = person?.name || "";
   const character = person?.character || "";
 
   return (
-    <div className="flex w-[180px] shrink-0 items-center gap-3 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
-      <div className="h-12 w-12 overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10 shrink-0">
+    <div className="flex w-[240px] shrink-0 items-center gap-4 rounded-3xl bg-white/5 p-4 ring-1 ring-white/10">
+      <div className="h-16 w-16 overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/10 shrink-0">
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={img} alt={name} className="h-full w-full object-cover" loading="lazy" />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-xs text-white/60">
+          <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-white/60">
             {name ? name.slice(0, 1).toUpperCase() : "?"}
           </div>
         )}
       </div>
 
       <div className="min-w-0">
-        <div className="truncate text-sm font-semibold text-white">{name || "Unknown"}</div>
-        {character ? <div className="truncate text-xs text-white/65">{character}</div> : null}
+        <div className="truncate text-sm font-semibold text-white">{name}</div>
+        {character ? (
+          <div className="mt-1 line-clamp-2 text-xs text-white/65">{character}</div>
+        ) : (
+          <div className="mt-1 text-xs text-white/45">Cast</div>
+        )}
       </div>
     </div>
   );
 }
 
+function DirectorCard({ director }) {
+  if (!director) return null;
+
+  const name = director?.name || "";
+  const img = director?.profile_path ? tmdbImageUrl(director.profile_path, "w342") : "";
+  const personUrl = director?.id ? `https://www.themoviedb.org/person/${director.id}` : "";
+
+  return (
+    <section className="mt-6 rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 className="text-lg font-semibold text-white">Director</h2>
+        {personUrl ? (
+          <a className="text-xs text-white/60 hover:text-white/80 transition" href={personUrl} target="_blank" rel="noreferrer">
+            TMDB profile →
+          </a>
+        ) : null}
+      </div>
+
+      <div className="mt-4 flex items-center gap-5">
+        <div className="h-20 w-20 overflow-hidden rounded-3xl bg-white/10 ring-1 ring-white/10 shrink-0">
+          {img ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={img} alt={name} className="h-full w-full object-cover" loading="lazy" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-white/60">
+              {name ? name.slice(0, 1).toUpperCase() : "?"}
+            </div>
+          )}
+        </div>
+
+        <div>
+          <div className="text-base font-semibold text-white">{name}</div>
+          <div className="mt-1 text-sm text-white/65">Director</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-
   const episodes = await getEpisodesFromRss();
   const ep = episodes.find((e) => e.slug === slug);
 
@@ -291,7 +323,6 @@ export default async function EpisodePage({ params }) {
   if (!ep) notFound();
 
   const guess = extractMovieFromEpisodeTitle(ep.title);
-
   const shouldSkipTmdb = looksLikeNonMovieEpisode(ep.title) || !guess.title;
 
   let tmdbMatch = null;
@@ -369,7 +400,7 @@ export default async function EpisodePage({ params }) {
           </Link>
         </div>
 
-        {/* HERO: backdrop + poster + title/meta/actions ONLY (no audio, no overview) */}
+        {/* HERO: backdrop + poster + title/meta/actions ONLY */}
         <section className="relative overflow-hidden rounded-3xl ring-1 ring-white/10">
           {backdropUrl ? (
             <div className="absolute inset-0">
@@ -416,7 +447,8 @@ export default async function EpisodePage({ params }) {
                   <div className="mt-4 rounded-2xl bg-black/45 p-3 text-xs text-white/75 ring-1 ring-white/10">
                     <div className="font-semibold text-white/90">No TMDB match</div>
                     <div className="mt-1">
-                      This episode doesn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still work.
+                      This episode doesn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still
+                      work.
                     </div>
                   </div>
                 ) : null}
@@ -439,8 +471,8 @@ export default async function EpisodePage({ params }) {
                   {runtime ? <span>{runtime}</span> : null}
                   {published ? <span className="text-white/45">•</span> : null}
                   {published ? <span>Published {published}</span> : null}
-                  {ep.duration ? <span className="text-white/45">•</span> : null}
-                  {ep.duration ? <span>Episode {ep.duration}</span> : null}
+                  {ep.durationPretty ? <span className="text-white/45">•</span> : null}
+                  {ep.durationPretty ? <span>Episode length {ep.durationPretty}</span> : null}
                 </div>
 
                 <div className="mt-2 text-sm text-white/60">{ep.title}</div>
@@ -457,7 +489,7 @@ export default async function EpisodePage({ params }) {
           </div>
         </section>
 
-        {/* Cast strip directly under hero (Trakt vibe) */}
+        {/* Cast strip */}
         {tmdbId && cast.length ? (
           <section className="mt-6 rounded-3xl bg-white/5 p-5 ring-1 ring-white/10">
             <div className="flex items-baseline justify-between gap-4">
@@ -465,7 +497,7 @@ export default async function EpisodePage({ params }) {
               <div className="text-xs text-white/55">scroll →</div>
             </div>
 
-            <div className="mt-4 flex gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {cast.slice(0, 12).map((p) => (
                 <CastStripItem key={p.credit_id || `${p.id}-${p.cast_id || ""}`} person={p} />
               ))}
@@ -473,11 +505,14 @@ export default async function EpisodePage({ params }) {
           </section>
         ) : null}
 
+        {/* Director callout */}
+        {tmdbId && director ? <DirectorCard director={director} /> : null}
+
         {/* BODY */}
         <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
           {/* Main column */}
           <section className="space-y-8">
-            {/* Play episode (separate from hero) */}
+            {/* Play episode */}
             {ep.audioUrl ? (
               <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
                 <div className="text-[11px] tracking-[0.25em] text-white/60">LISTEN</div>
@@ -488,7 +523,7 @@ export default async function EpisodePage({ params }) {
               </div>
             ) : null}
 
-            {/* Movie overview (separate from hero) */}
+            {/* Movie overview */}
             {tmdbId && details?.overview ? (
               <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
                 <h2 className="text-lg font-semibold text-white">Overview</h2>
@@ -498,7 +533,7 @@ export default async function EpisodePage({ params }) {
               </div>
             ) : null}
 
-            {/* Show notes (expandable) */}
+            {/* Show notes */}
             <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
               <div className="flex items-baseline justify-between gap-4">
                 <h2 className="text-lg font-semibold text-white">Show notes</h2>
@@ -531,7 +566,7 @@ export default async function EpisodePage({ params }) {
             </div>
           </section>
 
-          {/* Sidebar: links + key facts */}
+          {/* Sidebar */}
           <aside className="space-y-8">
             <section className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
               <h2 className="text-lg font-semibold text-white">Links</h2>
@@ -573,6 +608,11 @@ export default async function EpisodePage({ params }) {
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-white/60">Published</div>
                   <div className="text-white/85">{published || "—"}</div>
+                </div>
+
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-white/60">Episode length</div>
+                  <div className="text-white/85">{ep.durationPretty || "—"}</div>
                 </div>
               </div>
             </section>
