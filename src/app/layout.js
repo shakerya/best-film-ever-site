@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -11,62 +12,58 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// If you ever add a custom domain, set NEXT_PUBLIC_SITE_URL to it in Vercel.
-// Example: https://bestfilmever.com
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://best-film-ever-site.vercel.app"; // fallback (ok to leave)
-
 export const metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL("https://www.bestfilmeverpod.fyi"),
   title: {
     default: "Best Film Ever",
-    template: "%s · Best Film Ever",
+    template: "%s • Best Film Ever",
   },
-  description:
-    "Browse Best Film Ever podcast episodes like a movie library — posters first, details when you click in.",
-  creator: "Aashrey Kapoor",
+  description: "Browse Best Film Ever episodes like a movie library — posters first, details when you click in.",
+  applicationName: "Best Film Ever",
   authors: [{ name: "Aashrey Kapoor", url: "https://x.com/aashrey_" }],
+  creator: "Aashrey Kapoor",
+  publisher: "Aashrey Kapoor",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
-    url: siteUrl,
+    url: "https://www.bestfilmeverpod.fyi",
     title: "Best Film Ever",
-    description:
-      "Browse Best Film Ever podcast episodes like a movie library — posters first, details when you click in.",
+    description: "Browse Best Film Ever episodes like a movie library — posters first, details when you click in.",
+    siteName: "Best Film Ever",
   },
   twitter: {
     card: "summary_large_image",
+    title: "Best Film Ever",
+    description: "Browse Best Film Ever episodes like a movie library — posters first, details when you click in.",
     creator: "@aashrey_",
   },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-zinc-950 text-white`}
-      >
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen`}>
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-1">{children}</div>
 
-        <footer className="mx-auto max-w-6xl px-6 py-10 text-xs text-white/55">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              Made by{" "}
+          <footer className="border-t border-white/10 bg-zinc-950">
+            <div className="mx-auto max-w-6xl px-6 py-6 text-sm text-white/60">
               <a
                 href="https://x.com/aashrey_"
                 target="_blank"
                 rel="noreferrer"
-                className="text-white/75 hover:text-white transition underline underline-offset-4 decoration-white/20 hover:decoration-white/50"
+                className="hover:text-white/85 transition"
+                title="Aashrey on X"
               >
-                Aashrey Kapoor
+                Made by Aashrey Kapoor
               </a>
             </div>
+          </footer>
+        </div>
 
-            <div className="text-white/40">
-              Data from TMDB and the podcast RSS feed.
-            </div>
-          </div>
-        </footer>
+        <Analytics />
       </body>
     </html>
   );
