@@ -4,13 +4,12 @@ function normalizeSpace(s) {
   return String(s || "").replace(/\s+/g, " ").trim();
 }
 
+// Things that strongly indicate "not a full movie review".
+// (We keep this conservative.)
 const DISQUALIFY_KEYWORDS = [
-  // Non-full-review categories / formats
   "see it or skip it",
   "siosi",
   "ringside roundtable",
-  "bonus",
-  "patreon",
   "mailbag",
   "draft",
   "q&a",
@@ -32,22 +31,49 @@ const DISQUALIFY_KEYWORDS = [
   "worst of",
 ];
 
-function looksLikeNonFullReviewRemainder(remainderLower) {
-  const r = normalizeSpace(remainderLower).toLowerCase();
+// If the remainder *starts* with these, it's definitely not a full review.
+// (Hard guardrail)
+const STARTS_WITH_NON_REVIEW = [
+  "see it or skip it",
+  "siosi",
+  "ringside roundtable",
+  "mailbag",
+  "draft",
+  "roundtable",
+  "interview",
+];
+
+/**
+ * Remove ONE trailing parenthetical group, but keep (YYYY).
+ * Examples:
+ *  - "Scream (Bonus Halloween Episode)" -> "Scream"
+ *  - "Heat (1995)" -> "Heat (1995)"  (kept)
+ */
+function stripTrailingNonYearParensOnce(s) {
+  const t = normalizeSpace(s);
+  if (!t) return "";
+  return t.replace(/\s*\((?!\d{4}\)).*?\)\s*$/g, "").trim();
+}
+
+function looksLikeNonFullReviewRemainder(remainder) {
+  const rRaw = normalizeSpace(remainder);
+  const r = rRaw.toLowerCase();
   if (!r) return true;
 
-  // If the remainder itself starts with a known non-review prefix
-  const starts = [
-    "see it or skip it",
-    "siosi",
-    "ringside roundtable",
-    "bonus",
-    "patreon",
-  ];
-  if (starts.some((p) => r.startsWith(p))) return true;
+  // Hard-block if remainder begins with known non-review formats
+  if (STARTS_WITH_NON_REVIEW.some((p) => r.startsWith(p))) return true;
 
-  // If it contains strong non-review signals
-  return DISQUALIFY_KEYWORDS.some((k) => r.includes(k));
+  // Important nuance:
+  // Many legit movie reviews have trailing notes like "(Bonus Halloween Episode)".
+  // So we evaluate disqualifiers on the "main" part with that trailing parens removed.
+  const main = stripTrailingNonYearParensOnce(rRaw).toLowerCase();
+
+  // If stripping parens leaves nothing, treat as non-review
+  if (!main) return true;
+
+  // If the main part contains strong non-review signals, disqualify.
+  // (This keeps "Episode 36 - Scream (Bonus ...)" allowed because main="Scream")
+  return DISQUALIFY_KEYWORDS.some((k) => main.includes(k));
 }
 
 /**
