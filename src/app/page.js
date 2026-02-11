@@ -66,8 +66,7 @@ function PosterTile({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle =
-    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle = resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
 
   const subParts = [
     epNum ? `EP ${epNum}` : "",
@@ -87,30 +86,38 @@ function PosterTile({ ep, resolved }) {
     "";
 
   return (
-    <Link
-      href={`/episodes/${ep.slug}`}
-      className="group block rounded-3xl overflow-hidden bg-zinc-900/40 ring-1 ring-white/10 hover:ring-white/20 transition"
-    >
-      <div className="relative aspect-[2/3]">
-        {posterUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={posterUrl}
-            alt={displayTitle}
-            className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
-            loading="lazy"
-          />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
-        )}
+    <Link href={`/episodes/${ep.slug}`} className="group block">
+      {/* gradient “frame” */}
+      <div className="rounded-[28px] bg-gradient-to-br from-white/18 via-white/8 to-transparent p-[1px] transition-transform duration-300 group-hover:-translate-y-1">
+        {/* glass card */}
+        <div className="relative overflow-hidden rounded-[27px] bg-white/[0.04] ring-1 ring-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.55)] transition-shadow duration-300 group-hover:shadow-[0_28px_90px_rgba(0,0,0,0.70)]">
+          <div className="relative aspect-[2/3]">
+            {posterUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={posterUrl}
+                alt={displayTitle}
+                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
+            )}
 
-        {/* Readability overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+            {/* glossy sheen */}
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+              <div className="absolute -left-1/3 -top-1/3 h-[65%] w-[65%] rotate-12 bg-white/10 blur-2xl" />
+            </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <div className="text-xs text-white/70">{sub}</div>
-          <div className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-white">
-            {displayTitle}
+            {/* Readability overlay */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+
+            <div className="absolute bottom-0 left-0 right-0 p-4">
+              <div className="text-xs text-white/70">{sub}</div>
+              <div className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-white">
+                {displayTitle}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -122,8 +129,7 @@ function FeaturedCard({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle =
-    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle = resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
 
   const posterUrl =
     posterUrlFromResolved(resolved) ||
@@ -260,12 +266,9 @@ export default async function Home({ searchParams }) {
   const patreonBtnClass =
     "rounded-full bg-white/10 px-3 py-2 text-sm font-medium text-white/90 ring-1 ring-white/15 hover:bg-white/15 hover:ring-white/25 transition";
 
-  const tabBase =
-    "rounded-full px-3 py-2 text-sm ring-1 ring-white/10 transition";
-  const tabActive =
-    "bg-white text-zinc-950 ring-white/0";
-  const tabInactive =
-    "text-white/80 hover:bg-white/10";
+  const tabBase = "rounded-full px-3 py-2 text-sm ring-1 ring-white/10 transition";
+  const tabActive = "bg-white text-zinc-950 ring-white/0";
+  const tabInactive = "text-white/80 hover:bg-white/10";
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
@@ -381,22 +384,13 @@ export default async function Home({ searchParams }) {
 
               {/* Filter tabs */}
               <div className="flex items-center gap-2">
-                <Link
-                  className={`${tabBase} ${filter === "all" ? tabActive : tabInactive}`}
-                  href={buildHref({ q, filter: "all", p: 1 })}
-                >
+                <Link className={`${tabBase} ${filter === "all" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "all", p: 1 })}>
                   All
                 </Link>
-                <Link
-                  className={`${tabBase} ${filter === "full" ? tabActive : tabInactive}`}
-                  href={buildHref({ q, filter: "full", p: 1 })}
-                >
+                <Link className={`${tabBase} ${filter === "full" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "full", p: 1 })}>
                   Full Reviews
                 </Link>
-                <Link
-                  className={`${tabBase} ${filter === "extras" ? tabActive : tabInactive}`}
-                  href={buildHref({ q, filter: "extras", p: 1 })}
-                >
+                <Link className={`${tabBase} ${filter === "extras" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "extras", p: 1 })}>
                   Extras
                 </Link>
               </div>
@@ -423,8 +417,7 @@ export default async function Home({ searchParams }) {
           <div className="flex items-baseline justify-between">
             <h2 className="text-lg font-semibold text-white">Browse</h2>
             <div className="text-sm text-white/50">
-              Page <span className="text-white/80">{p}</span> of{" "}
-              <span className="text-white/80">{totalPages}</span>
+              Page <span className="text-white/80">{p}</span> of <span className="text-white/80">{totalPages}</span>
             </div>
           </div>
 
