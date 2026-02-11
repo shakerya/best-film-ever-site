@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getEpisodesFromRss } from "@/lib/podcast";
-import { searchMovie, getMovieBundle, tmdbImageUrl } from "@/lib/tmdb";
+import { resolveEpisodeMovieCached, getMovieBundle, tmdbImageUrl } from "@/lib/tmdb";
+import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "@/lib/episodeMeta";
 
 export const revalidate = 3600; // 1 hour
 
@@ -28,171 +29,6 @@ function formatRuntime(mins) {
   if (h <= 0) return `${r}m`;
   if (r === 0) return `${h}h`;
   return `${h}h ${r}m`;
-}
-
-// --- Episode title -> movie guess (fallback + search seed) ---
-function extractMovieFromEpisodeTitle(epTitle) {
-  const raw = String(epTitle || "").trim();
-  if (!raw) return { title: "", year: "" };
-
-  const yearMatch = raw.match(/\((19|20)\d{2}\)/);
-  const year = yearMatch ? yearMatch[0].replace(/[()]/g, "") : "";
-
-  let t = raw
-    .replace(/^episode\s*\d+\s*[-:–—]\s*/i, "")
-    .replace(/^see it or skip it\??\s*[-:–—]\s*/i, "")
-    .replace(/^ringside roundtable\s*[-:–—]\s*/i, "")
-    .replace(/^bonus\s*[-:–—]\s*/i, "")
-    .replace(/^patreon\s*[-:–—]\s*/i, "")
-    .trim();
-
-  // Remove trailing guest parentheses, keep (YYYY)
-  t = t.replace(/\s*\((?!\d{4}\)).*?\)\s*$/g, "").trim();
-
-  // If there’s still a " - " suffix, keep the first chunk
-  t = t.split(" - ")[0].trim();
-  t = t.split(" – ")[0].trim();
-
-  // Remove "(YYYY)" from the title text itself
-  t = t.replace(/\s*\((19|20)\d{2}\)\s*/g, "").trim();
-
-  return { title: t, year };
-}
-
-function looksLikeNonMovieEpisode(epTitle) {
-  const t = String(epTitle || "").toLowerCase();
-  const bad = [
-    "patreon",
-    "draft",
-    "mailbag",
-    "q&a",
-    "q & a",
-    "rankings",
-    "roundtable",
-    "fantasy football",
-    "summer slam",
-    "predictions",
-    "preview",
-    "award",
-    "oscars",
-    "golden globes",
-    "wrap-up",
-    "wrap up",
-    "best of",
-    "worst of",
-    "special",
-    "announcement",
-  ];
-  return bad.some((k) => t.includes(k));
-}
-
-// --- matching helpers (cheap + robust enough) ---
-function normalizeTitle(s) {
-  return String(s || "")
-    .toLowerCase()
-    .replace(/&/g, " and ")
-    .replace(/['’]/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function wordSet(s) {
-  const n = normalizeTitle(s);
-  if (!n) return new Set();
-  return new Set(n.split(" ").filter(Boolean));
-}
-
-function jaccard(a, b) {
-  const A = wordSet(a);
-  const B = wordSet(b);
-  if (!A.size || !B.size) return 0;
-  let inter = 0;
-  for (const w of A) if (B.has(w)) inter += 1;
-  const union = A.size + B.size - inter;
-  return union ? inter / union : 0;
-}
-
-function buildCandidateQueries(title) {
-  const raw = String(title || "").trim();
-  if (!raw) return [];
-
-  const variants = new Set();
-
-  variants.add(raw);
-
-  if (raw.includes(":")) variants.add(raw.split(":")[0].trim());
-
-  if (raw.includes(" - ")) variants.add(raw.split(" - ")[0].trim());
-  if (raw.includes(" – ")) variants.add(raw.split(" – ")[0].trim());
-
-  if (/^the\s+/i.test(raw)) variants.add(raw.replace(/^the\s+/i, "").trim());
-
-  variants.add(
-    raw
-      .replace(/[“”"]/g, "")
-      .replace(/[!?]/g, "")
-      .trim()
-  );
-
-  return Array.from(variants)
-    .map((s) => s.trim())
-    .filter(Boolean)
-    .slice(0, 6);
-}
-
-async function findBestTmdbMatch({ title, year }) {
-  if (!process.env.TMDB_API_KEY) return null;
-  if (!title) return null;
-
-  const candidateQueries = buildCandidateQueries(title);
-  if (!candidateQueries.length) return null;
-
-  const yr = year && /^\d{4}$/.test(year) ? year : "";
-
-  let allResults = [];
-  for (const q of candidateQueries) {
-    try {
-      const resultsYear = yr ? await searchMovie(q, { year: yr }) : [];
-      const resultsNoYear = await searchMovie(q, {});
-      allResults = allResults.concat(resultsYear || [], resultsNoYear || []);
-    } catch {
-      // ignore per-query failures
-    }
-  }
-
-  const byId = new Map();
-  for (const r of allResults) {
-    if (!r?.id) continue;
-    if (!byId.has(r.id)) byId.set(r.id, r);
-  }
-
-  const unique = Array.from(byId.values());
-  if (!unique.length) return null;
-
-  let best = null;
-  let bestScore = -1;
-
-  for (const r of unique.slice(0, 25)) {
-    const sim = jaccard(title, r.title || r.original_title || "");
-    const relYear = (r.release_date || "").slice(0, 4);
-    const yearScore = yr && relYear ? (yr === relYear ? 0.25 : 0) : 0;
-
-    const pop = Number(r.popularity || 0);
-    const popScore = Number.isFinite(pop) ? Math.min(0.10, pop / 1000) : 0;
-
-    const score = sim + yearScore + popScore;
-
-    if (score > bestScore) {
-      bestScore = score;
-      best = r;
-    }
-  }
-
-  const similarity = best ? jaccard(title, best.title || "") : 0;
-  if (similarity < 0.28) return null;
-
-  return best;
 }
 
 // --- UI components ---
@@ -322,19 +158,20 @@ export default async function EpisodePage({ params }) {
   const ep = episodes.find((e) => e.slug === slug);
   if (!ep) notFound();
 
-  const guess = extractMovieFromEpisodeTitle(ep.title);
-  const shouldSkipTmdb = looksLikeNonMovieEpisode(ep.title) || !guess.title;
+  const epNum = getEpisodeNumberIfFullReview(ep.title);
+  const isFullReview = epNum !== null;
 
-  let tmdbMatch = null;
+  let resolved = null;
   let bundle = null;
 
-  if (!shouldSkipTmdb) {
+  // Guardrail: only attempt TMDB matching for full-review episodes
+  if (isFullReview) {
     try {
-      tmdbMatch = await findBestTmdbMatch({ title: guess.title, year: guess.year });
-      if (tmdbMatch?.id) bundle = await getMovieBundle(tmdbMatch.id);
+      resolved = await resolveEpisodeMovieCached(ep.title, { revalidate: 86400, minScore: 55 });
+      if (resolved?.movieId) bundle = await getMovieBundle(resolved.movieId);
     } catch (e) {
       console.error("[TMDB] lookup failed:", e);
-      tmdbMatch = null;
+      resolved = null;
       bundle = null;
     }
   }
@@ -344,19 +181,31 @@ export default async function EpisodePage({ params }) {
   const cast = Array.isArray(bundle?.cast) ? bundle.cast : [];
   const images = bundle?.images || null;
 
-  const tmdbId = tmdbMatch?.id ? String(tmdbMatch.id) : "";
-  const movieTitle = details?.title || tmdbMatch?.title || guess.title || "Episode";
-  const year = details?.release_date ? String(details.release_date).slice(0, 4) : guess.year || "";
+  const tmdbId = resolved?.movieId ? String(resolved.movieId) : "";
+  const fallbackTitle = isFullReview ? stripLeadingEpisodeNumber(ep.title) : ep.title;
+
+  const movieTitle =
+    details?.title ||
+    resolved?.movie?.title ||
+    fallbackTitle ||
+    "Episode";
+
+  const year =
+    details?.release_date
+      ? String(details.release_date).slice(0, 4)
+      : resolved?.movie?.release_date
+        ? String(resolved.movie.release_date).slice(0, 4)
+        : "";
+
   const runtime = details?.runtime ? formatRuntime(details.runtime) : "";
   const directorName = director?.name || "";
-
   const genres = Array.isArray(details?.genres) ? details.genres : [];
 
-  const posterPath = details?.poster_path || tmdbMatch?.poster_path || "";
+  const posterPath = details?.poster_path || resolved?.movie?.poster_path || "";
   const backdropPath =
     details?.backdrop_path ||
     images?.backdrops?.[0]?.file_path ||
-    tmdbMatch?.backdrop_path ||
+    resolved?.movie?.backdrop_path ||
     "";
 
   const posterUrl = posterPath ? tmdbImageUrl(posterPath, "w780") : "";
@@ -364,8 +213,8 @@ export default async function EpisodePage({ params }) {
 
   const letterboxdUrl = tmdbId
     ? `https://letterboxd.com/tmdb/${tmdbId}/`
-    : guess.title
-      ? `https://letterboxd.com/search/${encodeURIComponent(guess.title)}/`
+    : movieTitle
+      ? `https://letterboxd.com/search/${encodeURIComponent(movieTitle)}/`
       : "https://letterboxd.com/";
 
   const tmdbUrl = tmdbId ? `https://www.themoviedb.org/movie/${tmdbId}` : "";
@@ -443,11 +292,11 @@ export default async function EpisodePage({ params }) {
                   ) : null}
                 </div>
 
-                {!tmdbId ? (
+                {!tmdbId && isFullReview ? (
                   <div className="mt-4 rounded-2xl bg-black/45 p-3 text-xs text-white/75 ring-1 ring-white/10">
                     <div className="font-semibold text-white/90">No TMDB match</div>
                     <div className="mt-1">
-                      This episode doesn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still
+                      This episode didn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still
                       work.
                     </div>
                   </div>
@@ -457,7 +306,7 @@ export default async function EpisodePage({ params }) {
               {/* Title + meta */}
               <div className="min-w-0">
                 <div className="inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-[11px] tracking-[0.25em] text-white/70 ring-1 ring-white/10">
-                  MOVIE
+                  {tmdbId ? "MOVIE" : "EPISODE"}
                 </div>
 
                 <h1 className="mt-3 text-4xl md:text-6xl font-semibold leading-none">
@@ -466,6 +315,8 @@ export default async function EpisodePage({ params }) {
                 </h1>
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/75">
+                  {epNum ? <span>Episode {epNum}</span> : null}
+                  {epNum ? <span className="text-white/45">•</span> : null}
                   {directorName ? <span>Directed by {directorName}</span> : null}
                   {runtime ? <span className="text-white/45">•</span> : null}
                   {runtime ? <span>{runtime}</span> : null}
@@ -590,6 +441,11 @@ export default async function EpisodePage({ params }) {
               <h2 className="text-lg font-semibold text-white">Details</h2>
 
               <div className="mt-4 space-y-3 text-sm text-white/75">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="text-white/60">Episode #</div>
+                  <div className="text-white/85">{epNum ? String(epNum) : "—"}</div>
+                </div>
+
                 <div className="flex items-center justify-between gap-3">
                   <div className="text-white/60">Director</div>
                   <div className="text-white/85">{directorName || "—"}</div>

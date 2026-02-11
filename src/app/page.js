@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { getEpisodesFromRss } from "../lib/podcast";
+import { tmdbImageUrl, resolveEpisodeMovieCached } from "../lib/tmdb";
+import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "../lib/episodeMeta";
 
 // IMPORTANT: keep this a literal number (Next segment config)
 export const revalidate = 3600; // 1 hour
 
 const PAGE_SIZE = 30;
+const HOMEPAGE_TMDB_MIN_SCORE = 62; // stricter than detail page to avoid wrong posters
+
+const PATREON_URL = "https://www.patreon.com/c/BFE/posts?vanity=BFE";
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -36,83 +41,28 @@ function prettyDateStable(iso) {
   }
 }
 
-function titleToMovieQuery(rawTitle) {
-  let t = decodeEntities(String(rawTitle ?? "")).trim();
-  if (!t) return "";
-
-  // Strip common prefixes
-  t = t.replace(/^episode\s*\d+\s*[-:]\s*/i, "");
-  t = t.replace(/^see it or skip it\?\s*[-:]\s*/i, "");
-  t = t.replace(/^ringside roundtable\s*[-:]\s*/i, "");
-  t = t.replace(/^bonus\s*[-:]\s*/i, "");
-
-  // Remove parenthetical clutter at end
-  t = t.replace(/\s*\([^)]*\)\s*$/g, "").trim();
-
-  // If it's clearly not a movie episode, bail
-  const lower = t.toLowerCase();
-  if (
-    !t ||
-    lower.includes("patreon") ||
-    lower.includes("draft") ||
-    lower.includes("mailbag") ||
-    lower.includes("q&a") ||
-    lower.includes("rankings") ||
-    lower.includes("roundtable")
-  ) {
-    return "";
-  }
-
-  return t;
+function posterUrlFromResolved(resolved) {
+  const posterPath = resolved?.movie?.poster_path || "";
+  return posterPath ? tmdbImageUrl(posterPath, "w500") : "";
 }
 
-function tmdbPosterUrl(posterPath, size = "w500") {
-  if (!posterPath) return "";
-  return `https://image.tmdb.org/t/p/${size}${posterPath}`;
-}
-
-async function tmdbSearchFirstMovie(query) {
-  const key = process.env.TMDB_API_KEY;
-  if (!key) return null;
-
-  const url =
-    `https://api.themoviedb.org/3/search/movie?` +
-    new URLSearchParams({
-      api_key: key,
-      query,
-      include_adult: "false",
-      language: "en-US",
-      page: "1",
-    });
-
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) return null;
-
-  const data = await res.json();
-  const first = data?.results?.[0];
-  if (!first?.id) return null;
-
-  return {
-    tmdbId: String(first.id),
-    movieTitle: first.title || query,
-    year: (first.release_date || "").slice(0, 4),
-    posterUrl: tmdbPosterUrl(first.poster_path),
-  };
-}
-
-function PosterTile({ ep, movie }) {
+function PosterTile({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
-  const displayTitle = movie?.movieTitle ? movie.movieTitle : titleToMovieQuery(epTitle) || epTitle;
+  const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const sub = [
+  const displayTitle =
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+
+  const subParts = [
+    epNum ? `EP ${epNum}` : "",
     prettyDateStable(ep.isoDate),
     ep.durationPretty ? `• ${ep.durationPretty}` : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean);
+
+  const sub = subParts.join(" ");
 
   const posterUrl =
-    movie?.posterUrl ||
+    posterUrlFromResolved(resolved) ||
     ep.posterUrl ||
     ep.movie?.posterUrl ||
     ep.tmdb?.posterUrl ||
@@ -152,15 +102,27 @@ function PosterTile({ ep, movie }) {
   );
 }
 
-function FeaturedCard({ ep, movie }) {
+function FeaturedCard({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
-  const displayTitle = movie?.movieTitle ? movie.movieTitle : titleToMovieQuery(epTitle) || epTitle;
+  const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const posterUrl = movie?.posterUrl || ep.posterUrl || ep.movie?.posterUrl || ep.tmdb?.posterUrl || ep.image || "";
+  const displayTitle =
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+
+  const posterUrl =
+    posterUrlFromResolved(resolved) ||
+    ep.posterUrl ||
+    ep.movie?.posterUrl ||
+    ep.tmdb?.posterUrl ||
+    ep.image ||
+    "";
+
+  const year = resolved?.movie?.release_date ? String(resolved.movie.release_date).slice(0, 4) : "";
 
   const meta = [
+    epNum ? `EP ${epNum}` : "",
     prettyDateStable(ep.isoDate),
-    movie?.year ? `• ${movie.year}` : "",
+    year ? `• ${year}` : "",
     ep.durationPretty ? `• ${ep.durationPretty}` : "",
   ]
     .filter(Boolean)
@@ -193,8 +155,9 @@ function FeaturedCard({ ep, movie }) {
         <div className="text-xs text-white/70">{meta}</div>
         <div className="mt-1 line-clamp-2 text-lg font-semibold text-white">{displayTitle}</div>
         {excerpt ? <div className="mt-2 line-clamp-2 text-sm text-white/70">{excerpt}…</div> : null}
+
         <div className="mt-3 inline-flex items-center gap-2 text-xs text-white/70">
-          {movie?.tmdbId ? (
+          {resolved?.movieId ? (
             <>
               <span className="rounded-full bg-white/10 px-2 py-1">TMDB</span>
               <span className="rounded-full bg-white/10 px-2 py-1">Letterboxd</span>
@@ -236,25 +199,39 @@ export default async function Home({ searchParams }) {
   const start = (p - 1) * PAGE_SIZE;
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
-  // TMDB lookups only for what we render (featured + current page)
+  // TMDB lookups only for full-review episodes we render
   const tmdbCache = new Map();
-  async function movieForEpisode(ep) {
-    const query = titleToMovieQuery(ep.title);
-    if (!query) return null;
-    if (tmdbCache.has(query)) return tmdbCache.get(query);
-    const promise = tmdbSearchFirstMovie(query);
-    tmdbCache.set(query, promise);
+
+  async function resolvedForEpisode(ep) {
+    const epNum = getEpisodeNumberIfFullReview(ep.title);
+    if (!epNum) return null; // guardrail: do not force non-review episodes into random posters
+
+    const key = String(ep.title || "").trim();
+    if (!key) return null;
+
+    if (tmdbCache.has(key)) return tmdbCache.get(key);
+
+    const promise = resolveEpisodeMovieCached(ep.title, {
+      revalidate: 86400,
+      minScore: HOMEPAGE_TMDB_MIN_SCORE,
+    });
+
+    tmdbCache.set(key, promise);
     return promise;
   }
 
-  const featuredMovies = await Promise.all(featured.map(movieForEpisode));
-  const pageMovies = await Promise.all(pageItems.map(movieForEpisode));
+  const featuredResolved = await Promise.all(featured.map(resolvedForEpisode));
+  const pageResolved = await Promise.all(pageItems.map(resolvedForEpisode));
 
   // Map by episode slug for easy access
-  const featuredBySlug = new Map(featured.map((ep, i) => [ep.slug, featuredMovies[i] || null]));
-  const pageBySlug = new Map(pageItems.map((ep, i) => [ep.slug, pageMovies[i] || null]));
+  const featuredBySlug = new Map(featured.map((ep, i) => [ep.slug, featuredResolved[i] || null]));
+  const pageBySlug = new Map(pageItems.map((ep, i) => [ep.slug, pageResolved[i] || null]));
 
   const rssUrl = process.env.PODCAST_RSS_URL || "";
+
+  // shared class for the Patreon button
+  const patreonBtnClass =
+    "rounded-full bg-white/10 px-3 py-2 text-sm font-medium text-white/90 ring-1 ring-white/15 hover:bg-white/15 hover:ring-white/25 transition";
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
@@ -265,7 +242,7 @@ export default async function Home({ searchParams }) {
         <div className="absolute inset-0 bg-[radial-gradient(700px_circle_at_50%_110%,rgba(244,63,94,0.08),transparent_55%)]" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
+      <div className="mx-auto max-w-7xl px-6 pb-16 pt-10">
         <header className="flex flex-col gap-6">
           <div className="flex items-start justify-between gap-6">
             <div>
@@ -273,9 +250,51 @@ export default async function Home({ searchParams }) {
               <p className="mt-3 max-w-2xl text-white/70">
                 Browse episodes like a movie library — posters first, details when you click in.
               </p>
+
+              {/* Mobile actions */}
+              <div className="mt-5 flex flex-wrap items-center gap-2 md:hidden">
+                <a
+                  className={patreonBtnClass}
+                  href={PATREON_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Support Best Film Ever on Patreon"
+                >
+                  Support on Patreon
+                </a>
+
+                <a
+                  className="rounded-full bg-white/10 px-3 py-2 text-sm text-white/80 hover:bg-white/15 transition"
+                  href="?p=1"
+                >
+                  Latest
+                </a>
+
+                {rssUrl ? (
+                  <a
+                    className="rounded-full bg-white/10 px-3 py-2 text-sm text-white/80 hover:bg-white/15 transition"
+                    href={rssUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    RSS feed
+                  </a>
+                ) : null}
+              </div>
             </div>
 
+            {/* Desktop actions */}
             <div className="hidden md:flex items-center gap-2">
+              <a
+                className={patreonBtnClass}
+                href={PATREON_URL}
+                target="_blank"
+                rel="noreferrer"
+                title="Support Best Film Ever on Patreon"
+              >
+                Support on Patreon
+              </a>
+
               {rssUrl ? (
                 <a
                   className="rounded-full bg-white/10 px-3 py-2 text-sm text-white/80 hover:bg-white/15 transition"
@@ -335,7 +354,7 @@ export default async function Home({ searchParams }) {
 
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             {featured.map((ep) => (
-              <FeaturedCard key={ep.guid || ep.slug} ep={ep} movie={featuredBySlug.get(ep.slug)} />
+              <FeaturedCard key={ep.guid || ep.slug} ep={ep} resolved={featuredBySlug.get(ep.slug)} />
             ))}
           </div>
         </section>
@@ -350,9 +369,9 @@ export default async function Home({ searchParams }) {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-4 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
             {pageItems.map((ep) => (
-              <PosterTile key={ep.guid || ep.slug} ep={ep} movie={pageBySlug.get(ep.slug)} />
+              <PosterTile key={ep.guid || ep.slug} ep={ep} resolved={pageBySlug.get(ep.slug)} />
             ))}
           </div>
 
@@ -385,8 +404,8 @@ export default async function Home({ searchParams }) {
           </div>
 
           <div className="mt-8 text-xs text-white/40">
-            Posters are fetched from TMDB based on the movie name in the episode title. Episode pages are the “detail
-            view” (audio, Letterboxd/TMDB, notes, and more).
+            Posters are fetched from TMDB for full-review episodes only. If a match is uncertain, the tile falls back to
+            the episode’s RSS image.
           </div>
         </section>
       </div>

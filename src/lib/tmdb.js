@@ -17,7 +17,7 @@ function toQuery(params) {
   return q.toString();
 }
 
-async function tmdbFetch(path, params = {}, { cache = "force-cache" } = {}) {
+async function tmdbFetch(path, params = {}, fetchOptions = {}) {
   const api_key = requireKey();
 
   const qs = toQuery({
@@ -29,7 +29,8 @@ async function tmdbFetch(path, params = {}, { cache = "force-cache" } = {}) {
 
   const url = `${TMDB_BASE}${path}?${qs}`;
 
-  const res = await fetch(url, { cache });
+  const { cache = "force-cache", next } = fetchOptions || {};
+  const res = await fetch(url, next ? { cache, next } : { cache });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -65,6 +66,16 @@ export async function searchMovie(query, { year } = {}) {
     "/search/movie",
     { query, year },
     { cache: "no-store" } // searches should not be cached aggressively
+  );
+  return Array.isArray(data?.results) ? data.results : [];
+}
+
+// Cached variant for SSR pages that revalidate
+export async function searchMovieCached(query, { year, revalidate = 86400 } = {}) {
+  const data = await tmdbFetch(
+    "/search/movie",
+    { query, year },
+    { cache: "force-cache", next: { revalidate } }
   );
   return Array.isArray(data?.results) ? data.results : [];
 }
@@ -288,7 +299,9 @@ export async function resolveEpisodeMovie(epTitle) {
 
   for (const c of candidates) {
     // Try with year first (if present), then without year
-    const attempts = c.year ? [{ query: c.query, year: c.year }, { query: c.query, year: "" }] : [{ query: c.query, year: "" }];
+    const attempts = c.year
+      ? [{ query: c.query, year: c.year }, { query: c.query, year: "" }]
+      : [{ query: c.query, year: "" }];
 
     for (const a of attempts) {
       const results = await searchMovie(a.query, { year: a.year || undefined });
@@ -309,5 +322,39 @@ export async function resolveEpisodeMovie(epTitle) {
   // Threshold to avoid obviously wrong matches
   if (!best || best.score < 55) return null;
 
+  return best;
+}
+
+/**
+ * Cached resolver for SSR pages that revalidate.
+ * Uses cached TMDB search results; adjustable minScore for stricter home tiles.
+ */
+export async function resolveEpisodeMovieCached(epTitle, { revalidate = 86400, minScore = 55 } = {}) {
+  const { candidates } = buildCandidates(epTitle);
+  if (!candidates.length) return null;
+
+  let best = null;
+
+  for (const c of candidates) {
+    const attempts = c.year
+      ? [{ query: c.query, year: c.year }, { query: c.query, year: "" }]
+      : [{ query: c.query, year: "" }];
+
+    for (const a of attempts) {
+      const results = await searchMovieCached(a.query, { year: a.year || undefined, revalidate });
+      if (!results.length) continue;
+
+      for (const r of results.slice(0, 7)) {
+        const rYear = r?.release_date ? String(r.release_date).slice(0, 4) : "";
+        const s = scoreResult(a.query, r?.title || "", rYear, c.year, r);
+
+        if (!best || s > best.score) {
+          best = { movieId: r.id, movie: r, guess: { query: a.query, year: c.year || "" }, score: s };
+        }
+      }
+    }
+  }
+
+  if (!best || best.score < minScore) return null;
   return best;
 }
