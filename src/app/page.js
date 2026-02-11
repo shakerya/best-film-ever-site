@@ -46,6 +46,22 @@ function posterUrlFromResolved(resolved) {
   return posterPath ? tmdbImageUrl(posterPath, "w500") : "";
 }
 
+function normalizeFilter(raw) {
+  const f = String(raw || "all").trim().toLowerCase();
+  if (f === "full" || f === "full-reviews" || f === "fullreviews") return "full";
+  if (f === "extras" || f === "extra" || f === "other") return "extras";
+  return "all";
+}
+
+function buildHref({ q, filter, p }) {
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (filter && filter !== "all") params.set("filter", filter);
+  if (p && String(p) !== "1") params.set("p", String(p));
+  const qs = params.toString();
+  return qs ? `/?${qs}` : "/";
+}
+
 function PosterTile({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
@@ -179,14 +195,25 @@ export default async function Home({ searchParams }) {
   const pageRaw = Number.parseInt(String(sp?.p ?? "1"), 10);
   const page = Number.isFinite(pageRaw) ? pageRaw : 1;
 
+  const filter = normalizeFilter(sp?.filter ?? sp?.f ?? "all");
+
   const all = await getEpisodesFromRss();
 
+  // 1) Filter bucket
+  const bucketed =
+    filter === "full"
+      ? all.filter((ep) => getEpisodeNumberIfFullReview(ep.title) !== null)
+      : filter === "extras"
+        ? all.filter((ep) => getEpisodeNumberIfFullReview(ep.title) === null)
+        : all;
+
+  // 2) Search filter (applied after bucket)
   const filtered = q
-    ? all.filter((ep) => {
+    ? bucketed.filter((ep) => {
         const hay = `${decodeEntities(ep.title)} ${decodeEntities(ep.descriptionText || "")}`.toLowerCase();
         return hay.includes(q.toLowerCase());
       })
-    : all;
+    : bucketed;
 
   const total = filtered.length;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -232,6 +259,13 @@ export default async function Home({ searchParams }) {
   // shared class for the Patreon button
   const patreonBtnClass =
     "rounded-full bg-white/10 px-3 py-2 text-sm font-medium text-white/90 ring-1 ring-white/15 hover:bg-white/15 hover:ring-white/25 transition";
+
+  const tabBase =
+    "rounded-full px-3 py-2 text-sm ring-1 ring-white/10 transition";
+  const tabActive =
+    "bg-white text-zinc-950 ring-white/0";
+  const tabInactive =
+    "text-white/80 hover:bg-white/10";
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
@@ -316,7 +350,7 @@ export default async function Home({ searchParams }) {
           </div>
 
           {/* Search + count */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <form className="flex items-center gap-2" action="/" method="get">
               <input
                 name="q"
@@ -325,6 +359,7 @@ export default async function Home({ searchParams }) {
                 className="w-full rounded-2xl bg-white/5 px-4 py-3 text-base text-white placeholder:text-white/35 ring-1 ring-white/10 focus:outline-none focus:ring-white/25"
               />
               <input type="hidden" name="p" value="1" />
+              <input type="hidden" name="filter" value={filter} />
               <button
                 type="submit"
                 className="rounded-2xl bg-white text-zinc-950 px-4 py-3 text-base font-medium hover:bg-white/90 transition"
@@ -333,14 +368,38 @@ export default async function Home({ searchParams }) {
               </button>
             </form>
 
-            <div className="text-sm text-white/60">
-              Showing <span className="text-white/85">{filtered.length}</span> episodes
-              {q ? (
-                <>
-                  {" "}
-                  for <span className="text-white/85">“{q}”</span>
-                </>
-              ) : null}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm text-white/60">
+                Showing <span className="text-white/85">{filtered.length}</span> episodes
+                {q ? (
+                  <>
+                    {" "}
+                    for <span className="text-white/85">“{q}”</span>
+                  </>
+                ) : null}
+              </div>
+
+              {/* Filter tabs */}
+              <div className="flex items-center gap-2">
+                <Link
+                  className={`${tabBase} ${filter === "all" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "all", p: 1 })}
+                >
+                  All
+                </Link>
+                <Link
+                  className={`${tabBase} ${filter === "full" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "full", p: 1 })}
+                >
+                  Full Reviews
+                </Link>
+                <Link
+                  className={`${tabBase} ${filter === "extras" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "extras", p: 1 })}
+                >
+                  Extras
+                </Link>
+              </div>
             </div>
           </div>
         </header>
@@ -388,7 +447,7 @@ export default async function Home({ searchParams }) {
                 className={`rounded-full px-4 py-2 text-sm ring-1 ring-white/10 transition ${
                   p <= 1 ? "pointer-events-none text-white/30" : "text-white/80 hover:bg-white/10"
                 }`}
-                href={`/?q=${encodeURIComponent(q)}&p=${p - 1}`}
+                href={buildHref({ q, filter, p: p - 1 })}
               >
                 Prev
               </Link>
@@ -396,7 +455,7 @@ export default async function Home({ searchParams }) {
                 className={`rounded-full px-4 py-2 text-sm ring-1 ring-white/10 transition ${
                   p >= totalPages ? "pointer-events-none text-white/30" : "text-white/80 hover:bg-white/10"
                 }`}
-                href={`/?q=${encodeURIComponent(q)}&p=${p + 1}`}
+                href={buildHref({ q, filter, p: p + 1 })}
               >
                 Next
               </Link>

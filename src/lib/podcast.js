@@ -132,13 +132,67 @@ function formatDurationPretty(seconds) {
   return `${h}h ${String(m).padStart(2, "0")}m`;
 }
 
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+function isNetworkishError(err) {
+  const msg = String(err?.message || "");
+  const code = String(err?.cause?.code || err?.code || "");
+  return (
+    code === "ENOTFOUND" ||
+    code === "EAI_AGAIN" ||
+    code === "ECONNRESET" ||
+    code === "ETIMEDOUT" ||
+    msg.includes("fetch failed") ||
+    msg.includes("ENOTFOUND") ||
+    msg.includes("EAI_AGAIN") ||
+    msg.includes("timed out") ||
+    msg.includes("aborted")
+  );
+}
+
 export async function getEpisodesFromRss() {
-  const rssUrl = process.env.PODCAST_RSS_URL;
-  if (!rssUrl) throw new Error("Missing PODCAST_RSS_URL in .env.local");
+  const rssUrlRaw = process.env.PODCAST_RSS_URL;
+  if (!rssUrlRaw) throw new Error("Missing PODCAST_RSS_URL in .env.local");
+
+  const rssUrl = String(rssUrlRaw).replace(/^"|"$/g, "").trim();
 
   // no-store prevents Next from trying (and failing) to cache a >2MB RSS response
-  const res = await fetch(rssUrl, { cache: "no-store" });
-  if (!res.ok) throw new Error(`RSS fetch failed: ${res.status} ${res.statusText}`);
+  // Add timeout + retry to avoid dev-only DNS hiccups taking down the whole page.
+  let res;
+  try {
+    res = await fetchWithTimeout(rssUrl, { cache: "no-store" }, 15000);
+  } catch (e) {
+    if (isNetworkishError(e)) {
+      // one short retry
+      await sleep(350);
+      try {
+        res = await fetchWithTimeout(rssUrl, { cache: "no-store" }, 15000);
+      } catch (e2) {
+        console.error("[RSS] fetch failed after retry:", e2);
+        return [];
+      }
+    } else {
+      throw e;
+    }
+  }
+
+  if (!res || !res.ok) {
+    const status = res ? `${res.status} ${res.statusText}` : "no response";
+    console.error("[RSS] fetch not ok:", status);
+    return [];
+  }
 
   const xml = await res.text();
 
