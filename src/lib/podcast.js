@@ -1,4 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
+import { parseHostKeysFromText } from "@/lib/hosts";
 
 function toArray(x) {
   if (!x) return [];
@@ -224,6 +225,11 @@ export async function getEpisodesFromRss() {
 
       const imageUrl = normalizeHttps(pickImageUrl(item, channel));
 
+      const descriptionText = stripHtml(descriptionHtml);
+
+      // ✅ Hosts parsed once here; becomes available everywhere (home + episode pages)
+      const hostKeys = parseHostKeysFromText(`${title}\n${descriptionText}`);
+
       return {
         guid: String(item?.guid?.["#text"] ?? item?.guid ?? ""),
         title,
@@ -231,7 +237,7 @@ export async function getEpisodesFromRss() {
         pubDate: pubDateRaw,
         isoDate,
         descriptionHtml: String(descriptionHtml ?? ""),
-        descriptionText: stripHtml(descriptionHtml),
+        descriptionText,
         audioUrl,
 
         // Duration fields
@@ -242,6 +248,9 @@ export async function getEpisodesFromRss() {
         // Used by homepage list UI
         image: imageUrl,
         posterUrl: imageUrl,
+
+        // ✅ New
+        hostKeys,
       };
     })
     .filter((ep) => ep.title);

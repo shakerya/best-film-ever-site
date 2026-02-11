@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getEpisodesFromRss } from "@/lib/podcast";
 import { resolveEpisodeMovieCached, getMovieBundle, tmdbImageUrl } from "@/lib/tmdb";
 import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "@/lib/episodeMeta";
+import { hostsForKeys } from "@/lib/hosts";
 
 export const revalidate = 3600; // 1 hour
 
@@ -68,6 +69,35 @@ function ButtonGhost({ href, children, title }) {
   );
 }
 
+function HostStrip({ hostKeys }) {
+  const keys = Array.isArray(hostKeys) ? hostKeys : [];
+  if (!keys.length) return null;
+
+  const hosts = hostsForKeys(keys);
+  if (!hosts.length) return null;
+
+  return (
+    <div className="mt-4 flex flex-wrap items-center gap-2">
+      {hosts.slice(0, 6).map((h) => (
+        <div
+          key={h.key}
+          className="inline-flex items-center gap-2 rounded-full bg-black/35 px-2.5 py-1 ring-1 ring-white/10"
+          title={h.name}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={h.image}
+            alt={h.name}
+            className="h-7 w-7 rounded-full object-cover ring-1 ring-white/15"
+            loading="lazy"
+          />
+          <span className="text-xs font-semibold text-white/90">{h.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function CastStripItem({ person }) {
   // Bigger + higher-res headshots
   const img = person?.profile_path ? tmdbImageUrl(person.profile_path, "w342") : "";
@@ -111,7 +141,12 @@ function DirectorCard({ director }) {
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-lg font-semibold text-white">Director</h2>
         {personUrl ? (
-          <a className="text-xs text-white/60 hover:text-white/80 transition" href={personUrl} target="_blank" rel="noreferrer">
+          <a
+            className="text-xs text-white/60 hover:text-white/80 transition"
+            href={personUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
             TMDB profile →
           </a>
         ) : null}
@@ -184,11 +219,7 @@ export default async function EpisodePage({ params }) {
   const tmdbId = resolved?.movieId ? String(resolved.movieId) : "";
   const fallbackTitle = isFullReview ? stripLeadingEpisodeNumber(ep.title) : ep.title;
 
-  const movieTitle =
-    details?.title ||
-    resolved?.movie?.title ||
-    fallbackTitle ||
-    "Episode";
+  const movieTitle = details?.title || resolved?.movie?.title || fallbackTitle || "Episode";
 
   const year =
     details?.release_date
@@ -203,10 +234,7 @@ export default async function EpisodePage({ params }) {
 
   const posterPath = details?.poster_path || resolved?.movie?.poster_path || "";
   const backdropPath =
-    details?.backdrop_path ||
-    images?.backdrops?.[0]?.file_path ||
-    resolved?.movie?.backdrop_path ||
-    "";
+    details?.backdrop_path || images?.backdrops?.[0]?.file_path || resolved?.movie?.backdrop_path || "";
 
   const posterUrl = posterPath ? tmdbImageUrl(posterPath, "w780") : "";
   const backdropUrl = backdropPath ? tmdbImageUrl(backdropPath, "w1280") : "";
@@ -249,7 +277,7 @@ export default async function EpisodePage({ params }) {
           </Link>
         </div>
 
-        {/* HERO: backdrop + poster + title/meta/actions ONLY */}
+        {/* HERO */}
         <section className="relative overflow-hidden rounded-3xl ring-1 ring-white/10">
           {backdropUrl ? (
             <div className="absolute inset-0">
@@ -296,8 +324,7 @@ export default async function EpisodePage({ params }) {
                   <div className="mt-4 rounded-2xl bg-black/45 p-3 text-xs text-white/75 ring-1 ring-white/10">
                     <div className="font-semibold text-white/90">No TMDB match</div>
                     <div className="mt-1">
-                      This episode didn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still
-                      work.
+                      This episode didn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still work.
                     </div>
                   </div>
                 ) : null}
@@ -325,6 +352,9 @@ export default async function EpisodePage({ params }) {
                   {ep.durationPretty ? <span className="text-white/45">•</span> : null}
                   {ep.durationPretty ? <span>Episode length {ep.durationPretty}</span> : null}
                 </div>
+
+                {/* HOSTS (new) */}
+                <HostStrip hostKeys={ep.hostKeys} />
 
                 <div className="mt-2 text-sm text-white/60">{ep.title}</div>
 
@@ -378,9 +408,7 @@ export default async function EpisodePage({ params }) {
             {tmdbId && details?.overview ? (
               <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
                 <h2 className="text-lg font-semibold text-white">Overview</h2>
-                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/80">
-                  {details.overview}
-                </p>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/80">{details.overview}</p>
               </div>
             ) : null}
 
@@ -470,6 +498,14 @@ export default async function EpisodePage({ params }) {
                   <div className="text-white/60">Episode length</div>
                   <div className="text-white/85">{ep.durationPretty || "—"}</div>
                 </div>
+
+                {/* Hosts in sidebar too (optional but nice) */}
+                {Array.isArray(ep.hostKeys) && ep.hostKeys.length ? (
+                  <div className="pt-2">
+                    <div className="text-white/60 text-sm mb-2">Hosts</div>
+                    <HostStrip hostKeys={ep.hostKeys} />
+                  </div>
+                ) : null}
               </div>
             </section>
           </aside>

@@ -1,7 +1,10 @@
+// src/app/page.js
+
 import Link from "next/link";
 import { getEpisodesFromRss } from "../lib/podcast";
 import { tmdbImageUrl, resolveEpisodeMovieCached } from "../lib/tmdb";
 import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "../lib/episodeMeta";
+import { hostsForKeys } from "../lib/hosts";
 
 // IMPORTANT: keep this a literal number (Next segment config)
 export const revalidate = 3600; // 1 hour
@@ -62,11 +65,67 @@ function buildHref({ q, filter, p }) {
   return qs ? `/?${qs}` : "/";
 }
 
+function HostRow({ keys, max = 4, variant = "chip" }) {
+  const list = Array.isArray(keys) ? keys.filter(Boolean) : [];
+  if (!list.length) return null;
+
+  const hosts = hostsForKeys(list);
+  if (!hosts.length) return null;
+
+  if (variant === "compact") {
+    return (
+      <div className="mt-2 flex items-center gap-2">
+        <div className="flex -space-x-2">
+          {hosts.slice(0, max).map((h) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              key={h.key}
+              src={h.image}
+              alt={h.name}
+              title={h.name}
+              className="h-7 w-7 rounded-full object-cover ring-2 ring-black/60"
+              loading="lazy"
+            />
+          ))}
+        </div>
+        <div className="text-xs text-white/70">
+          {hosts
+            .slice(0, max)
+            .map((h) => h.name)
+            .join(" • ")}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2">
+      {hosts.slice(0, max).map((h) => (
+        <div
+          key={h.key}
+          className="inline-flex items-center gap-2 rounded-full bg-white/10 px-2.5 py-1 ring-1 ring-white/10"
+          title={h.name}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={h.image}
+            alt={h.name}
+            className="h-6 w-6 rounded-full object-cover ring-1 ring-white/15"
+            loading="lazy"
+          />
+          <span className="text-xs font-medium text-white/85">{h.name}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PosterTile({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle = resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle =
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
 
   const subParts = [
     epNum ? `EP ${epNum}` : "",
@@ -86,38 +145,35 @@ function PosterTile({ ep, resolved }) {
     "";
 
   return (
-    <Link href={`/episodes/${ep.slug}`} className="group block">
-      {/* gradient “frame” */}
-      <div className="rounded-[28px] bg-gradient-to-br from-white/18 via-white/8 to-transparent p-[1px] transition-transform duration-300 group-hover:-translate-y-1">
-        {/* glass card */}
-        <div className="relative overflow-hidden rounded-[27px] bg-white/[0.04] ring-1 ring-white/10 shadow-[0_18px_60px_rgba(0,0,0,0.55)] transition-shadow duration-300 group-hover:shadow-[0_28px_90px_rgba(0,0,0,0.70)]">
-          <div className="relative aspect-[2/3]">
-            {posterUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={posterUrl}
-                alt={displayTitle}
-                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
-                loading="lazy"
-              />
-            ) : (
-              <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
-            )}
+    <Link
+      href={`/episodes/${ep.slug}`}
+      className="group block rounded-3xl overflow-hidden bg-zinc-900/40 ring-1 ring-white/10 hover:ring-white/20 transition"
+    >
+      <div className="relative aspect-[2/3]">
+        {posterUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={posterUrl}
+            alt={displayTitle}
+            className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
+            loading="lazy"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
+        )}
 
-            {/* glossy sheen */}
-            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-              <div className="absolute -left-1/3 -top-1/3 h-[65%] w-[65%] rotate-12 bg-white/10 blur-2xl" />
-            </div>
+        {/* Readability overlay */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
 
-            {/* Readability overlay */}
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <div className="text-xs text-white/70">{sub}</div>
+          <div className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-white">
+            {displayTitle}
+          </div>
 
-            <div className="absolute bottom-0 left-0 right-0 p-4">
-              <div className="text-xs text-white/70">{sub}</div>
-              <div className="mt-1 line-clamp-2 text-base font-semibold leading-snug text-white">
-                {displayTitle}
-              </div>
-            </div>
+          {/* Hosts (compact overlay) */}
+          <div className="mt-2">
+            <HostRow keys={ep.hostKeys} max={3} variant="compact" />
           </div>
         </div>
       </div>
@@ -129,7 +185,8 @@ function FeaturedCard({ ep, resolved }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle = resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle =
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
 
   const posterUrl =
     posterUrlFromResolved(resolved) ||
@@ -177,6 +234,9 @@ function FeaturedCard({ ep, resolved }) {
         <div className="text-xs text-white/70">{meta}</div>
         <div className="mt-1 line-clamp-2 text-lg font-semibold text-white">{displayTitle}</div>
         {excerpt ? <div className="mt-2 line-clamp-2 text-sm text-white/70">{excerpt}…</div> : null}
+
+        {/* Hosts (chips) */}
+        <HostRow keys={ep.hostKeys} max={5} variant="chip" />
 
         <div className="mt-3 inline-flex items-center gap-2 text-xs text-white/70">
           {resolved?.movieId ? (
@@ -384,13 +444,22 @@ export default async function Home({ searchParams }) {
 
               {/* Filter tabs */}
               <div className="flex items-center gap-2">
-                <Link className={`${tabBase} ${filter === "all" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "all", p: 1 })}>
+                <Link
+                  className={`${tabBase} ${filter === "all" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "all", p: 1 })}
+                >
                   All
                 </Link>
-                <Link className={`${tabBase} ${filter === "full" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "full", p: 1 })}>
+                <Link
+                  className={`${tabBase} ${filter === "full" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "full", p: 1 })}
+                >
                   Full Reviews
                 </Link>
-                <Link className={`${tabBase} ${filter === "extras" ? tabActive : tabInactive}`} href={buildHref({ q, filter: "extras", p: 1 })}>
+                <Link
+                  className={`${tabBase} ${filter === "extras" ? tabActive : tabInactive}`}
+                  href={buildHref({ q, filter: "extras", p: 1 })}
+                >
                   Extras
                 </Link>
               </div>
@@ -417,7 +486,8 @@ export default async function Home({ searchParams }) {
           <div className="flex items-baseline justify-between">
             <h2 className="text-lg font-semibold text-white">Browse</h2>
             <div className="text-sm text-white/50">
-              Page <span className="text-white/80">{p}</span> of <span className="text-white/80">{totalPages}</span>
+              Page <span className="text-white/80">{p}</span> of{" "}
+              <span className="text-white/80">{totalPages}</span>
             </div>
           </div>
 
