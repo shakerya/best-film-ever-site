@@ -18,8 +18,8 @@ function formatCutoffLabel(iso) {
   const days = Math.floor(hrs / 24);
   const remHrs = hrs % 24;
   return days > 0
-    ? `Recording Sun, ${formatted} (${days}d ${remHrs}h left)`
-    : `Recording Sun, ${formatted} (${Math.max(1, hrs)}h left)`;
+    ? `Recording ${formatted} (${days}d ${remHrs}h left)`
+    : `Recording ${formatted} (${Math.max(1, hrs)}h left)`;
 }
 
 export default function FifthSeatBanner({
