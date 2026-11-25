@@ -14,7 +14,7 @@ import {
   buildGoogleFormLink,
   computeFifthSeatSummary,
   computeBeetrootSummary,
-  getMergedEpisodeDataByNumber,
+  getMergedEpisodeDataWithState,
 } from "../lib/bfeStore";
 import { hasPatronCookie } from "../lib/patronAuth";
 import FifthSeatBanner from "../components/FifthSeatBanner";
@@ -291,7 +291,7 @@ export default async function Home({ searchParams }) {
 
   const [all, state, isPatron] = await Promise.all([
     getEpisodesFromRss(),
-    Promise.resolve(readBfeState()),
+    readBfeState(),
     hasPatronCookie(),
   ]);
 
@@ -320,7 +320,7 @@ export default async function Home({ searchParams }) {
   for (const ep of all) {
     const num = getEpisodeNumberIfFullReview(ep.title);
     if (num) {
-      const m = getMergedEpisodeDataByNumber(num);
+      const m = getMergedEpisodeDataWithState(num, state);
       if (m) scoreByEpNum.set(num, m);
     }
   }

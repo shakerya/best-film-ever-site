@@ -29,32 +29,37 @@ export async function POST(req) {
     }
 
     let filmTitle = filmId;
-    const nextState = writeBfeState((draft) => {
-      const film = draft.schedule.find((s) => s.id === filmId);
-      if (film) filmTitle = film.title;
-      if (!draft.beetroot[filmId]) {
-        draft.beetroot[filmId] = { great: 0, good: 0, ok: 0, poor: 0, comments: [] };
-      }
-      const bucket = draft.beetroot[filmId];
-      if (VALID_CHOICES.has(prevChoice) && bucket[prevChoice] > 0) {
-        bucket[prevChoice] -= 1;
-      }
-      bucket[choice] = Number(bucket[choice] || 0) + 1;
+    const nextState = await writeBfeState(
+      (draft) => {
+        const film = draft.schedule.find((s) => s.id === filmId);
+        if (film) filmTitle = film.title;
+        if (!draft.beetroot[filmId]) {
+          draft.beetroot[filmId] = { great: 0, good: 0, ok: 0, poor: 0, comments: [] };
+        }
+        const bucket = draft.beetroot[filmId];
+        if (VALID_CHOICES.has(prevChoice) && prevChoice !== choice && bucket[prevChoice] > 0) {
+          bucket[prevChoice] -= 1;
+        }
+        if (prevChoice !== choice) {
+          bucket[choice] = Number(bucket[choice] || 0) + 1;
+        }
 
-      if (comment) {
-        bucket.comments = [
-          {
-            id: `beet-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-            name: name || "Fledgling Fandom Listener",
-            choice,
-            comment,
-            createdAt: new Date().toISOString(),
-          },
-          ...(bucket.comments || []),
-        ].slice(0, 50);
-      }
-      return draft;
-    });
+        if (comment) {
+          bucket.comments = [
+            {
+              id: `beet-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+              name: name || "Fledgling Fandom Listener",
+              choice,
+              comment,
+              createdAt: new Date().toISOString(),
+            },
+            ...(bucket.comments || []),
+          ].slice(0, 50);
+        }
+        return draft;
+      },
+      { type: "beetroot", filmId, choice, prevChoice, name, comment }
+    );
 
     await forwardToGoogleSheetWebhook("beetroot_vote", {
       filmId,

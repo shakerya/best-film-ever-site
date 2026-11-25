@@ -10,7 +10,7 @@ import {
 import { hasPatronCookie } from "@/lib/patronAuth";
 
 export async function GET() {
-  const state = readBfeState();
+  const state = await readBfeState();
   const summaries = {};
   for (const s of state.schedule) {
     summaries[s.id] = computeFifthSeatSummary(state.fifthSeats?.[s.id] || []);
@@ -19,7 +19,7 @@ export async function GET() {
     ok: true,
     schedule: state.schedule,
     summaries,
-    contributors: getPatronContributorLeaderboard(),
+    contributors: await getPatronContributorLeaderboard(state),
   });
 }
 
@@ -36,7 +36,6 @@ export async function POST(req) {
 
   try {
     const body = await req.json();
-    // Honeypot anti-spam
     if (body?.website) {
       return NextResponse.json({ ok: true });
     }
@@ -72,27 +71,29 @@ export async function POST(req) {
     };
 
     let filmTitle = filmId;
-    const nextState = writeBfeState((draft) => {
-      const film = draft.schedule.find((s) => s.id === filmId);
-      if (film) filmTitle = film.title;
-      if (!draft.fifthSeats[filmId]) draft.fifthSeats[filmId] = [];
-      // Replace existing submission by same patron name on same film if re-submitting, else append
-      const existingIdx = draft.fifthSeats[filmId].findIndex(
-        (e) => e.name.toLowerCase() === name.toLowerCase() && e.source === "site"
-      );
-      if (existingIdx >= 0) {
-        draft.fifthSeats[filmId][existingIdx] = {
-          ...draft.fifthSeats[filmId][existingIdx],
-          score,
-          thoughts,
-          hostQuestion,
-          updatedAt: entry.createdAt,
-        };
-      } else {
-        draft.fifthSeats[filmId].push(entry);
-      }
-      return draft;
-    });
+    const nextState = await writeBfeState(
+      (draft) => {
+        const film = draft.schedule.find((s) => s.id === filmId);
+        if (film) filmTitle = film.title;
+        if (!draft.fifthSeats[filmId]) draft.fifthSeats[filmId] = [];
+        const existingIdx = draft.fifthSeats[filmId].findIndex(
+          (e) => e.name.toLowerCase() === name.toLowerCase() && e.source === "site"
+        );
+        if (existingIdx >= 0) {
+          draft.fifthSeats[filmId][existingIdx] = {
+            ...draft.fifthSeats[filmId][existingIdx],
+            score,
+            thoughts,
+            hostQuestion,
+            updatedAt: entry.createdAt,
+          };
+        } else {
+          draft.fifthSeats[filmId].push(entry);
+        }
+        return draft;
+      },
+      { type: "fifth_seat", filmId, name, score, thoughts, hostQuestion }
+    );
 
     await forwardToGoogleSheetWebhook("fifth_seat_submission", {
       filmId,
@@ -101,7 +102,7 @@ export async function POST(req) {
     });
 
     const summary = computeFifthSeatSummary(nextState.fifthSeats?.[filmId] || []);
-    const contributors = getPatronContributorLeaderboard();
+    const contributors = await getPatronContributorLeaderboard(nextState);
     const myRank = contributors.find((c) => c.name.toLowerCase() === name.toLowerCase()) || null;
 
     return NextResponse.json({

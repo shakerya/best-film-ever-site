@@ -33,7 +33,7 @@ export default async function FifthSeatPage({ searchParams }) {
   const isPatron = await hasPatronCookie();
   const requestedFilmId = String(sp?.film || "").trim();
 
-  const state = readBfeState();
+  const state = await readBfeState();
   const fullSchedule = state.schedule || [];
 
   const visibleSchedule = isPatron
@@ -64,7 +64,7 @@ export default async function FifthSeatPage({ searchParams }) {
 
   const spotlight =
     enrichedSchedule.find((s) => s.id === activeFilm?.id) || enrichedSchedule[0] || null;
-  const contributors = getPatronContributorLeaderboard();
+  const contributors = await getPatronContributorLeaderboard(state);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">

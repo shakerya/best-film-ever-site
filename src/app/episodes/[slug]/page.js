@@ -194,7 +194,7 @@ export default async function EpisodePage({ params }) {
 
   const epNum = getEpisodeNumberIfFullReview(ep.title);
   const isFullReview = epNum !== null;
-  const bfeScorecard = epNum ? getMergedEpisodeDataByNumber(epNum) : null;
+  const bfeScorecard = epNum ? await getMergedEpisodeDataByNumber(epNum) : null;
 
   let resolved = null;
   let bundle = null;

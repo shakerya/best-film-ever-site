@@ -6,13 +6,18 @@ import {
   computeFifthSeatSummary,
   computeBeetrootSummary,
   buildGoogleFormLink,
+  buildFullBackupCsv,
+  hasCloudKv,
+  GOOGLE_BACKUP_SHEET_URL,
 } from "@/lib/bfeStore";
 import { searchMovie } from "@/lib/tmdb";
 import { getExpectedPatronKey } from "@/lib/patronAuth";
 
 function verifyAdmin(req) {
   const expected = process.env.ADMIN_PASSCODE || "bfe-vault";
-  const provided = String(req.headers.get("x-bfe-passcode") || "").trim();
+  const provided =
+    String(req.headers.get("x-bfe-passcode") || "").trim() ||
+    String(new URL(req.url).searchParams.get("key") || "").trim();
   return provided === expected;
 }
 
@@ -22,6 +27,21 @@ export async function GET(req) {
   }
 
   const { searchParams } = new URL(req.url);
+
+  if (searchParams.get("export") === "csv") {
+    const state = await readBfeState({ fresh: true });
+    const csv = buildFullBackupCsv(state);
+    return new NextResponse(csv, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/csv; charset=utf-8",
+        "Content-Disposition": `attachment; filename="bfe-submissions-backup-${new Date()
+          .toISOString()
+          .slice(0, 10)}.csv"`,
+      },
+    });
+  }
+
   const tmdbQuery = String(searchParams.get("tmdbQuery") || "").trim();
   if (tmdbQuery) {
     const results = await searchMovie(tmdbQuery).catch(() => []);
@@ -36,7 +56,7 @@ export async function GET(req) {
     });
   }
 
-  const state = readBfeState();
+  const state = await readBfeState({ fresh: true });
   const detailedSchedule = state.schedule.map((s) => ({
     ...s,
     fifthSummary: computeFifthSeatSummary(state.fifthSeats?.[s.id] || []),
@@ -46,6 +66,8 @@ export async function GET(req) {
 
   return NextResponse.json({
     ok: true,
+    cloudKvActive: hasCloudKv(),
+    googleSheetUrl: GOOGLE_BACKUP_SHEET_URL,
     patronAccessKey: getExpectedPatronKey(),
     evergreenGoogleForm: state.evergreenGoogleForm,
     schedule: detailedSchedule,
@@ -64,32 +86,41 @@ export async function POST(req) {
 
     if (action === "toggle_read") {
       const { filmId, entryId } = body;
-      writeBfeState((draft) => {
-        const list = draft.fifthSeats?.[filmId] || [];
-        const target = list.find((e) => e.id === entryId);
-        if (target) target.readOnAir = !target.readOnAir;
-        return draft;
-      });
+      await writeBfeState(
+        (draft) => {
+          const list = draft.fifthSeats?.[filmId] || [];
+          const target = list.find((e) => e.id === entryId);
+          if (target) target.readOnAir = !target.readOnAir;
+          return draft;
+        },
+        { type: "toggle_read", filmId, entryId }
+      );
       return NextResponse.json({ ok: true });
     }
 
     if (action === "crown_gif") {
       const { roundId, entryId } = body;
-      writeBfeState((draft) => {
-        const round = (draft.gifRounds || []).find((r) => r.id === roundId);
-        if (round) round.winnerEntryId = entryId;
-        return draft;
-      });
+      await writeBfeState(
+        (draft) => {
+          const round = (draft.gifRounds || []).find((r) => r.id === roundId);
+          if (round) round.winnerEntryId = entryId;
+          return draft;
+        },
+        { type: "crown_gif", roundId, entryId }
+      );
       return NextResponse.json({ ok: true });
     }
 
     if (action === "save_evergreen_form") {
       const baseUrl = String(body?.baseUrl || "").trim();
       const filmEntryId = String(body?.filmEntryId || "").trim();
-      writeBfeState((draft) => {
-        draft.evergreenGoogleForm = { baseUrl, filmEntryId };
-        return draft;
-      });
+      await writeBfeState(
+        (draft) => {
+          draft.evergreenGoogleForm = { baseUrl, filmEntryId };
+          return draft;
+        },
+        { type: "save_evergreen_form" }
+      );
       return NextResponse.json({ ok: true });
     }
 
@@ -101,52 +132,54 @@ export async function POST(req) {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, "-")}`;
 
-      writeBfeState((draft) => {
-        // If marking this film "open", optionally close previous open ones if requested
-        if (film.makePrimaryOpen) {
-          for (const s of draft.schedule) {
-            if (s.status === "open") s.status = "upcoming";
+      await writeBfeState(
+        (draft) => {
+          if (film.makePrimaryOpen) {
+            for (const s of draft.schedule) {
+              if (s.status === "open") s.status = "closed";
+            }
           }
-        }
-        const entry = {
-          id,
-          title: String(film.title || "").trim(),
-          year: String(film.year || "").trim(),
-          tmdbId: film.tmdbId ? Number(film.tmdbId) : null,
-          episodeNum: film.episodeNum ? Number(film.episodeNum) : null,
-          episodeDate: String(film.episodeDate || "").trim(),
-          cutoffIso: String(film.cutoffIso || "").trim(),
-          pickNote: String(film.pickNote || "").trim(),
-          googleFormUrl: String(film.googleFormUrl || "").trim(),
-          status: film.status || "open",
-        };
-        const idx = draft.schedule.findIndex((s) => s.id === id);
-        if (idx >= 0) draft.schedule[idx] = entry;
-        else draft.schedule.unshift(entry);
+          const entry = {
+            id,
+            title: String(film.title || "").trim(),
+            year: String(film.year || "").trim(),
+            tmdbId: film.tmdbId ? Number(film.tmdbId) : null,
+            episodeNum: film.episodeNum ? Number(film.episodeNum) : null,
+            episodeDate: String(film.episodeDate || "").trim(),
+            cutoffIso: String(film.cutoffIso || "").trim(),
+            pickNote: String(film.pickNote || "").trim(),
+            googleFormUrl: String(film.googleFormUrl || "").trim(),
+            status: film.status || "open",
+          };
+          const idx = draft.schedule.findIndex((s) => s.id === id);
+          if (idx >= 0) draft.schedule[idx] = entry;
+          else draft.schedule.unshift(entry);
 
-        if (film.randomWord && entry.episodeNum) {
-          const roundId = `ep-${entry.episodeNum}-${String(film.randomWord)
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, "-")}`;
-          const existingRound = draft.gifRounds.find((r) => r.epNum === entry.episodeNum);
-          if (existingRound) {
-            existingRound.randomWord = String(film.randomWord).trim();
-            existingRound.filmTitle = entry.title;
-          } else {
-            draft.gifRounds.unshift({
-              id: roundId,
-              epNum: entry.episodeNum,
-              filmTitle: entry.title,
-              randomWord: String(film.randomWord).trim(),
-              hint: `Announced in Episode ${entry.episodeNum} Endgame.`,
-              status: "open",
-              winnerEntryId: null,
-              entries: [],
-            });
+          if (film.randomWord && entry.episodeNum) {
+            const roundId = `ep-${entry.episodeNum}-${String(film.randomWord)
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, "-")}`;
+            const existingRound = draft.gifRounds.find((r) => r.epNum === entry.episodeNum);
+            if (existingRound) {
+              existingRound.randomWord = String(film.randomWord).trim();
+              existingRound.filmTitle = entry.title;
+            } else {
+              draft.gifRounds.unshift({
+                id: roundId,
+                epNum: entry.episodeNum,
+                filmTitle: entry.title,
+                randomWord: String(film.randomWord).trim(),
+                hint: `Announced in Episode ${entry.episodeNum} Endgame.`,
+                status: "open",
+                winnerEntryId: null,
+                entries: [],
+              });
+            }
           }
-        }
-        return draft;
-      });
+          return draft;
+        },
+        { type: "upsert_schedule", title: film.title, episodeNum: film.episodeNum }
+      );
       return NextResponse.json({ ok: true });
     }
 

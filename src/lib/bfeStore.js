@@ -8,6 +8,11 @@ export { BFE_LINKS, normalizeGifKey };
 
 const STATE_FILE = path.join(process.cwd(), ".bfe-runtime-state.json");
 const STATE_SCHEMA_VERSION = 2;
+const REDIS_STATE_KEY = "bfe_state_v2";
+const REDIS_AUDIT_KEY = "bfe_audit_log_v2";
+
+export const GOOGLE_BACKUP_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1vIPXbt6KfSXeuYTkJHgUPgf2K8TNpwdzyCdgsKK6hxs/edit";
 
 const DEFAULT_SCHEDULE = [
   {
@@ -20,7 +25,7 @@ const DEFAULT_SCHEDULE = [
     cutoffIso: "2026-11-29T18:00:00Z",
     pickNote: "40th Anniversary Musical • feat. Special Guest Amy",
     googleFormUrl: "",
-    status: "open", // "open" | "upcoming" | "closed"
+    status: "open",
   },
   {
     id: "nov-2026-gangs",
@@ -114,7 +119,6 @@ const DEFAULT_GIF_ROUNDS = [
   },
 ];
 
-// Clean zero-dummy-data state for live Beetroot polls
 const DEFAULT_BEETROOT = {};
 
 function buildInitialFifthSeats() {
@@ -169,7 +173,7 @@ function buildInitialFifthSeats() {
   };
 }
 
-function getDefaultState() {
+export function getDefaultState() {
   return {
     schemaVersion: STATE_SCHEMA_VERSION,
     evergreenGoogleForm: {
@@ -184,10 +188,82 @@ function getDefaultState() {
   };
 }
 
-let memoryState = null;
+function getKvConfig() {
+  const url = String(
+    process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || ""
+  )
+    .replace(/^"|"$/g, "")
+    .replace(/\/+$/, "")
+    .trim();
+  const token = String(
+    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || ""
+  )
+    .replace(/^"|"$/g, "")
+    .trim();
+  return url && token ? { url, token } : null;
+}
 
-export function readBfeState() {
-  if (memoryState) return memoryState;
+export function hasCloudKv() {
+  return Boolean(getKvConfig());
+}
+
+let memoryState = null;
+let memoryFetchedAt = 0;
+
+async function fetchKvStateRaw(kv) {
+  const res = await fetch(`${kv.url}/get/${REDIS_STATE_KEY}`, {
+    headers: { Authorization: `Bearer ${kv.token}` },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Upstash GET failed: ${res.status}`);
+  }
+  const data = await res.json();
+  if (!data?.result) return null;
+  const parsed = typeof data.result === "string" ? JSON.parse(data.result) : data.result;
+  if (parsed?.schemaVersion === STATE_SCHEMA_VERSION) {
+    return {
+      ...getDefaultState(),
+      ...parsed,
+    };
+  }
+  return null;
+}
+
+export async function readBfeState({ fresh = false } = {}) {
+  const now = Date.now();
+  if (!fresh && memoryState && now - memoryFetchedAt < 1500) {
+    return memoryState;
+  }
+
+  const kv = getKvConfig();
+  if (kv) {
+    try {
+      const remote = await fetchKvStateRaw(kv);
+      if (remote) {
+        memoryState = remote;
+        memoryFetchedAt = Date.now();
+        return memoryState;
+      }
+      // Seed initial v2 state into Redis on first read
+      const initial = getDefaultState();
+      await fetch(`${kv.url}/pipeline`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${kv.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([["SET", REDIS_STATE_KEY, JSON.stringify(initial)]]),
+        cache: "no-store",
+      });
+      memoryState = initial;
+      memoryFetchedAt = Date.now();
+      return memoryState;
+    } catch (e) {
+      console.warn("[bfeStore] Cloud KV read failed, falling back:", e?.message);
+    }
+  }
+
   try {
     if (fs.existsSync(STATE_FILE)) {
       const parsed = JSON.parse(fs.readFileSync(STATE_FILE, "utf-8"));
@@ -196,26 +272,62 @@ export function readBfeState() {
           ...getDefaultState(),
           ...parsed,
         };
+        memoryFetchedAt = Date.now();
         return memoryState;
       }
     }
   } catch (e) {
     console.warn("[bfeStore] Failed reading state file, using defaults:", e?.message);
   }
+
   memoryState = getDefaultState();
+  memoryFetchedAt = Date.now();
   return memoryState;
 }
 
-export function writeBfeState(updater) {
-  const current = readBfeState();
+export async function writeBfeState(updater, auditEvent = null) {
+  const current = await readBfeState({ fresh: true });
   const next = typeof updater === "function" ? updater(structuredClone(current)) : updater;
   next.schemaVersion = STATE_SCHEMA_VERSION;
+  next.updatedAt = new Date().toISOString();
+
   memoryState = next;
+  memoryFetchedAt = Date.now();
+
+  const kv = getKvConfig();
+  if (kv) {
+    try {
+      const commands = [["SET", REDIS_STATE_KEY, JSON.stringify(next)]];
+      if (auditEvent) {
+        commands.push([
+          "RPUSH",
+          REDIS_AUDIT_KEY,
+          JSON.stringify({ timestamp: next.updatedAt, ...auditEvent }),
+        ]);
+      }
+      const res = await fetch(`${kv.url}/pipeline`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${kv.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(commands),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        console.error("[bfeStore] Cloud KV pipeline write status:", res.status);
+      }
+    } catch (e) {
+      console.error("[bfeStore] Cloud KV write error:", e?.message);
+    }
+  }
+
   try {
     fs.writeFileSync(STATE_FILE, JSON.stringify(next, null, 2), "utf-8");
-  } catch (e) {
-    console.warn("[bfeStore] Read-only fs, kept in memory:", e?.message);
+  } catch {
+    // Ignore read-only fs on serverless
   }
+
   return next;
 }
 
@@ -233,6 +345,98 @@ export async function forwardToGoogleSheetWebhook(eventType, payload) {
     console.error("[bfeStore] Google Sheets webhook error:", e?.message);
     return { synced: false };
   }
+}
+
+function csvEscape(val) {
+  const s = String(val ?? "");
+  if (/[",\n\r]/.test(s)) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+export function buildFullBackupCsv(state) {
+  const rows = [
+    [
+      "Record Type",
+      "Timestamp",
+      "Episode #",
+      "Film",
+      "Contributor / Name",
+      "Score / Choice",
+      "Thoughts / Comment / Caption",
+      "Host Question / GIF URL",
+      "Read / Status",
+    ],
+  ];
+
+  const filmById = new Map((state.schedule || []).map((s) => [s.id, s]));
+
+  for (const [filmId, list] of Object.entries(state.fifthSeats || {})) {
+    const f = filmById.get(filmId);
+    for (const entry of list || []) {
+      rows.push([
+        "Fifth-Seat",
+        entry.updatedAt || entry.createdAt || "",
+        f?.episodeNum || "",
+        f?.title || filmId,
+        entry.name || "",
+        entry.score ?? "",
+        entry.thoughts || "",
+        entry.hostQuestion || "",
+        entry.readOnAir ? "Read on Air" : "Pending",
+      ]);
+    }
+  }
+
+  for (const [filmId, poll] of Object.entries(state.beetroot || {})) {
+    const f = filmById.get(filmId);
+    const summary = computeBeetrootSummary(poll);
+    if (summary.total > 0) {
+      rows.push([
+        "Beetroot Summary",
+        state.updatedAt || "",
+        f?.episodeNum || "",
+        f?.title || filmId,
+        `${summary.total} votes`,
+        `${summary.beetrootPct}% Beetroot`,
+        `Great:${summary.great} Good:${summary.good} OK:${summary.ok} Poor:${summary.poor}`,
+        "",
+        summary.qualifies ? "Qualified" : "<10 votes",
+      ]);
+    }
+    for (const c of summary.comments || []) {
+      rows.push([
+        "Beetroot Comment",
+        c.createdAt || "",
+        f?.episodeNum || "",
+        f?.title || filmId,
+        c.name || "",
+        c.choice || "",
+        c.comment || "",
+        "",
+        "",
+      ]);
+    }
+  }
+
+  for (const round of state.gifRounds || []) {
+    for (const entry of round.entries || []) {
+      rows.push([
+        "GIF Entry",
+        entry.createdAt || "",
+        round.epNum || "",
+        round.filmTitle || "",
+        entry.handle ? `${entry.name} (${entry.handle})` : entry.name || "",
+        round.randomWord || "",
+        entry.caption || "",
+        entry.gifUrl || "",
+        round.winnerEntryId === entry.id ? "Winner" : round.status || "",
+      ]);
+    }
+  }
+
+  return rows.map((r) => r.map(csvEscape).join(",")).join("\n");
 }
 
 export function buildGoogleFormLink(film, evergreenConfig = {}) {
@@ -305,9 +509,8 @@ export function computeCombinedEpisodeScore({ hosts = {}, guests = [], fifthSeat
   return Math.round(mean * 100) / 100;
 }
 
-export function getMergedEpisodeDataByNumber(epNum) {
-  if (!epNum) return null;
-  const state = readBfeState();
+export function getMergedEpisodeDataWithState(epNum, state) {
+  if (!epNum || !state) return null;
   const base = seedEpisodes[String(epNum)] || null;
   const override = state.episodeOverrides?.[String(epNum)] || null;
 
@@ -348,8 +551,14 @@ export function getMergedEpisodeDataByNumber(epNum) {
   return merged;
 }
 
-export function getAllRankedLeaderboardItems() {
-  const state = readBfeState();
+export async function getMergedEpisodeDataByNumber(epNum) {
+  if (!epNum) return null;
+  const state = await readBfeState();
+  return getMergedEpisodeDataWithState(epNum, state);
+}
+
+export async function getAllRankedLeaderboardItems(providedState = null) {
+  const state = providedState || (await readBfeState());
   const allNums = new Set([
     ...Object.keys(seedEpisodes),
     ...Object.keys(state.episodeOverrides || {}),
@@ -357,7 +566,7 @@ export function getAllRankedLeaderboardItems() {
 
   const items = [];
   for (const key of allNums) {
-    const ep = getMergedEpisodeDataByNumber(Number(key));
+    const ep = getMergedEpisodeDataWithState(Number(key), state);
     if (!ep || !Number.isFinite(Number(ep.combinedScore))) continue;
 
     const hostVals = [
@@ -389,7 +598,7 @@ export function getAllRankedLeaderboardItems() {
   }));
 }
 
-export function getPatronContributorLeaderboard() {
+export async function getPatronContributorLeaderboard(providedState = null) {
   const counts = new Map();
 
   const bump = (rawName, score) => {
@@ -413,7 +622,7 @@ export function getPatronContributorLeaderboard() {
     counts.set(key, prev);
   };
 
-  const state = readBfeState();
+  const state = providedState || (await readBfeState());
   const seededEpNumsInLive = new Set(
     state.schedule
       .filter((s) => (state.fifthSeats?.[s.id] || []).length > 0)

@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function LeaderboardPage() {
-  const ranked = getAllRankedLeaderboardItems();
+  const ranked = await getAllRankedLeaderboardItems();
 
   const enriched = await Promise.all(
     ranked.map(async (ep) => {

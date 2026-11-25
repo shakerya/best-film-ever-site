@@ -341,12 +341,37 @@ export default function AdminClient() {
       {/* Studio Header & Segmented Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-            Studio of Awesomeness
+          <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+            <span>Studio of Awesomeness</span>
+            <span className="text-white/25">•</span>
+            <span className={data?.cloudKvActive ? "text-emerald-300" : "text-zinc-400"}>
+              {data?.cloudKvActive ? "Cloud DB Active" : "Local Memory"}
+            </span>
           </div>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">
             Ian & Georgia Producer Hub
           </h1>
+          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+            <a
+              href={`/api/admin?export=csv&key=${encodeURIComponent(passcode)}`}
+              className="hover:text-white underline transition"
+            >
+              Download Full CSV Backup ↓
+            </a>
+            {data?.googleSheetUrl ? (
+              <>
+                <span className="text-white/20">·</span>
+                <a
+                  href={data.googleSheetUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white underline transition"
+                >
+                  Open Google Sheet Backup ↗
+                </a>
+              </>
+            ) : null}
+          </div>
         </div>
 
         <div className="inline-flex flex-wrap gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08]">

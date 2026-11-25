@@ -221,7 +221,7 @@ export async function POST(req) {
     }
 
     const sources = searchTranscripts(question, { topK: 8 });
-    const leaderboard = getAllRankedLeaderboardItems();
+    const leaderboard = await getAllRankedLeaderboardItems();
     const { answer, model } = await generateGroundedAnswer(question, sources, leaderboard);
 
     return NextResponse.json({

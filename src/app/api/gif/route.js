@@ -50,15 +50,17 @@ export async function GET(req) {
         );
         if (res.ok) {
           const data = await res.json();
-          const results = (data?.data || []).map((g) => ({
-            id: g.id,
-            title: g.title || q,
-            url: g.images?.downsized_medium?.url || g.images?.original?.url || "",
-          })).filter((g) => g.url);
+          const results = (data?.data || [])
+            .map((g) => ({
+              id: g.id,
+              title: g.title || q,
+              url: g.images?.downsized_medium?.url || g.images?.original?.url || "",
+            }))
+            .filter((g) => g.url);
           return NextResponse.json({ ok: true, results, provider: "giphy" });
         }
       } catch {
-        // fall through to curated starter pack
+        // fall through
       }
     }
 
@@ -73,7 +75,7 @@ export async function GET(req) {
     });
   }
 
-  const state = readBfeState();
+  const state = await readBfeState();
   return NextResponse.json({ ok: true, rounds: state.gifRounds || [] });
 }
 
@@ -84,11 +86,10 @@ export async function POST(req) {
 
     const action = String(body?.action || "submit");
 
-    // Verify random word without spoilers
     if (action === "unlock") {
       const roundId = String(body?.roundId || "").trim();
       const guess = String(body?.word || "").trim().toLowerCase();
-      const state = readBfeState();
+      const state = await readBfeState();
       const round = (state.gifRounds || []).find((r) => r.id === roundId);
       if (!round) {
         return NextResponse.json({ ok: false, error: "Round not found." }, { status: 404 });
@@ -126,7 +127,7 @@ export async function POST(req) {
       );
     }
 
-    const state = readBfeState();
+    const state = await readBfeState({ fresh: true });
     const round = (state.gifRounds || []).find((r) => r.id === roundId);
     if (!round) {
       return NextResponse.json({ ok: false, error: "Round not found." }, { status: 404 });
@@ -164,14 +165,17 @@ export async function POST(req) {
     };
 
     let updatedRound = null;
-    writeBfeState((draft) => {
-      const targetRound = draft.gifRounds.find((r) => r.id === roundId);
-      if (targetRound) {
-        targetRound.entries = [...(targetRound.entries || []), newEntry];
-        updatedRound = targetRound;
-      }
-      return draft;
-    });
+    await writeBfeState(
+      (draft) => {
+        const targetRound = draft.gifRounds.find((r) => r.id === roundId);
+        if (targetRound) {
+          targetRound.entries = [...(targetRound.entries || []), newEntry];
+          updatedRound = targetRound;
+        }
+        return draft;
+      },
+      { type: "gif_entry", roundId, name, handle, gifUrl, caption }
+    );
 
     await forwardToGoogleSheetWebhook("gif_entry", {
       roundId,
