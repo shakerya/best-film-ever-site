@@ -1,5 +1,7 @@
 import { XMLParser } from "fast-xml-parser";
-import { parseHostKeysFromText } from "@/lib/hosts";
+import seedEpisodes from "@/data/seedEpisodes.json";
+import { getEpisodeNumberIfFullReview } from "@/lib/episodeMeta";
+import { HOSTS, parseEpisodeHosts } from "@/lib/hosts";
 
 function toArray(x) {
   if (!x) return [];
@@ -227,8 +229,13 @@ export async function getEpisodesFromRss() {
 
       const descriptionText = stripHtml(descriptionHtml);
 
-      // ✅ Hosts parsed once here; becomes available everywhere (home + episode pages)
-      const hostKeys = parseHostKeysFromText(`${title}\n${descriptionText}`);
+      // Prefer transcript-verified host seats when available; otherwise parse opening roll-call
+      const epNum = getEpisodeNumberIfFullReview(title);
+      const seededHosts = epNum ? seedEpisodes[String(epNum)]?.hosts : null;
+      const hostKeys =
+        seededHosts && Object.keys(seededHosts).length > 0
+          ? HOSTS.map((h) => h.key).filter((k) => seededHosts[k] !== undefined)
+          : parseEpisodeHosts(title, descriptionText);
 
       return {
         guid: String(item?.guid?.["#text"] ?? item?.guid ?? ""),
