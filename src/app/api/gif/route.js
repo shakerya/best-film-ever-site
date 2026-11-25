@@ -3,49 +3,78 @@ import { NextResponse } from "next/server";
 import {
   readBfeState,
   writeBfeState,
-  normalizeGifKey,
   forwardToGoogleSheetWebhook,
 } from "@/lib/bfeStore";
+import { coerceDirectGifUrl, normalizeGifKey } from "@/lib/bfeShared";
 
-const FALLBACK_STARTER_GIFS = [
-  {
-    title: "Anchorman Cannonball",
-    url: "https://media.giphy.com/media/l2Je4YMcwUymua0rC/giphy.gif",
-  },
-  {
-    title: "Pirate Ship Cannon Fire",
-    url: "https://media.giphy.com/media/7khTD5qvP0bFm/giphy.gif",
-  },
-  {
-    title: "Dog Pool Cannonball Jump",
-    url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
-  },
-  {
-    title: "Celebration Fireworks Cannon",
-    url: "https://media.giphy.com/media/peAFQfg7Ol6IE/giphy.gif",
-  },
-  {
-    title: "Scorsese Absolute Cinema",
-    url: "https://media.giphy.com/media/TFIoWBxZp2EKM/giphy.gif",
-  },
-  {
-    title: "Bill the Butcher Hat Tip",
-    url: "https://media.giphy.com/media/vnOQdGt1IlnsDpZWJk/giphy.gif",
-  },
-];
+function normalizeSecretWord(w) {
+  return String(w || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")
+    .trim();
+}
+
+function wordsMatch(guessRaw, targetRaw) {
+  const g = normalizeSecretWord(guessRaw);
+  const t = normalizeSecretWord(targetRaw);
+  if (!g || !t) return false;
+  if (g === t) return true;
+  // Tolerate simple singular/plural ("cannonballs" vs "cannonball")
+  if (g === `${t}s` || `${g}s` === t) return true;
+  return false;
+}
+
+async function searchLiveTenorGifs(query, limit = 18) {
+  const slug = encodeURIComponent(query.trim().toLowerCase().replace(/\s+/g, "-"));
+  const res = await fetch(`https://tenor.com/search/${slug}-gifs`, {
+    headers: {
+      "User-Agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      Accept: "text/html,application/xhtml+xml",
+    },
+    cache: "no-store",
+  });
+
+  if (!res.ok) return [];
+  const html = await res.text();
+  const matches = html.matchAll(/https:\/\/media\d*\.tenor\.com\/[^\s"<>\\]+\.gif/gi);
+
+  const byKey = new Map();
+  for (const m of matches) {
+    const url = m[0];
+    const key = normalizeGifKey(url);
+    if (!key) continue;
+
+    // Prefer fast medium-grid AAAAM preview if both AAAAC and AAAAM appear, or keep first seen
+    const existing = byKey.get(key);
+    if (!existing || (existing.url.includes("AAAAC/") && url.includes("AAAAM/"))) {
+      const slugPart = url.split("/").pop()?.replace(/\.gif$/i, "") || query;
+      const title = slugPart.replace(/-/g, " ").trim();
+      byKey.set(key, {
+        id: key,
+        title: title || query,
+        url,
+      });
+    }
+    if (byKey.size >= limit) break;
+  }
+
+  return Array.from(byKey.values());
+}
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const q = String(searchParams.get("q") || "").trim();
 
   if (q) {
-    const apiKey = process.env.GIPHY_API_KEY || "";
-    if (apiKey) {
+    // 1) Optional Giphy API key if configured
+    const giphyKey = process.env.GIPHY_API_KEY || "";
+    if (giphyKey) {
       try {
         const res = await fetch(
           `https://api.giphy.com/v1/gifs/search?api_key=${encodeURIComponent(
-            apiKey
-          )}&q=${encodeURIComponent(q)}&limit=12&rating=pg-13`,
+            giphyKey
+          )}&q=${encodeURIComponent(q)}&limit=18&rating=pg-13`,
           { cache: "no-store" }
         );
         if (res.ok) {
@@ -57,26 +86,46 @@ export async function GET(req) {
               url: g.images?.downsized_medium?.url || g.images?.original?.url || "",
             }))
             .filter((g) => g.url);
-          return NextResponse.json({ ok: true, results, provider: "giphy" });
+          if (results.length > 0) {
+            return NextResponse.json({ ok: true, results, provider: "giphy" });
+          }
         }
       } catch {
-        // fall through
+        // fall through to live Tenor search
       }
     }
 
-    const lower = q.toLowerCase();
-    const filtered = FALLBACK_STARTER_GIFS.filter((g) =>
-      g.title.toLowerCase().includes(lower)
-    );
-    return NextResponse.json({
-      ok: true,
-      results: filtered.length ? filtered : FALLBACK_STARTER_GIFS,
-      provider: "starter",
-    });
+    // 2) Live Tenor GIF search (works out-of-the-box for any search query)
+    try {
+      const tenorResults = await searchLiveTenorGifs(q, 18);
+      return NextResponse.json({
+        ok: true,
+        results: tenorResults,
+        provider: "tenor",
+      });
+    } catch (e) {
+      return NextResponse.json(
+        { ok: false, results: [], error: e?.message || "GIF search unavailable." },
+        { status: 502 }
+      );
+    }
   }
 
+  // Redact active secret word on public GET
   const state = await readBfeState();
-  return NextResponse.json({ ok: true, rounds: state.gifRounds || [] });
+  const safeRounds = (state.gifRounds || []).map((r) =>
+    r.status === "open"
+      ? {
+          id: r.id,
+          epNum: r.epNum,
+          filmTitle: r.filmTitle,
+          hint: r.hint,
+          status: r.status,
+          entryCount: (r.entries || []).length,
+        }
+      : r
+  );
+  return NextResponse.json({ ok: true, rounds: safeRounds });
 }
 
 export async function POST(req) {
@@ -88,35 +137,40 @@ export async function POST(req) {
 
     if (action === "unlock") {
       const roundId = String(body?.roundId || "").trim();
-      const guess = String(body?.word || "").trim().toLowerCase();
-      const state = await readBfeState();
+      const guess = String(body?.word || "").trim();
+      const state = await readBfeState({ fresh: true });
       const round = (state.gifRounds || []).find((r) => r.id === roundId);
       if (!round) {
         return NextResponse.json({ ok: false, error: "Round not found." }, { status: 404 });
       }
-      const target = String(round.randomWord || "").trim().toLowerCase();
-      if (guess !== target) {
+      if (!wordsMatch(guess, round.randomWord)) {
         return NextResponse.json(
           {
             ok: false,
-            error: "Not quite! Listen to the start of the Endgame for this week’s Random Word.",
+            error:
+              "Not quite — listen to the start of the Endgame segment for this week’s Random Word.",
           },
           { status: 400 }
         );
       }
-      return NextResponse.json({ ok: true, unlockedWord: round.randomWord });
+      return NextResponse.json({
+        ok: true,
+        unlockedWord: round.randomWord,
+        entries: round.entries || [],
+        threadTweetUrl: round.threadTweetUrl || "",
+      });
     }
 
     const roundId = String(body?.roundId || "").trim();
     const word = String(body?.word || "").trim();
     const name = String(body?.name || "").trim().slice(0, 80);
     const handle = String(body?.handle || "").trim().slice(0, 50);
-    const gifUrl = String(body?.gifUrl || "").trim();
+    const gifUrl = coerceDirectGifUrl(body?.gifUrl);
     const caption = String(body?.caption || "").trim().slice(0, 200);
 
     if (!roundId || !name || !gifUrl) {
       return NextResponse.json(
-        { ok: false, error: "Please enter your name and pick or paste a GIF." },
+        { ok: false, error: "Please enter your name and select or paste a GIF." },
         { status: 400 }
       );
     }
@@ -133,10 +187,10 @@ export async function POST(req) {
       return NextResponse.json({ ok: false, error: "Round not found." }, { status: 404 });
     }
 
-    if (word.toLowerCase() !== String(round.randomWord || "").trim().toLowerCase()) {
+    if (!wordsMatch(word, round.randomWord)) {
       return NextResponse.json(
-        { ok: false, error: "Secret Random Word doesn't match this episode!" },
-        { status: 400 }
+        { ok: false, error: "Unlock the arena with this episode’s Random Word first." },
+        { status: 403 }
       );
     }
 
@@ -149,7 +203,7 @@ export async function POST(req) {
         {
           ok: false,
           duplicate: true,
-          error: `Duplicate GIF blocked! ${dup.name} already claimed that exact GIF — pick a different one so you don’t get disqualified on air!`,
+          error: `Duplicate GIF blocked: ${dup.name} already claimed that exact GIF. Pick another so you don’t get disqualified on air!`,
         },
         { status: 409 }
       );

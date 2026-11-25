@@ -111,6 +111,20 @@ export async function POST(req) {
       return NextResponse.json({ ok: true });
     }
 
+    if (action === "set_gif_thread") {
+      const roundId = String(body?.roundId || "").trim();
+      const threadTweetUrl = String(body?.threadTweetUrl || "").trim();
+      await writeBfeState(
+        (draft) => {
+          const round = (draft.gifRounds || []).find((r) => r.id === roundId);
+          if (round) round.threadTweetUrl = threadTweetUrl;
+          return draft;
+        },
+        { type: "set_gif_thread", roundId, threadTweetUrl }
+      );
+      return NextResponse.json({ ok: true });
+    }
+
     if (action === "save_evergreen_form") {
       const baseUrl = String(body?.baseUrl || "").trim();
       const filmEntryId = String(body?.filmEntryId || "").trim();
