@@ -16,7 +16,7 @@ import FifthSeatInteractive from "@/components/FifthSeatInteractive";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "The Fifth Seat & Beetroot Poll",
+  title: "Fifth Seat & Beetroot Poll",
   description:
     "Cast your vote in this week's Best Film Ever Beetroot Metric poll or unlock Patron Fifth-Seat rankings.",
 };
@@ -24,7 +24,6 @@ export const metadata = {
 export default async function FifthSeatPage({ searchParams }) {
   const sp = await searchParams;
 
-  // Support 1-click Magic Link directly on /fifth-seat?key=... -> sets 1-year cookie & strips key from URL
   const incomingKey = String(sp?.key || "").trim();
   if (incomingKey) {
     redirect(`/api/patron/unlock?key=${encodeURIComponent(incomingKey)}&next=/fifth-seat`);
@@ -37,7 +36,6 @@ export default async function FifthSeatPage({ searchParams }) {
   const state = readBfeState();
   const fullSchedule = state.schedule || [];
 
-  // Non-patrons only see the current open film + already-aired closed episodes (future "upcoming" monthly picks stay gated!)
   const visibleSchedule = isPatron
     ? fullSchedule
     : fullSchedule.filter((s) => s.status !== "upcoming");
@@ -73,19 +71,19 @@ export default async function FifthSeatPage({ searchParams }) {
       {spotlight?.backdropUrl ? (
         <div className="pointer-events-none fixed inset-0 -z-10">
           <div
-            className="absolute inset-0 bg-cover bg-center opacity-20 blur-[2px]"
+            className="absolute inset-0 bg-cover bg-center opacity-15 blur-[2px]"
             style={{ backgroundImage: `url(${spotlight.backdropUrl})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/90 to-zinc-950" />
+          <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/75 via-zinc-950/90 to-zinc-950" />
         </div>
       ) : null}
 
       <div className="mx-auto max-w-6xl px-6 pb-20 pt-8">
         {spotlight ? (
-          <section className="rounded-3xl bg-white/5 p-6 md:p-8 ring-1 ring-white/10">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-[220px_1fr]">
+          <section className="rounded-3xl bg-zinc-900/60 p-6 md:p-8 ring-1 ring-white/[0.08]">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
               <div className="shrink-0">
-                <div className="overflow-hidden rounded-3xl bg-zinc-900 ring-1 ring-white/15 shadow-2xl">
+                <div className="overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/15 shadow-2xl">
                   {spotlight.posterUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -100,74 +98,89 @@ export default async function FifthSeatPage({ searchParams }) {
               </div>
 
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-400/30">
-                    {spotlight.status === "open" ? "🎬 THIS WEEK ON BFE" : "PAST SLATE"}
+                <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-amber-300">
+                  <span>
+                    {spotlight.status === "open" ? "Up Next on Best Film Ever" : "Past Episode Slate"}
                   </span>
                   {spotlight.episodeNum ? (
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">
-                      Episode {spotlight.episodeNum}
-                    </span>
+                    <>
+                      <span className="text-white/25">•</span>
+                      <span className="text-zinc-300">Episode {spotlight.episodeNum}</span>
+                    </>
                   ) : null}
-                  {spotlight.pickNote ? (
-                    <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">
-                      {spotlight.pickNote}
-                    </span>
+                  {spotlight.episodeDate ? (
+                    <>
+                      <span className="text-white/25">•</span>
+                      <span className="text-zinc-400">{spotlight.episodeDate}</span>
+                    </>
                   ) : null}
                 </div>
 
-                <h1 className="mt-3 text-4xl md:text-5xl font-bold leading-tight">
+                <h1 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white">
                   {spotlight.title}{" "}
                   {spotlight.year ? (
-                    <span className="text-white/55 font-normal">({spotlight.year})</span>
+                    <span className="font-normal text-zinc-400">({spotlight.year})</span>
                   ) : null}
                 </h1>
 
+                {spotlight.pickNote ? (
+                  <div className="mt-1.5 text-sm font-medium text-zinc-300">
+                    {spotlight.pickNote}
+                  </div>
+                ) : null}
+
                 {spotlight.overview ? (
-                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/75">
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-zinc-400">
                     {spotlight.overview}
                   </p>
                 ) : null}
 
-                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-black/35 p-3.5 ring-1 ring-white/10">
-                    <div className="text-[11px] uppercase tracking-wider text-white/50">
-                      How the 5th Seat Works
-                    </div>
-                    <div className="mt-1 text-sm font-semibold text-emerald-300">
-                      Equals 1 Full Host Chair
-                    </div>
-                    <div className="mt-0.5 text-xs text-white/60">
-                      BFE Patrons average into one equal co-host vote.
-                    </div>
-                  </div>
-
-                  <div className="rounded-2xl bg-black/35 p-3.5 ring-1 ring-white/10">
-                    <div className="text-[11px] uppercase tracking-wider text-white/50">
-                      Patron Turnout
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                    <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                      Fifth-Seat Weight
                     </div>
                     <div className="mt-1 text-sm font-semibold text-white">
-                      {spotlight.fifthSummary.count} Fifth-Seat
-                      {spotlight.fifthSummary.count === 1 ? "" : "s"}
+                      1 Full Co-Host Chair
                     </div>
-                    <div className="mt-0.5 text-xs text-white/60">
-                      {spotlight.status === "closed" && spotlight.fifthSummary.average !== null
-                        ? `Official Avg: ${spotlight.fifthSummary.average}/10`
-                        : "Score revealed on Tuesday’s pod!"}
+                    <div className="mt-0.5 text-xs text-zinc-400">
+                      Patron scores average into one equal seat.
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-black/35 p-3.5 ring-1 ring-white/10">
-                    <div className="text-[11px] uppercase tracking-wider text-white/50">
-                      🥬 Beetroot Metric
+                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                    <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                      Patron Submissions
                     </div>
-                    <div className="mt-1 text-sm font-semibold text-fuchsia-300">
-                      {spotlight.beetSummary.beetrootPct !== null
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {spotlight.fifthSummary.count === 0
+                        ? "Open for Patrons"
+                        : `${spotlight.fifthSummary.count} Fifth-Seat${
+                            spotlight.fifthSummary.count === 1 ? "" : "s"
+                          }`}
+                    </div>
+                    <div className="mt-0.5 text-xs text-zinc-400">
+                      {spotlight.status === "closed" && spotlight.fifthSummary.average !== null
+                        ? `Official Avg: ${spotlight.fifthSummary.average} / 10`
+                        : "Revealed on Tuesday’s episode"}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                    <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                      Beetroot Metric
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-amber-300">
+                      {spotlight.beetSummary.beetrootPct !== null && spotlight.beetSummary.total > 0
                         ? `${spotlight.beetSummary.beetrootPct}% Fresh`
-                        : "Vote Open"}
+                        : "Public Poll Open"}
                     </div>
-                    <div className="mt-0.5 text-xs text-white/60">
-                      {spotlight.beetSummary.total} public listener votes
+                    <div className="mt-0.5 text-xs text-zinc-400">
+                      {spotlight.beetSummary.total > 0
+                        ? `${spotlight.beetSummary.total} listener vote${
+                            spotlight.beetSummary.total === 1 ? "" : "s"
+                          }`
+                        : "Great + Good % (10+ votes to qualify)"}
                     </div>
                   </div>
                 </div>
@@ -191,31 +204,31 @@ export default async function FifthSeatPage({ searchParams }) {
         {/* Slate + Contributor Standings */}
         <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
           <section>
-            <div className="flex items-baseline justify-between">
-              <h2 className="text-xl font-semibold text-white">
-                {isPatron ? "Monthly Patron Fifth-Seat Slate" : "Recent & Active Fifth-Seat Films"}
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 className="text-lg font-semibold tracking-tight text-white">
+                {isPatron ? "Fifth-Seat Film Slate" : "Active & Recent Fifth-Seat Films"}
               </h2>
               {!isPatron ? (
-                <span className="text-xs text-emerald-300">
-                  🔒 Full advance slate unlocked for Patrons
+                <span className="text-xs text-zinc-400">
+                  Advance monthly slate unlocked for Patrons
                 </span>
               ) : null}
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
               {enrichedSchedule.map((item) => {
                 const isSelected = item.id === spotlight?.id;
                 return (
                   <Link
                     key={item.id}
                     href={`/fifth-seat?film=${encodeURIComponent(item.id)}`}
-                    className={`flex gap-4 rounded-3xl p-4 transition ${
+                    className={`flex gap-4 rounded-2xl p-3.5 transition ${
                       isSelected
-                        ? "bg-emerald-500/10 ring-2 ring-emerald-400/60"
-                        : "bg-white/5 ring-1 ring-white/10 hover:bg-white/10"
+                        ? "bg-white/[0.09] ring-1 ring-white/35"
+                        : "bg-zinc-900/50 ring-1 ring-white/[0.08] hover:bg-zinc-900/80 hover:ring-white/20"
                     }`}
                   >
-                    <div className="w-16 shrink-0 overflow-hidden rounded-xl bg-zinc-900 aspect-[2/3]">
+                    <div className="w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-900 aspect-[2/3]">
                       {item.posterUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -225,29 +238,32 @@ export default async function FifthSeatPage({ searchParams }) {
                         />
                       ) : null}
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 py-0.5">
                       <div className="flex items-center gap-2 text-[11px]">
                         <span
                           className={`rounded-full px-2 py-0.5 font-semibold ${
                             item.status === "open"
-                              ? "bg-emerald-400/20 text-emerald-300"
-                              : "bg-white/10 text-white/65"
+                              ? "bg-amber-300 text-zinc-950"
+                              : "bg-white/10 text-zinc-300"
                           }`}
                         >
-                          {item.status === "open" ? "OPEN NOW" : `EP ${item.episodeNum || ""}`}
+                          {item.status === "open" ? "OPEN" : `EP ${item.episodeNum || ""}`}
                         </span>
-                        <span className="text-white/50">{item.episodeDate}</span>
+                        <span className="text-zinc-500">{item.episodeDate}</span>
                       </div>
-                      <div className="mt-1 truncate text-base font-semibold text-white">
+                      <div className="mt-1 truncate text-[15px] font-semibold text-white">
                         {item.title}
                       </div>
                       {item.pickNote ? (
-                        <div className="mt-0.5 truncate text-xs text-white/60">{item.pickNote}</div>
+                        <div className="mt-0.5 truncate text-xs text-zinc-400">{item.pickNote}</div>
                       ) : null}
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/70">
-                        <span>🪑 {item.fifthSummary.count} in</span>
-                        {item.beetSummary.beetrootPct !== null ? (
-                          <span>• 🥬 {item.beetSummary.beetrootPct}%</span>
+                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
+                        <span>
+                          {item.fifthSummary.count} Fifth-Seat
+                          {item.fifthSummary.count === 1 ? "" : "s"}
+                        </span>
+                        {item.fifthSummary.average !== null && item.status === "closed" ? (
+                          <span>· Avg {item.fifthSummary.average}/10</span>
                         ) : null}
                       </div>
                     </div>
@@ -257,32 +273,36 @@ export default async function FifthSeatPage({ searchParams }) {
             </div>
           </section>
 
-          <aside className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10 h-fit">
-            <div className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-              🏆 Gamified Standings
+          <aside className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08] h-fit">
+            <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-300">
+              Patron Contributors
             </div>
-            <h2 className="mt-1 text-lg font-semibold text-white">Fifth-Seat Hall of Honor</h2>
-            <p className="mt-1 text-xs text-white/60">
-              Active BFE Patrons ranked by Fifth-Seat appearances logged since Episode 311.
+            <h2 className="mt-1 text-lg font-semibold tracking-tight text-white">
+              Fifth-Seat Hall of Honor
+            </h2>
+            <p className="mt-1 text-xs text-zinc-400">
+              Verified Fifth-Seat appearances logged from podcast transcripts since Episode 301.
             </p>
 
-            <div className="mt-4 space-y-2.5">
+            <div className="mt-4 space-y-2">
               {contributors.slice(0, 10).map((c, idx) => (
                 <div
                   key={c.name}
-                  className="flex items-center justify-between gap-3 rounded-2xl bg-black/30 px-3.5 py-2.5 ring-1 ring-white/10"
+                  className="flex items-center justify-between gap-3 rounded-xl bg-zinc-950/70 px-3.5 py-2.5 ring-1 ring-white/[0.06]"
                 >
                   <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-white">
-                      <span className="text-white/45 mr-1.5">#{idx + 1}</span>
+                    <div className="truncate text-sm font-medium text-white">
+                      <span className="text-zinc-500 mr-2 tabular-nums">#{idx + 1}</span>
                       {c.name}
                     </div>
-                    <div className="text-[11px] text-emerald-300/90">{c.tierBadge}</div>
+                    <div className="text-[11px] text-zinc-400">{c.tierBadge}</div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-sm font-bold text-white">{c.submissions}x</div>
+                    <div className="text-sm font-semibold text-amber-300 tabular-nums">
+                      {c.submissions}×
+                    </div>
                     {c.avgScoreGiven !== null ? (
-                      <div className="text-[11px] text-white/50">avg {c.avgScoreGiven}/10</div>
+                      <div className="text-[11px] text-zinc-500">avg {c.avgScoreGiven}</div>
                     ) : null}
                   </div>
                 </div>
@@ -293,9 +313,9 @@ export default async function FifthSeatPage({ searchParams }) {
               href={BFE_LINKS.patreon}
               target="_blank"
               rel="noreferrer"
-              className="mt-5 block w-full rounded-2xl bg-white/10 py-2.5 text-center text-xs font-semibold text-white ring-1 ring-white/15 hover:bg-white/15 transition"
+              className="mt-5 block w-full rounded-full bg-white py-2.5 text-center text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
             >
-              Join BFE on Patreon to Climb the Table →
+              Join BFE on Patreon →
             </a>
           </aside>
         </div>

@@ -6,7 +6,7 @@ import LeaderboardClient from "@/components/LeaderboardClient";
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "All-Time BFE Leaderboard",
+  title: "Leaderboard",
   description:
     "See how Best Film Ever's reviewed movies stack up by Official Combined Score (Host chairs + the Patron Fifth-Seat).",
 };
@@ -33,17 +33,16 @@ export default async function LeaderboardPage() {
     <main className="min-h-screen bg-zinc-950 text-white">
       <div className="mx-auto max-w-6xl px-6 pb-20 pt-8 space-y-8">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-semibold text-emerald-300 ring-1 ring-emerald-400/30">
-            🏆 THE MASTER TABLE
+          <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+            The Master Table
           </div>
-          <h1 className="mt-3 text-4xl md:text-5xl font-bold text-white">
+          <h1 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white">
             Best Film Ever Leaderboard
           </h1>
-          <p className="mt-2 max-w-2xl text-sm text-white/70">
-            Ranked using BFE’s unweighted equal-chair formula: every host/guest chair counts once,
-            and the <strong className="text-white">Patron Fifth-Seat average</strong> counts as one
-            full equal chair. Seeded from verified recent episode transcripts and ready to import
-            Ian’s full 358-film Master Spreadsheet!
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            Ranked using BFE’s unweighted equal-chair formula: every host or guest seat counts once,
+            and the <strong className="text-zinc-200 font-medium">Patron Fifth-Seat average</strong>{" "}
+            counts as one full equal chair.
           </p>
         </div>
 

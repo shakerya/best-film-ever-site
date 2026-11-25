@@ -7,18 +7,19 @@ import { BFE_LINKS, normalizeGifKey } from "./bfeShared";
 export { BFE_LINKS, normalizeGifKey };
 
 const STATE_FILE = path.join(process.cwd(), ".bfe-runtime-state.json");
+const STATE_SCHEMA_VERSION = 2;
 
 const DEFAULT_SCHEDULE = [
   {
-    id: "dec-2026-christmas-pick",
-    title: "Die Hard",
-    year: "1988",
-    tmdbId: 562,
+    id: "dec-2026-little-shop",
+    title: "Little Shop of Horrors",
+    year: "1986",
+    tmdbId: 10776,
     episodeNum: 359,
     episodeDate: "2026-12-01",
     cutoffIso: "2026-11-29T18:00:00Z",
-    pickNote: "December Kickoff • Theatrical Cut",
-    googleFormUrl: "https://forms.gle/8xmrcSZ7XEuQVfhq5",
+    pickNote: "40th Anniversary Musical • feat. Special Guest Amy",
+    googleFormUrl: "",
     status: "open", // "open" | "upcoming" | "closed"
   },
   {
@@ -29,7 +30,7 @@ const DEFAULT_SCHEDULE = [
     episodeNum: 358,
     episodeDate: "2026-11-24",
     cutoffIso: "2026-11-22T18:00:00Z",
-    pickNote: "Scorsese Deep Dive • 2002",
+    pickNote: "Kevin's Pick • Martin Scorsese",
     googleFormUrl: "https://forms.gle/8xmrcSZ7XEuQVfhq5",
     status: "closed",
   },
@@ -65,7 +66,7 @@ const DEFAULT_SCHEDULE = [
     episodeNum: 355,
     episodeDate: "2026-11-03",
     cutoffIso: "2026-11-01T18:00:00Z",
-    pickNote: "25th Anniversary Pixar Special",
+    pickNote: "25th Anniversary Pixar Review",
     googleFormUrl: "https://forms.gle/ziRqmYRTnAQuSMmE7",
     status: "closed",
   },
@@ -77,28 +78,18 @@ const DEFAULT_GIF_ROUNDS = [
     epNum: 358,
     filmTitle: "Gangs of New York",
     randomWord: "Cannonball",
-    hint: "Dropped by Kev at the start of the Episode 358 Endgame.",
+    hint: "Chosen by Kev at the start of the Episode 358 Endgame.",
     closesIso: "2026-11-29T18:00:00Z",
     status: "open",
     winnerEntryId: null,
-    entries: [
-      {
-        id: "seed-gif-358-1",
-        name: "Ian (@bestfilmeverpod)",
-        handle: "@bestfilmeverpod",
-        gifUrl: "https://media.giphy.com/media/l2Je4YMcwUymua0rC/giphy.gif",
-        caption: "Ron Burgundy hitting the pool!",
-        createdAt: "2026-11-24T11:00:03Z",
-        isHostStarter: true,
-      },
-    ],
+    entries: [],
   },
   {
     id: "ep-357-sniper",
     epNum: 357,
     filmTitle: "Full Metal Jacket",
     randomWord: "Sniper",
-    hint: "Picked by Shai Bergerfroind in Episode 357.",
+    hint: "Chosen by Shai Bergerfroind in Episode 357.",
     closesIso: "2026-11-22T18:00:00Z",
     status: "closed",
     winnerEntryId: "seed-gif-357-ian",
@@ -108,75 +99,47 @@ const DEFAULT_GIF_ROUNDS = [
         name: "Shai Bergerfroind",
         handle: "@Bergershai",
         gifUrl: "https://media.giphy.com/media/W0EYYvXeYBm1O/giphy.gif",
-        caption: "Cat sniper get down!",
+        caption: "Cat sniper — get down!",
         createdAt: "2026-11-17T12:15:00Z",
       },
       {
         id: "seed-gif-357-ian",
-        name: "Ian (Host Winner 👑)",
+        name: "Ian (@bestfilmeverpod)",
         handle: "@bestfilmeverpod",
         gifUrl: "https://media.giphy.com/media/l0HlMPcbD4jdARjRC/giphy.gif",
-        caption: "Robin Hood splitting the arrow dead center",
+        caption: "Disney's Robin Hood splitting the arrow (Episode 358 Winner)",
         createdAt: "2026-11-22T17:59:43Z",
       },
     ],
   },
 ];
 
-const DEFAULT_BEETROOT = {
-  "dec-2026-christmas-pick": {
-    great: 9,
-    good: 4,
-    ok: 1,
-    poor: 0,
-    comments: [
-      {
-        id: "seed-beet-1",
-        name: "Paul Komoroski",
-        choice: "great",
-        comment: "100% a Christmas movie and Alan Rickman is an all-time villain.",
-        createdAt: "2026-11-25T08:00:00Z",
-      },
-    ],
-  },
-  "nov-2026-gangs": {
-    great: 5,
-    good: 9,
-    ok: 3,
-    poor: 1,
-    comments: [
-      {
-        id: "seed-beet-2",
-        name: "James DeGuzman",
-        choice: "good",
-        comment: "Bill the Butcher is a 10/10 character inside an 8/10 sprawl.",
-        createdAt: "2026-11-21T16:00:00Z",
-      },
-    ],
-  },
-};
+// Clean zero-dummy-data state for live Beetroot polls
+const DEFAULT_BEETROOT = {};
 
 function buildInitialFifthSeats() {
-  const byFilm = {
-    "dec-2026-christmas-pick": [],
+  return {
+    "dec-2026-little-shop": [],
     "nov-2026-gangs": [
       {
         id: "seed-5th-358-1",
-        name: "James DeGuzman",
-        score: 8,
-        thoughts: "Daniel Day-Lewis dominates every scene he's in.",
-        hostQuestion: "Would Gangs of New York be a 10/10 as a 6-part HBO miniseries?",
-        source: "transcript_seed",
+        name: "Richard",
+        score: 7,
+        thoughts:
+          "One of my least favorite Scorseses. Diaz is a walking, talking anachronism. Daniel Day-Lewis blows everyone off the screen. Doesn't quite hang together.",
+        hostQuestion: "",
+        source: "transcript_verified",
         readOnAir: true,
         createdAt: "2026-11-21T19:00:00Z",
       },
       {
         id: "seed-5th-358-2",
-        name: "Richard",
-        score: 7,
-        thoughts: "Great setting and villain, drags a bit in the middle.",
+        name: "Shai Bergerfroind",
+        score: 5,
+        thoughts:
+          "Day-Lewis gives one of his best performances of all time, which is the only reason this film is watchable. Five self-removed eyeballs out of ten.",
         hostQuestion: "",
-        source: "transcript_seed",
+        source: "transcript_verified",
         readOnAir: true,
         createdAt: "2026-11-21T20:00:00Z",
       },
@@ -184,29 +147,31 @@ function buildInitialFifthSeats() {
         id: "seed-5th-358-3",
         name: "Aashrey",
         score: 6,
-        thoughts: "Ambitious Scorsese, uneven second half.",
+        thoughts:
+          "Very promising in the first half, but Gangs of New York meanders through half-baked stories in the second. Daniel Day-Lewis stands out; Leo was all over the place.",
         hostQuestion: "",
-        source: "transcript_seed",
+        source: "transcript_verified",
         readOnAir: true,
         createdAt: "2026-11-22T04:00:00Z",
       },
       {
         id: "seed-5th-358-4",
-        name: "Shai Bergerfroind",
-        score: 5,
-        thoughts: "Wanted to love it way more than I did.",
+        name: "James DeGuzman",
+        score: 8,
+        thoughts:
+          "Probably my favorite Martin Scorsese film — not the best one, but my personal favorite. Eight 'it's raw!' steaks out of ten.",
         hostQuestion: "",
-        source: "transcript_seed",
+        source: "transcript_verified",
         readOnAir: true,
         createdAt: "2026-11-22T09:00:00Z",
       },
     ],
   };
-  return byFilm;
 }
 
 function getDefaultState() {
   return {
+    schemaVersion: STATE_SCHEMA_VERSION,
     evergreenGoogleForm: {
       baseUrl: process.env.EVERGREEN_GOOGLE_FORM_URL || "",
       filmEntryId: process.env.EVERGREEN_FILM_ENTRY_ID || "entry.1000001",
@@ -226,11 +191,13 @@ export function readBfeState() {
   try {
     if (fs.existsSync(STATE_FILE)) {
       const parsed = JSON.parse(fs.readFileSync(STATE_FILE, "utf-8"));
-      memoryState = {
-        ...getDefaultState(),
-        ...parsed,
-      };
-      return memoryState;
+      if (parsed?.schemaVersion === STATE_SCHEMA_VERSION) {
+        memoryState = {
+          ...getDefaultState(),
+          ...parsed,
+        };
+        return memoryState;
+      }
     }
   } catch (e) {
     console.warn("[bfeStore] Failed reading state file, using defaults:", e?.message);
@@ -242,11 +209,11 @@ export function readBfeState() {
 export function writeBfeState(updater) {
   const current = readBfeState();
   const next = typeof updater === "function" ? updater(structuredClone(current)) : updater;
+  next.schemaVersion = STATE_SCHEMA_VERSION;
   memoryState = next;
   try {
     fs.writeFileSync(STATE_FILE, JSON.stringify(next, null, 2), "utf-8");
   } catch (e) {
-    // On read-only serverless filesystems without Google Sheet webhook, memoryState still serves warm lambdas
     console.warn("[bfeStore] Read-only fs, kept in memory:", e?.message);
   }
   return next;
@@ -268,10 +235,6 @@ export async function forwardToGoogleSheetWebhook(eventType, payload) {
   }
 }
 
-/**
- * Builds a Pre-Filled Google Form URL when an evergreen Google Form is configured,
- * falling back cleanly to the film's individual forms.gle URL.
- */
 export function buildGoogleFormLink(film, evergreenConfig = {}) {
   const base = String(evergreenConfig?.baseUrl || process.env.EVERGREEN_GOOGLE_FORM_URL || "").trim();
   const entryId = String(evergreenConfig?.filmEntryId || process.env.EVERGREEN_FILM_ENTRY_ID || "").trim();
@@ -326,10 +289,6 @@ export function computeFifthSeatSummary(entries = []) {
   };
 }
 
-/**
- * Computes Official Combined BFE Score using Ian's exact unweighted equal-seat formula:
- * mean(Host1, Host2, ..., Guest, FifthSeatAverage)
- */
 export function computeCombinedEpisodeScore({ hosts = {}, guests = [], fifthSeatAvg = null }) {
   const seats = [];
   for (const val of Object.values(hosts || {})) {
@@ -352,7 +311,6 @@ export function getMergedEpisodeDataByNumber(epNum) {
   const base = seedEpisodes[String(epNum)] || null;
   const override = state.episodeOverrides?.[String(epNum)] || null;
 
-  // Also check if a scheduled item has live Fifth-Seat / Beetroot data for this episodeNum
   const sched = state.schedule.find((s) => Number(s.episodeNum) === Number(epNum));
   const liveFifth = sched ? computeFifthSeatSummary(state.fifthSeats?.[sched.id] || []) : null;
   const liveBeet = sched ? computeBeetrootSummary(state.beetroot?.[sched.id]) : null;
@@ -437,7 +395,6 @@ export function getPatronContributorLeaderboard() {
   const bump = (rawName, score) => {
     const clean = String(rawName || "").trim();
     if (!clean) return;
-    // Normalize common transcript variants
     const key = clean.toLowerCase().startsWith("paul")
       ? "Paul Komoroski"
       : clean.toLowerCase().startsWith("shai")
@@ -456,7 +413,6 @@ export function getPatronContributorLeaderboard() {
     counts.set(key, prev);
   };
 
-  // Count from seedEpisodes (avoiding double-counting ep 358 which is also in default fifthSeats)
   const state = readBfeState();
   const seededEpNumsInLive = new Set(
     state.schedule
@@ -484,10 +440,10 @@ export function getPatronContributorLeaderboard() {
       avgScoreGiven: p.count ? Math.round((p.sum / p.count) * 10) / 10 : null,
       tierBadge:
         p.count >= 10
-          ? "🏆 Iron Fifth-Seater"
+          ? "Iron Fifth-Seater"
           : p.count >= 3
-            ? "🔥 Regular Critic"
-            : "🪑 Fifth-Seat Backer",
+            ? "Regular Critic"
+            : "Fifth-Seat Backer",
     }))
     .sort((a, b) => b.submissions - a.submissions || a.name.localeCompare(b.name));
 }

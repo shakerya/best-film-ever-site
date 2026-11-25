@@ -23,7 +23,7 @@ function fmtTime(sec) {
 
 export default function AudioPlayerProvider({ children }) {
   const audioRef = useRef(null);
-  const [track, setTrack] = useState(null); // { title, slug, audioUrl, posterUrl }
+  const [track, setTrack] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -67,7 +67,7 @@ export default function AudioPlayerProvider({ children }) {
       {children}
 
       {track ? (
-        <div className="fixed bottom-0 inset-x-0 z-50 border-t border-white/15 bg-zinc-950/95 backdrop-blur-xl shadow-[0_-12px_40px_rgba(0,0,0,0.65)]">
+        <div className="fixed bottom-0 inset-x-0 z-50 border-t border-white/10 bg-zinc-950/95 backdrop-blur-2xl shadow-[0_-12px_40px_rgba(0,0,0,0.7)]">
           <audio
             ref={audioRef}
             src={track.audioUrl}
@@ -85,11 +85,11 @@ export default function AudioPlayerProvider({ children }) {
                 <img
                   src={track.posterUrl}
                   alt={track.title}
-                  className="h-11 w-8 rounded-lg object-cover ring-1 ring-white/15 shrink-0"
+                  className="h-11 w-8 rounded-md object-cover ring-1 ring-white/15 shrink-0"
                 />
               ) : null}
               <div className="min-w-0">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-emerald-300">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-amber-300">
                   Now Playing
                 </div>
                 <Link
@@ -105,8 +105,7 @@ export default function AudioPlayerProvider({ children }) {
               <button
                 type="button"
                 onClick={() => skipBy(-15)}
-                className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
-                title="Back 15s"
+                className="rounded-full bg-white/[0.08] px-2.5 py-1 text-xs font-medium text-zinc-200 hover:bg-white/15"
               >
                 -15s
               </button>
@@ -114,7 +113,7 @@ export default function AudioPlayerProvider({ children }) {
               <button
                 type="button"
                 onClick={() => playEpisode(track)}
-                className="rounded-full bg-emerald-400 px-4 py-2 text-xs font-bold text-zinc-950 hover:bg-emerald-300 transition"
+                className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
               >
                 {playing ? "Pause" : "Play"}
               </button>
@@ -122,13 +121,12 @@ export default function AudioPlayerProvider({ children }) {
               <button
                 type="button"
                 onClick={() => skipBy(30)}
-                className="rounded-xl bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-white/15"
-                title="Forward 30s"
+                className="rounded-full bg-white/[0.08] px-2.5 py-1 text-xs font-medium text-zinc-200 hover:bg-white/15"
               >
                 +30s
               </button>
 
-              <div className="hidden sm:flex flex-1 items-center gap-2 text-xs text-white/60">
+              <div className="hidden sm:flex flex-1 items-center gap-2 text-xs text-zinc-400">
                 <span className="w-12 text-right tabular-nums">{fmtTime(currentTime)}</span>
                 <input
                   type="range"
@@ -140,7 +138,7 @@ export default function AudioPlayerProvider({ children }) {
                     setCurrentTime(val);
                     if (audioRef.current) audioRef.current.currentTime = val;
                   }}
-                  className="flex-1 accent-emerald-400 cursor-pointer"
+                  className="flex-1 accent-white cursor-pointer"
                 />
                 <span className="w-12 tabular-nums">{fmtTime(duration)}</span>
               </div>
@@ -149,10 +147,10 @@ export default function AudioPlayerProvider({ children }) {
             <button
               type="button"
               onClick={closePlayer}
-              className="rounded-xl bg-white/5 px-2.5 py-1.5 text-xs text-white/60 hover:bg-white/10 hover:text-white"
+              className="rounded-full bg-white/[0.06] px-2.5 py-1 text-xs text-zinc-400 hover:bg-white/10 hover:text-white"
               title="Close mini-player"
             >
-              ✕
+              Close
             </button>
           </div>
         </div>

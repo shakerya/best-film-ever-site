@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 const STARTER_PROMPTS = [
   "What did Ian say about Robert Pattinson being cast as James Bond?",
   "Compare the host scores and Fifth-Seat scores on Full Metal Jacket and Gangs of New York",
-  "How did Ian edit Episode 321 (Memento) and what were the Money Money Money guesses?",
+  "What did the hosts say about Gerard Butler and Zack Snyder in Episode 300 (300)?",
   "Why did Liam almost watch the wrong Arrival movie with Charlie Sheen?",
-  "What happened during Ian's theater chair story in Gangs of New York?",
+  "What happened during Ian's office chair story in Gangs of New York?",
   "Why did Debbie get disqualified in GIF of the Week for Sniper?",
 ];
 
@@ -90,46 +90,45 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header + Coverage Banner */}
-      <section className="rounded-3xl bg-gradient-to-br from-indigo-950/50 via-zinc-900/80 to-zinc-950 p-6 md:p-8 ring-1 ring-indigo-400/25">
+    <div className="space-y-6">
+      <section className="rounded-3xl bg-zinc-900/60 p-6 md:p-8 ring-1 ring-white/[0.08]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-indigo-400/15 px-3 py-1 text-xs font-semibold text-indigo-300 ring-1 ring-indigo-400/30">
-              🔒 OWNER PREVIEW • ASK THE BFE ARCHIVE
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+              Private Archive Search & Q&A
             </div>
-            <h1 className="mt-3 text-3xl md:text-4xl font-bold text-white">
+            <h1 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-white">
               Best Film Ever Transcript Vault
             </h1>
-            <p className="mt-2 max-w-2xl text-sm text-white/70">
-              Private search & Q&A across{" "}
-              <strong className="text-white">{stats.episodeCount} full transcripts</strong> (
-              {stats.totalWords.toLocaleString()} words across Episodes {stats.minEpNum}–
-              {stats.maxEpNum} + {stats.extrasCount} Extras). Gated to you right now while we
-              backfill Episodes 1–300, and ready to open to Patrons whenever you flip the switch.
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
+              Search and ask questions across{" "}
+              <strong className="text-zinc-200 font-medium">
+                {stats.episodeCount} full transcripts
+              </strong>{" "}
+              ({stats.totalWords.toLocaleString()} words across Episodes {stats.minEpNum}–
+              {stats.maxEpNum} + {stats.extrasCount} Extras), expanding automatically as historical
+              episodes finish transcribing.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-black/40 px-4 py-3 text-xs ring-1 ring-white/10 space-y-1">
-            <div className="text-white/55">Search Engine Status</div>
-            <div className="font-semibold text-emerald-300">
-              ✅ {stats.chunkCount.toLocaleString()} chunks indexed
+          <div className="rounded-2xl bg-zinc-950/80 px-4 py-3 text-xs ring-1 ring-white/[0.08] space-y-1">
+            <div className="text-zinc-500">Index Status</div>
+            <div className="font-semibold text-white tabular-nums">
+              {stats.chunkCount.toLocaleString()} transcript segments
             </div>
-            <div className="text-white/60">
-              {hasLlmKey
-                ? "🤖 AI Synthesis Active"
-                : "🔎 Direct Transcript Mode (add GEMINI/GROQ key for AI prose)"}
+            <div className={hasLlmKey ? "text-amber-300 font-medium" : "text-zinc-400"}>
+              {hasLlmKey ? "AI Synthesis Active" : "Direct Transcript Search Mode"}
             </div>
           </div>
         </div>
       </section>
 
       {!unlocked ? (
-        <section className="mx-auto max-w-md rounded-3xl bg-white/5 p-6 ring-1 ring-white/15">
-          <h2 className="text-lg font-semibold text-white">Unlock Private Archive Chatbot</h2>
-          <p className="mt-1 text-xs text-white/65">
-            Enter your `CHAT_PASSCODE` / `ADMIN_PASSCODE` (default in local dev:{" "}
-            <code className="rounded bg-white/10 px-1.5 py-0.5 text-indigo-200">bfe-vault</code>).
+        <section className="mx-auto max-w-md rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+          <h2 className="text-lg font-semibold text-white">Unlock Private Transcript Vault</h2>
+          <p className="mt-1 text-xs text-zinc-400">
+            Enter your Vault passcode (default:{" "}
+            <code className="rounded bg-zinc-950 px-1.5 py-0.5 text-amber-300">bfe-vault</code>).
           </p>
           <form
             onSubmit={(e) => {
@@ -143,25 +142,24 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
               type="password"
               value={passcode}
               onChange={(e) => setPasscode(e.target.value)}
-              placeholder="Enter vault passcode…"
-              className="w-full rounded-2xl bg-black/50 px-4 py-3 text-sm text-white ring-1 ring-white/15 focus:outline-none focus:ring-indigo-400"
+              placeholder="Passcode…"
+              className="w-full rounded-xl bg-zinc-950 px-4 py-2.5 text-sm text-white ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
             />
             {authError ? <div className="text-xs text-rose-300">{authError}</div> : null}
             <button
               type="submit"
-              className="w-full rounded-2xl bg-indigo-400 py-3 text-sm font-semibold text-zinc-950 hover:bg-indigo-300 transition"
+              className="w-full rounded-full bg-white py-2.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 transition"
             >
               Unlock Vault →
             </button>
           </form>
         </section>
       ) : (
-        <section className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/15 space-y-6">
-          {/* Starter Prompts */}
+        <section className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08] space-y-6">
           {messages.length === 0 ? (
             <div>
-              <div className="text-xs font-semibold uppercase tracking-wider text-white/50">
-                Try asking across the 2.77M-word archive:
+              <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+                Sample Queries Across the Archive
               </div>
               <div className="mt-3 grid grid-cols-1 gap-2.5 md:grid-cols-2">
                 {STARTER_PROMPTS.map((p) => (
@@ -169,7 +167,7 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
                     key={p}
                     type="button"
                     onClick={() => sendQuestion(p)}
-                    className="rounded-2xl bg-black/35 p-3.5 text-left text-xs text-white/85 ring-1 ring-white/10 hover:bg-white/10 hover:ring-indigo-400/40 transition"
+                    className="rounded-2xl bg-zinc-950/70 p-3.5 text-left text-xs text-zinc-300 ring-1 ring-white/[0.08] hover:bg-zinc-950 hover:text-white hover:ring-white/20 transition"
                   >
                     “{p}”
                   </button>
@@ -178,48 +176,47 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
             </div>
           ) : null}
 
-          {/* Conversation Stream */}
           {messages.length > 0 ? (
-            <div className="space-y-5 max-h-[62vh] overflow-y-auto pr-1">
+            <div className="space-y-4 max-h-[62vh] overflow-y-auto pr-1">
               {messages.map((m, idx) => (
                 <div
                   key={idx}
-                  className={`rounded-3xl p-5 ${
+                  className={`rounded-2xl p-5 ${
                     m.role === "user"
-                      ? "ml-auto max-w-2xl bg-indigo-500/20 ring-1 ring-indigo-400/35"
-                      : "bg-zinc-900/90 ring-1 ring-white/10"
+                      ? "ml-auto max-w-2xl bg-white/[0.09] ring-1 ring-white/15"
+                      : "bg-zinc-950/85 ring-1 ring-white/[0.08]"
                   }`}
                 >
-                  <div className="text-[11px] font-semibold uppercase tracking-wider text-white/45 mb-1.5">
-                    {m.role === "user" ? "You" : `BFE Vault (${m.model || "RAG"})`}
+                  <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500 mb-1.5">
+                    {m.role === "user" ? "You" : `BFE Vault · ${m.model || "Transcript RAG"}`}
                   </div>
-                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-white/90">
+                  <div className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-100">
                     {m.content}
                   </div>
 
                   {m.sources?.length ? (
-                    <details className="mt-4 rounded-2xl bg-black/40 p-3.5 ring-1 ring-white/10">
-                      <summary className="cursor-pointer text-xs font-semibold text-indigo-300">
-                        View {m.sources.length} cited episode transcript passages
+                    <details className="mt-4 rounded-xl bg-zinc-900/80 p-3.5 ring-1 ring-white/[0.08]">
+                      <summary className="cursor-pointer text-xs font-medium text-amber-300">
+                        View {m.sources.length} cited transcript passages
                       </summary>
-                      <div className="mt-3 space-y-3">
+                      <div className="mt-3 space-y-2.5">
                         {m.sources.map((s, sIdx) => (
                           <div
                             key={`${s.slug}-${sIdx}`}
-                            className="rounded-xl bg-white/5 p-3 text-xs ring-1 ring-white/10"
+                            className="rounded-xl bg-zinc-950 p-3 text-xs ring-1 ring-white/[0.06]"
                           >
                             <div className="flex flex-wrap items-center justify-between gap-2">
                               <Link
                                 href={`/episodes/${s.slug}`}
-                                className="font-semibold text-white hover:text-indigo-300 underline"
+                                className="font-semibold text-white hover:text-amber-300 underline"
                               >
                                 {s.title}
                               </Link>
-                              <span className="text-[11px] text-white/50">
-                                {s.section} • ~{s.pct}% in
+                              <span className="text-[11px] text-zinc-500">
+                                {s.section} · ~{s.pct}% in
                               </span>
                             </div>
-                            <p className="mt-1.5 line-clamp-4 text-white/70 leading-relaxed">
+                            <p className="mt-1.5 line-clamp-4 text-zinc-400 leading-relaxed">
                               “{s.text}”
                             </p>
                           </div>
@@ -230,14 +227,14 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
                 </div>
               ))}
               {loading ? (
-                <div className="rounded-3xl bg-zinc-900/90 p-5 text-xs text-indigo-200 ring-1 ring-white/10">
-                  Searching 7,725 transcript segments across 76 episodes…
+                <div className="rounded-2xl bg-zinc-950/85 p-5 text-xs text-zinc-400 ring-1 ring-white/[0.08]">
+                  Searching {stats.chunkCount.toLocaleString()} transcript segments across{" "}
+                  {stats.episodeCount} episodes…
                 </div>
               ) : null}
             </div>
           ) : null}
 
-          {/* Input Box */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -249,13 +246,13 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything spoken on Best Film Ever (movies, scores, stories, games, inside jokes)…"
-              className="flex-1 rounded-2xl bg-black/50 px-4 py-3.5 text-sm text-white placeholder:text-white/35 ring-1 ring-white/15 focus:outline-none focus:ring-indigo-400"
+              placeholder="Ask anything spoken on Best Film Ever (scores, stories, games, quotes)…"
+              className="flex-1 rounded-xl bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="rounded-2xl bg-indigo-400 px-6 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-indigo-300 disabled:opacity-40 transition"
+              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 transition"
             >
               Ask Vault
             </button>

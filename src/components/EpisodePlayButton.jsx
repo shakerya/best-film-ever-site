@@ -13,9 +13,9 @@ export default function EpisodePlayButton({ title, slug, audioUrl, posterUrl }) 
     <button
       type="button"
       onClick={() => player.playEpisode({ title, slug, audioUrl, posterUrl })}
-      className="inline-flex items-center gap-2 rounded-2xl bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-emerald-300 transition"
+      className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
     >
-      <span>{isPlaying ? "⏸ Pause Mini-Player" : "▶ Play While Browsing"}</span>
+      <span>{isPlaying ? "Pause Mini-Player" : "Play in Mini-Player"}</span>
     </button>
   );
 }

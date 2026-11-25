@@ -1,6 +1,7 @@
 // src/app/fifth-seat/opengraph-image.js
 import { ImageResponse } from "next/og";
 import { readBfeState, computeBeetrootSummary } from "@/lib/bfeStore";
+import { getMovieByIdCached, tmdbImageUrl } from "@/lib/tmdb";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,14 +12,24 @@ export default async function Image() {
   const state = readBfeState();
   const active =
     state.schedule.find((s) => s.status === "open") || state.schedule[0] || {
-      title: "This Week's Film",
-      year: "",
+      title: "Little Shop of Horrors",
+      year: "1986",
+      tmdbId: 10776,
       pickNote: "Best Film Ever Podcast",
     };
+
+  let posterUrl = "";
+  if (active.tmdbId) {
+    const details = await getMovieByIdCached(active.tmdbId).catch(() => null);
+    posterUrl = details?.poster_path ? tmdbImageUrl(details.poster_path, "w500") : "";
+  }
+
   const beet = computeBeetrootSummary(state.beetroot?.[active.id]);
   const fullTitle = active.year ? `${active.title} (${active.year})` : String(active.title || "");
-  const beetLabel =
-    beet.beetrootPct !== null ? `${beet.beetrootPct}% Beetroot Metric` : "Vote Now";
+  const statusPill =
+    beet.beetrootPct !== null && beet.total > 0
+      ? `${beet.beetrootPct}% Beetroot Metric`
+      : `Episode ${active.episodeNum || ""} • Vote Open`;
 
   return new ImageResponse(
     (
@@ -27,80 +38,129 @@ export default async function Image() {
           width: "100%",
           height: "100%",
           display: "flex",
-          flexDirection: "column",
+          alignItems: "stretch",
           justifyContent: "space-between",
-          padding: "56px 64px",
-          background: "linear-gradient(135deg, #09090b 0%, #064e3b 55%, #4c0519 100%)",
+          padding: "48px 56px",
+          background: "linear-gradient(135deg, #09090b 0%, #18181b 60%, #27272a 100%)",
           color: "#ffffff",
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {posterUrl ? (
           <div
             style={{
               display: "flex",
-              alignItems: "center",
-              background: "rgba(52, 211, 153, 0.18)",
-              border: "1px solid rgba(52, 211, 153, 0.45)",
-              borderRadius: "999px",
-              padding: "10px 22px",
-              fontSize: 22,
-              fontWeight: 700,
-              color: "#6ee7b7",
+              width: "340px",
+              height: "510px",
+              borderRadius: "24px",
+              overflow: "hidden",
+              border: "2px solid rgba(255,255,255,0.16)",
+              marginRight: "48px",
+              flexShrink: 0,
             }}
           >
-            BEST FILM EVER • WEEKLY #BFEPOLL & FIFTH-SEAT
+            <img
+              src={posterUrl}
+              alt=""
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
           </div>
-          <div
-            style={{
-              display: "flex",
-              background: "rgba(232, 121, 249, 0.2)",
-              border: "1px solid rgba(232, 121, 249, 0.45)",
-              borderRadius: "999px",
-              padding: "10px 22px",
-              fontSize: 22,
-              fontWeight: 700,
-              color: "#f5d0fe",
-            }}
-          >
-            {beetLabel}
-          </div>
-        </div>
+        ) : null}
 
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ display: "flex", fontSize: 28, color: "rgba(255,255,255,0.72)", marginBottom: 10 }}>
-            We’re recording this week on:
-          </div>
-          <div style={{ display: "flex", fontSize: 74, fontWeight: 800, lineHeight: 1.05 }}>
-            {fullTitle}
-          </div>
-          <div style={{ display: "flex", fontSize: 26, color: "#a7f3d0", marginTop: 14 }}>
-            {String(active.pickNote || "Cast your Patron 1–10 Fifth-Seat or vote below!")}
-          </div>
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", gap: "16px" }}>
-            {["Great Film", "Good Film", "OK Film", "Poor Film"].map((label) => (
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "8px 0",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
               <div
-                key={label}
                 style={{
                   display: "flex",
-                  background: "rgba(255,255,255,0.12)",
-                  border: "1px solid rgba(255,255,255,0.22)",
-                  borderRadius: "18px",
-                  padding: "14px 24px",
-                  fontSize: 24,
-                  fontWeight: 700,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#e11d48",
+                  borderRadius: "10px",
+                  padding: "6px 12px",
+                  fontSize: 20,
+                  fontWeight: 900,
                 }}
               >
-                {label}
+                BFE
               </div>
-            ))}
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: 20,
+                  fontWeight: 700,
+                  letterSpacing: "0.12em",
+                  color: "#fcd34d",
+                }}
+              >
+                BEST FILM EVER • #BFEPOLL
+              </div>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                background: "rgba(255,255,255,0.08)",
+                border: "1px solid rgba(255,255,255,0.16)",
+                borderRadius: "999px",
+                padding: "8px 18px",
+                fontSize: 18,
+                fontWeight: 600,
+                color: "#e4e4e7",
+              }}
+            >
+              {statusPill}
+            </div>
           </div>
 
-          <div style={{ display: "flex", fontSize: 24, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
-            bestfilmeverpod.fyi/fifth-seat
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", fontSize: 24, color: "#a1a1aa", marginBottom: 10 }}>
+              Put out a fleece — what’s your verdict on:
+            </div>
+            <div style={{ display: "flex", fontSize: 58, fontWeight: 800, lineHeight: 1.06 }}>
+              {fullTitle}
+            </div>
+            <div style={{ display: "flex", fontSize: 22, color: "#d4d4d8", marginTop: 14 }}>
+              {String(active.pickNote || "Cast your 1-tap Beetroot vote or Patron Fifth-Seat score")}
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+            <div style={{ display: "flex", gap: "12px" }}>
+              {["Great Film", "Good Film", "OK Film", "Poor Film"].map((label) => (
+                <div
+                  key={label}
+                  style={{
+                    display: "flex",
+                    background: "rgba(255,255,255,0.09)",
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    borderRadius: "14px",
+                    padding: "12px 20px",
+                    fontSize: 20,
+                    fontWeight: 700,
+                  }}
+                >
+                  {label}
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", fontSize: 20, fontWeight: 600, color: "#fcd34d" }}>
+              Vote now at bestfilmeverpod.fyi/fifth-seat →
+            </div>
           </div>
         </div>
       </div>

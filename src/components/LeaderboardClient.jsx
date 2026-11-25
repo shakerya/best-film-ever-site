@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { HOSTS } from "@/lib/hosts";
 
 export default function LeaderboardClient({ items = [] }) {
-  const [mode, setMode] = useState("overall"); // overall | splits | patrons
+  const [mode, setMode] = useState("overall");
   const [hostFilter, setHostFilter] = useState("all");
 
   const filtered = useMemo(() => {
@@ -35,20 +35,20 @@ export default function LeaderboardClient({ items = [] }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap gap-2">
+        <div className="inline-flex flex-wrap gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08]">
           {[
-            { key: "overall", label: "🏆 Official Combined Score" },
-            { key: "splits", label: "⚡ Biggest Host vs. Patron Splits" },
-            { key: "patrons", label: "🪑 Highest Fifth-Seat Scores" },
+            { key: "overall", label: "Official Combined Score" },
+            { key: "splits", label: "Host vs. Patron Splits" },
+            { key: "patrons", label: "Highest Fifth-Seat" },
           ].map((tab) => (
             <button
               key={tab.key}
               type="button"
               onClick={() => setMode(tab.key)}
-              className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
+              className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
                 mode === tab.key
-                  ? "bg-white text-zinc-950"
-                  : "bg-white/5 text-white/80 ring-1 ring-white/10 hover:bg-white/10"
+                  ? "bg-white text-zinc-950 font-semibold"
+                  : "text-zinc-400 hover:text-white"
               }`}
             >
               {tab.label}
@@ -57,27 +57,26 @@ export default function LeaderboardClient({ items = [] }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-xs text-white/50 mr-1">Host:</span>
           <button
             type="button"
             onClick={() => setHostFilter("all")}
-            className={`rounded-full px-3 py-1 text-xs transition ${
+            className={`rounded-full px-3 py-1 text-xs font-medium transition ${
               hostFilter === "all"
-                ? "bg-emerald-400 text-zinc-950 font-semibold"
-                : "bg-white/5 text-white/75 hover:bg-white/10"
+                ? "bg-white/15 text-white ring-1 ring-white/30"
+                : "text-zinc-400 ring-1 ring-white/[0.06] hover:text-white"
             }`}
           >
-            All
+            All Hosts
           </button>
           {HOSTS.map((h) => (
             <button
               key={h.key}
               type="button"
               onClick={() => setHostFilter(h.key)}
-              className={`rounded-full px-3 py-1 text-xs transition ${
+              className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                 hostFilter === h.key
-                  ? "bg-emerald-400 text-zinc-950 font-semibold"
-                  : "bg-white/5 text-white/75 hover:bg-white/10"
+                  ? "bg-white/15 text-white ring-1 ring-white/30"
+                  : "text-zinc-400 ring-1 ring-white/[0.06] hover:text-white"
               }`}
             >
               {h.name}
@@ -86,97 +85,106 @@ export default function LeaderboardClient({ items = [] }) {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-3xl bg-white/5 ring-1 ring-white/10">
-        <div className="divide-y divide-white/10">
-          {filtered.map((ep, idx) => (
-            <Link
-              key={ep.epNum}
-              href={`/episodes/${ep.slug}`}
-              className="flex flex-col gap-4 p-5 hover:bg-white/5 transition sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-sm font-bold text-white">
-                  #{mode === "overall" && hostFilter === "all" ? ep.rank : idx + 1}
-                </div>
-
-                {ep.posterUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={ep.posterUrl}
-                    alt={ep.filmTitle || ep.title}
-                    className="h-16 w-11 shrink-0 rounded-xl object-cover ring-1 ring-white/15"
-                  />
-                ) : null}
-
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-white/55">
-                    <span>EP {ep.epNum}</span>
-                    {ep.pickNote ? <span>• {ep.pickNote}</span> : null}
+      <div className="overflow-hidden rounded-3xl bg-zinc-900/55 ring-1 ring-white/[0.08]">
+        <div className="divide-y divide-white/[0.06]">
+          {filtered.map((ep, idx) => {
+            const displayRank = mode === "overall" && hostFilter === "all" ? ep.rank : idx + 1;
+            return (
+              <Link
+                key={ep.epNum}
+                href={`/episodes/${ep.slug}`}
+                className="flex flex-col gap-4 p-5 hover:bg-white/[0.03] transition sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div className="flex items-center gap-4 min-w-0">
+                  <div
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold tabular-nums ${
+                      displayRank <= 3
+                        ? "bg-amber-300/15 text-amber-300 ring-1 ring-amber-300/35"
+                        : "bg-zinc-950 text-zinc-400 ring-1 ring-white/[0.08]"
+                    }`}
+                  >
+                    #{displayRank}
                   </div>
-                  <div className="truncate text-lg font-semibold text-white">
-                    {ep.filmTitle || ep.title}
-                  </div>
-                  <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs">
-                    {Object.entries(ep.hosts || {}).map(([hk, val]) => (
-                      <span
-                        key={hk}
-                        className="rounded-lg bg-black/40 px-2 py-0.5 text-white/80 ring-1 ring-white/10 capitalize"
-                      >
-                        {hk}: <strong>{val}</strong>
-                      </span>
-                    ))}
-                    {(ep.guests || []).map((g) => (
-                      <span
-                        key={g.name}
-                        className="rounded-lg bg-indigo-500/15 px-2 py-0.5 text-indigo-200 ring-1 ring-indigo-400/25"
-                      >
-                        {g.name}: <strong>{g.score}</strong>
-                      </span>
-                    ))}
-                    {ep.fifthSeatAvg !== null && ep.fifthSeatAvg !== undefined ? (
-                      <span className="rounded-lg bg-emerald-500/15 px-2 py-0.5 text-emerald-200 ring-1 ring-emerald-400/30">
-                        🪑 5th Seat: <strong>{ep.fifthSeatAvg}</strong> ({ep.fifthSeatCount})
-                      </span>
-                    ) : (
-                      <span className="rounded-lg bg-white/5 px-2 py-0.5 text-white/40">
-                        🪑 No 5th Seat
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-4 shrink-0 self-end sm:self-center">
-                {ep.patronDelta !== null ? (
-                  <div className="text-right">
-                    <div className="text-[10px] uppercase tracking-wider text-white/45">
-                      Patron vs Host
+                  {ep.posterUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={ep.posterUrl}
+                      alt={ep.filmTitle || ep.title}
+                      className="h-16 w-11 shrink-0 rounded-lg object-cover ring-1 ring-white/15"
+                    />
+                  ) : null}
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                      <span>EP {ep.epNum}</span>
+                      {ep.pickNote ? <span>· {ep.pickNote}</span> : null}
                     </div>
-                    <div
-                      className={`text-xs font-bold ${
-                        ep.patronDelta > 0
-                          ? "text-emerald-300"
-                          : ep.patronDelta < 0
-                            ? "text-rose-300"
-                            : "text-white/70"
-                      }`}
-                    >
-                      {ep.patronDelta > 0 ? `+${ep.patronDelta}` : ep.patronDelta}
+                    <div className="truncate text-base sm:text-lg font-semibold text-white">
+                      {ep.filmTitle || ep.title}
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-1.5 text-xs">
+                      {Object.entries(ep.hosts || {}).map(([hk, val]) => (
+                        <span
+                          key={hk}
+                          className="rounded-md bg-zinc-950 px-2 py-0.5 text-zinc-300 ring-1 ring-white/[0.08] capitalize tabular-nums"
+                        >
+                          {hk}: <strong className="text-white">{val}</strong>
+                        </span>
+                      ))}
+                      {(ep.guests || []).map((g) => (
+                        <span
+                          key={g.name}
+                          className="rounded-md bg-zinc-950 px-2 py-0.5 text-zinc-300 ring-1 ring-white/[0.08] tabular-nums"
+                        >
+                          {g.name}: <strong className="text-white">{g.score}</strong>
+                        </span>
+                      ))}
+                      {ep.fifthSeatAvg !== null && ep.fifthSeatAvg !== undefined ? (
+                        <span className="rounded-md bg-amber-300/10 px-2 py-0.5 text-amber-200 ring-1 ring-amber-300/25 tabular-nums">
+                          5th Seat: <strong>{ep.fifthSeatAvg}</strong> ({ep.fifthSeatCount})
+                        </span>
+                      ) : (
+                        <span className="rounded-md bg-white/[0.03] px-2 py-0.5 text-zinc-500">
+                          No 5th Seat
+                        </span>
+                      )}
                     </div>
                   </div>
-                ) : null}
+                </div>
 
-                <div className="rounded-2xl bg-emerald-400/15 px-4 py-2 text-right ring-1 ring-emerald-400/35">
-                  <div className="text-[10px] uppercase tracking-wider text-emerald-300">
-                    Official BFE
-                  </div>
-                  <div className="text-xl font-black text-white">
-                    {ep.combinedScore.toFixed(2)}
+                <div className="flex items-center gap-5 shrink-0 self-end sm:self-center">
+                  {ep.patronDelta !== null ? (
+                    <div className="text-right tabular-nums">
+                      <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+                        Patron Δ
+                      </div>
+                      <div
+                        className={`text-xs font-semibold ${
+                          ep.patronDelta > 0
+                            ? "text-emerald-300"
+                            : ep.patronDelta < 0
+                              ? "text-rose-300"
+                              : "text-zinc-400"
+                        }`}
+                      >
+                        {ep.patronDelta > 0 ? `+${ep.patronDelta}` : ep.patronDelta}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  <div className="rounded-2xl bg-zinc-950 px-4 py-2 text-right ring-1 ring-white/10 tabular-nums">
+                    <div className="text-[10px] uppercase tracking-wider text-zinc-500">
+                      Official BFE
+                    </div>
+                    <div className="text-xl font-bold text-amber-300">
+                      ★ {ep.combinedScore.toFixed(2)}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
