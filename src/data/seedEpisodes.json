@@ -1,0 +1,771 @@
+{
+  "358": {
+    "epNum": 358,
+    "title": "Episode 358 - Gangs of New York",
+    "slug": "episode-358-gangs-of-new-york",
+    "wordCount": 45267,
+    "hasTranscript": true,
+    "filmTitle": "Gangs of New York",
+    "hosts": {
+      "ian": 8.0,
+      "liam": 6.0,
+      "kevin": 7.5
+    },
+    "fifthSeatAvg": 6.5,
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "James DeGuzman",
+        "score": 8,
+        "quote": "Daniel Day-Lewis carries every frame."
+      },
+      {
+        "name": "Richard",
+        "score": 7
+      },
+      {
+        "name": "Aashrey",
+        "score": 6
+      },
+      {
+        "name": "Shai Bergerfroind",
+        "score": 5
+      }
+    ],
+    "combinedScore": 7.0,
+    "randomWord": "Cannonball",
+    "pickNote": "2002 \u2022 Martin Scorsese"
+  },
+  "357": {
+    "epNum": 357,
+    "title": "Episode 357 - Full Metal Jacket (feat. BFF of the BFE: Shai Bergerfroind)",
+    "slug": "episode-357-full-metal-jacket-feat-bff-of-the-bfe-shai-bergerfroind",
+    "wordCount": 53283,
+    "hasTranscript": true,
+    "filmTitle": "Full Metal Jacket",
+    "hosts": {
+      "ian": 9.0,
+      "liam": 8.0
+    },
+    "guests": [
+      {
+        "name": "Shai Bergerfroind",
+        "score": 9.5
+      }
+    ],
+    "fifthSeatAvg": 3.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 3
+      }
+    ],
+    "combinedScore": 7.38,
+    "randomWord": "Sniper",
+    "gifWinner": "Ian (Robin Hood bullseye GIF)",
+    "pickNote": "Shai Bergerfroind's BFF Pick"
+  },
+  "356": {
+    "epNum": 356,
+    "title": "Episode 356 - The English Patient (feat. Friend Of The Podcasters: Jim)",
+    "slug": "episode-356-the-english-patient-feat-friend-of-the-podcasters-jim",
+    "wordCount": 39665,
+    "hasTranscript": true,
+    "filmTitle": "The English Patient",
+    "hosts": {
+      "ian": 8.0
+    },
+    "guests": [
+      {
+        "name": "Jim",
+        "score": 5.5
+      }
+    ],
+    "fifthSeatAvg": 7.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 7,
+        "quote": "Saw the length and thought I'd be bored, but by the end it turned around\u2014very well shot, though could be 45 minutes shorter."
+      }
+    ],
+    "combinedScore": 6.83,
+    "randomWord": "Plums",
+    "pickNote": "Feat. Friend of the Podcasters: Jim"
+  },
+  "355": {
+    "epNum": 355,
+    "title": "Episode 355 - Monsters, Inc.",
+    "slug": "episode-355-monsters-inc",
+    "wordCount": 38722,
+    "hasTranscript": true,
+    "filmTitle": "Monsters, Inc.",
+    "hosts": {
+      "ian": 9.0,
+      "liam": 8.5,
+      "megan": 8.0
+    },
+    "fifthSeatAvg": 8.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 8
+      }
+    ],
+    "combinedScore": 8.38,
+    "randomWord": "Door",
+    "pickNote": "25th Anniversary Pixar Review"
+  },
+  "354": {
+    "epNum": 354,
+    "title": "Episode 354 - Donnie Darko",
+    "slug": "episode-354-donnie-darko",
+    "wordCount": 34130,
+    "hasTranscript": true,
+    "filmTitle": "Donnie Darko",
+    "hosts": {
+      "ian": 7.0,
+      "liam": 6.0
+    },
+    "fifthSeatAvg": null,
+    "fifthSeatCount": 0,
+    "fifthSeatVoters": [],
+    "combinedScore": 6.5,
+    "randomWord": "Trans Am",
+    "pickNote": "Halloween Month"
+  },
+  "353": {
+    "epNum": 353,
+    "title": "Episode 353 - Arrival - UPDATED (w/ BFF of the BFE: Duane Smith (Duane Smith!))",
+    "slug": "episode-353-arrival-updated-w-bff-of-the-bfe-duane-smith-duane-smith",
+    "wordCount": 30055,
+    "hasTranscript": true,
+    "filmTitle": "Arrival",
+    "hosts": {
+      "ian": 8.0,
+      "liam": 7.5
+    },
+    "guests": [
+      {
+        "name": "Duane Smith",
+        "score": 9.5
+      }
+    ],
+    "fifthSeatAvg": 9.25,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul Komoroski",
+        "score": 9.5
+      },
+      {
+        "name": "Aashrey",
+        "score": 9
+      }
+    ],
+    "combinedScore": 8.56,
+    "randomWord": "Kangaroo",
+    "pickNote": "Duane Smith's BFF Pick"
+  },
+  "352": {
+    "epNum": 352,
+    "title": "Episode 352 - Training Day (w/ Hermes Auslander)",
+    "slug": "episode-352-training-day-w-hermes-auslander",
+    "wordCount": 36705,
+    "hasTranscript": true,
+    "filmTitle": "Training Day",
+    "hosts": {
+      "ian": 8.5
+    },
+    "guests": [
+      {
+        "name": "Hermes Auslander",
+        "score": 9.0
+      }
+    ],
+    "fifthSeatAvg": 8.0,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Juleen",
+        "score": 9
+      },
+      {
+        "name": "Paul Komoroski",
+        "score": 8
+      },
+      {
+        "name": "Aashrey",
+        "score": 7
+      }
+    ],
+    "combinedScore": 8.5,
+    "randomWord": "Cash",
+    "pickNote": "w/ Hermes Auslander"
+  },
+  "351": {
+    "epNum": 351,
+    "title": "Episode 351 - Psycho",
+    "slug": "episode-351-psycho",
+    "wordCount": 32732,
+    "hasTranscript": true,
+    "filmTitle": "Psycho",
+    "hosts": {
+      "ian": 8.0,
+      "megan": 9.0
+    },
+    "fifthSeatAvg": 9.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 9
+      }
+    ],
+    "combinedScore": 8.67,
+    "randomWord": "Shower",
+    "pickNote": "Spooky Season Kickoff"
+  },
+  "350": {
+    "epNum": 350,
+    "title": "Episode 350 - Crocodile Dundee",
+    "slug": "episode-350-crocodile-dundee",
+    "wordCount": 33108,
+    "hasTranscript": true,
+    "filmTitle": "Crocodile Dundee",
+    "hosts": {
+      "ian": 6.5,
+      "megan": 6.0
+    },
+    "fifthSeatAvg": 6.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 6
+      }
+    ],
+    "combinedScore": 6.17,
+    "randomWord": "Crocodile",
+    "pickNote": "Patreon Poll Winner (beat Zoolander 52.6%\u201347.4%)"
+  },
+  "349": {
+    "epNum": 349,
+    "title": "Episode 349 - High Fidelity",
+    "slug": "episode-349-high-fidelity",
+    "wordCount": 33800,
+    "hasTranscript": true,
+    "filmTitle": "High Fidelity",
+    "hosts": {
+      "ian": 8.0,
+      "liam": 8.5
+    },
+    "fifthSeatAvg": 7.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 7
+      }
+    ],
+    "combinedScore": 7.83,
+    "randomWord": "Cassette tape",
+    "pickNote": "Liam's Pick"
+  },
+  "348": {
+    "epNum": 348,
+    "title": "Episode 348 - Gran Torino (w/ BFF of the BFE: Hermes Auslander)",
+    "slug": "episode-348-gran-torino-w-bff-of-the-bfe-hermes-auslander",
+    "wordCount": 62187,
+    "hasTranscript": true,
+    "filmTitle": "Gran Torino",
+    "hosts": {
+      "ian": 9.5,
+      "liam": 9.0,
+      "megan": 9.0
+    },
+    "guests": [
+      {
+        "name": "Hermes Auslander",
+        "score": 9.5
+      }
+    ],
+    "fifthSeatAvg": 9.0,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 10
+      },
+      {
+        "name": "Shai Bergerfroind",
+        "score": 9
+      },
+      {
+        "name": "Ariannah",
+        "score": 8
+      }
+    ],
+    "combinedScore": 9.2,
+    "randomWord": "Lighter",
+    "pickNote": "Hermes Auslander's BFF Pick"
+  },
+  "347": {
+    "epNum": 347,
+    "title": "Episode 347 - Jay and Silent Bob Strike Back",
+    "slug": "episode-347-jay-and-silent-bob-strike-back",
+    "wordCount": 34921,
+    "hasTranscript": true,
+    "filmTitle": "Jay and Silent Bob Strike Back",
+    "hosts": {
+      "ian": 6.5,
+      "liam": 8.0
+    },
+    "fifthSeatAvg": 6.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Ariannah",
+        "score": 6
+      }
+    ],
+    "combinedScore": 6.83,
+    "randomWord": "Orangutan",
+    "pickNote": "25th Anniversary View Askew"
+  },
+  "346": {
+    "epNum": 346,
+    "title": "Episode 346 - Children of Men",
+    "slug": "episode-346-children-of-men",
+    "wordCount": 48836,
+    "hasTranscript": true,
+    "filmTitle": "Children of Men",
+    "hosts": {
+      "ian": 7.5,
+      "liam": 7.5,
+      "megan": 7.5
+    },
+    "guests": [
+      {
+        "name": "Synthia",
+        "score": 7.5
+      }
+    ],
+    "fifthSeatAvg": 7.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Richard",
+        "score": 7
+      }
+    ],
+    "combinedScore": 7.4,
+    "randomWord": "Propaganda",
+    "pickNote": "w/ Synthia"
+  },
+  "345": {
+    "epNum": 345,
+    "title": "Episode 345 - The Last King of Scotland",
+    "slug": "episode-345-the-last-king-of-scotland",
+    "wordCount": 40916,
+    "hasTranscript": true,
+    "filmTitle": "The Last King of Scotland",
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.0
+    },
+    "fifthSeatAvg": 6.5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Aashrey",
+        "score": 7
+      },
+      {
+        "name": "Dirk Diggler",
+        "score": 6
+      }
+    ],
+    "combinedScore": 7.33
+  },
+  "344": {
+    "epNum": 344,
+    "title": "Episode 344 - Escape From New York",
+    "slug": "episode-344-escape-from-new-york",
+    "wordCount": 45789,
+    "hasTranscript": true
+  },
+  "343": {
+    "epNum": 343,
+    "title": "Episode 343 - She's Gotta Have It",
+    "slug": "episode-343-shes-gotta-have-it",
+    "wordCount": 28995,
+    "hasTranscript": true
+  },
+  "342": {
+    "epNum": 342,
+    "title": "Episode 342 - Rain Man (Updated!)",
+    "slug": "episode-342-rain-man-updated",
+    "wordCount": 39373,
+    "hasTranscript": true,
+    "filmTitle": "Rain Man",
+    "hosts": {
+      "ian": 9.5,
+      "liam": 9.0,
+      "megan": 8.5
+    },
+    "fifthSeatAvg": 10.0,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Ariannah",
+        "score": 10
+      }
+    ],
+    "combinedScore": 9.25
+  },
+  "341": {
+    "epNum": 341,
+    "title": "Episode 341 - Boyz N' The Hood",
+    "slug": "episode-341-boyz-n-the-hood",
+    "wordCount": 44872,
+    "hasTranscript": true
+  },
+  "340": {
+    "epNum": 340,
+    "title": "Episode 340 - Hello, My Name is Frank (w/ BFF of the BFE: Paul Komorowski)",
+    "slug": "episode-340-hello-my-name-is-frank-w-bff-of-the-bfe-paul-komorowski",
+    "wordCount": 43022,
+    "hasTranscript": true
+  },
+  "339": {
+    "epNum": 339,
+    "title": "Episode 339 - The Outsiders",
+    "slug": "episode-339-the-outsiders",
+    "wordCount": 48381,
+    "hasTranscript": true
+  },
+  "338": {
+    "epNum": 338,
+    "title": "Episode 338 - Big Trouble in Little China",
+    "slug": "episode-338-big-trouble-in-little-china",
+    "wordCount": 29223,
+    "hasTranscript": true
+  },
+  "337": {
+    "epNum": 337,
+    "title": "Episode 337 - The Devil Wears Prada",
+    "slug": "episode-337-the-devil-wears-prada",
+    "wordCount": 47944,
+    "hasTranscript": true
+  },
+  "336": {
+    "epNum": 336,
+    "title": "Episode 336 - The Descent",
+    "slug": "episode-336-the-descent",
+    "wordCount": 32036,
+    "hasTranscript": true
+  },
+  "335": {
+    "epNum": 335,
+    "title": "Episode 335 - Robin Hood: Prince of Thieves",
+    "slug": "episode-335-robin-hood-prince-of-thieves",
+    "wordCount": 52141,
+    "hasTranscript": true
+  },
+  "334": {
+    "epNum": 334,
+    "title": "Episode 334 - The Woman King (w/ BFF of the BFE: Juleen)",
+    "slug": "episode-334-the-woman-king-w-bff-of-the-bfe-juleen",
+    "wordCount": 42602,
+    "hasTranscript": true
+  },
+  "333": {
+    "epNum": 333,
+    "title": "Episode 333 - Soapdish",
+    "slug": "episode-333-soapdish",
+    "wordCount": 51297,
+    "hasTranscript": true
+  },
+  "332": {
+    "epNum": 332,
+    "title": "Episode 332 - Stand By Me (with BFF of the BFE: Ariannah Who Loves BFE The Most)",
+    "slug": "episode-332-stand-by-me-with-bff-of-the-bfe-ariannah-who-loves-bfe-the-most",
+    "wordCount": 52668,
+    "hasTranscript": true
+  },
+  "331": {
+    "epNum": 331,
+    "title": "Episode 331 - A Knight's Tale",
+    "slug": "episode-331-a-knights-tale",
+    "wordCount": 39977,
+    "hasTranscript": true
+  },
+  "330": {
+    "epNum": 330,
+    "title": "Episode 330 - Butch Cassidy and the Sundance Kid",
+    "slug": "episode-330-butch-cassidy-and-the-sundance-kid",
+    "wordCount": 42363,
+    "hasTranscript": true,
+    "filmTitle": "Butch Cassidy and the Sundance Kid",
+    "beetrootPct": 100,
+    "beetrootBreakdown": {
+      "great": 71,
+      "good": 29,
+      "ok": 0,
+      "poor": 0
+    }
+  },
+  "329": {
+    "epNum": 329,
+    "title": "Episode 329 - Star Wars: The Force Awakens",
+    "slug": "episode-329-star-wars-the-force-awakens",
+    "wordCount": 61357,
+    "hasTranscript": true,
+    "filmTitle": "Star Wars: The Force Awakens",
+    "hosts": {
+      "ian": 8.0,
+      "liam": 7.5,
+      "kevin": 6.5
+    },
+    "combinedScore": 7.33
+  },
+  "328": {
+    "epNum": 328,
+    "title": "Episode 328 - The Prince of Egypt (with that lucky so-and-so, James DeGuzman)",
+    "slug": "episode-328-the-prince-of-egypt-with-that-lucky-so-and-so-james-deguzman",
+    "wordCount": 45649,
+    "hasTranscript": true
+  },
+  "327": {
+    "epNum": 327,
+    "title": "Episode 327 - All The President's Men",
+    "slug": "episode-327-all-the-presidents-men",
+    "wordCount": 43773,
+    "hasTranscript": true
+  },
+  "326": {
+    "epNum": 326,
+    "title": "Episode 326 - Jumanji: Welcome To The Jungle",
+    "slug": "episode-326-jumanji-welcome-to-the-jungle",
+    "wordCount": 41206,
+    "hasTranscript": true
+  },
+  "325": {
+    "epNum": 325,
+    "title": "Episode 325 - Wag the Dog",
+    "slug": "episode-325-wag-the-dog",
+    "wordCount": 46169,
+    "hasTranscript": true
+  },
+  "324": {
+    "epNum": 324,
+    "title": "Episode 324 - Inside Man",
+    "slug": "episode-324-inside-man",
+    "wordCount": 25920,
+    "hasTranscript": true
+  },
+  "323": {
+    "epNum": 323,
+    "title": "Episode 323 - The Green Mile",
+    "slug": "episode-323-the-green-mile",
+    "wordCount": 42628,
+    "hasTranscript": true
+  },
+  "322": {
+    "epNum": 322,
+    "title": "Episode 322 - Mulholland Drive",
+    "slug": "episode-322-mulholland-drive",
+    "wordCount": 42678,
+    "hasTranscript": true
+  },
+  "321": {
+    "epNum": 321,
+    "title": "Episode 321 - Memento",
+    "slug": "episode-321-memento",
+    "wordCount": 41093,
+    "hasTranscript": true,
+    "filmTitle": "Memento",
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8.0,
+      "megan": 8.0,
+      "kevin": 8.0
+    },
+    "randomWord": "Tattoo",
+    "combinedScore": 8.13,
+    "pickNote": "Edited in reverse chronological order!"
+  },
+  "320": {
+    "epNum": 320,
+    "title": "Episode 320 - Thank You For Smoking",
+    "slug": "episode-320-thank-you-for-smoking",
+    "wordCount": 36796,
+    "hasTranscript": true
+  },
+  "319": {
+    "epNum": 319,
+    "title": "Episode 319 - Pretty in Pink",
+    "slug": "episode-319-pretty-in-pink",
+    "wordCount": 44748,
+    "hasTranscript": true
+  },
+  "318": {
+    "epNum": 318,
+    "title": "Episode 318 - High School Musical",
+    "slug": "episode-318-high-school-musical",
+    "wordCount": 36676,
+    "hasTranscript": true
+  },
+  "317": {
+    "epNum": 317,
+    "title": "Episode 317 - American History X (feat. an Interview with Director Tony Kaye - Brought to us by BFF of the BFE: Hermes Auslander)",
+    "slug": "episode-317-american-history-x-feat-an-interview-with-director-tony-kaye-brought-to-us-by-bff-of-the-bfe-hermes-auslander",
+    "wordCount": 54896,
+    "hasTranscript": true
+  },
+  "316": {
+    "epNum": 316,
+    "title": "Episode 316 - The Cabin in the Woods",
+    "slug": "episode-316-the-cabin-in-the-woods",
+    "wordCount": 42972,
+    "hasTranscript": true
+  },
+  "315": {
+    "epNum": 315,
+    "title": "Episode 315 - Starship Troopers (w/ BFF of the BFE: Synthia)",
+    "slug": "episode-315-starship-troopers-w-bff-of-the-bfe-synthia",
+    "wordCount": 45835,
+    "hasTranscript": true
+  },
+  "314": {
+    "epNum": 314,
+    "title": "Episode 314 - From Dusk till Dawn",
+    "slug": "episode-314-from-dusk-till-dawn",
+    "wordCount": 45787,
+    "hasTranscript": true
+  },
+  "313": {
+    "epNum": 313,
+    "title": "Episode 313 - A Few Good Men",
+    "slug": "episode-313-a-few-good-men",
+    "wordCount": 46607,
+    "hasTranscript": true
+  },
+  "312": {
+    "epNum": 312,
+    "title": "Episode 312 - For Colored Girls (w/ BFF of the BFE: Juleen)",
+    "slug": "episode-312-for-colored-girls-w-bff-of-the-bfe-juleen",
+    "wordCount": 45661,
+    "hasTranscript": true
+  },
+  "311": {
+    "epNum": 311,
+    "title": "Episode 311 - Ruby Sparks",
+    "slug": "episode-311-ruby-sparks",
+    "wordCount": 41897,
+    "hasTranscript": true,
+    "filmTitle": "Ruby Sparks",
+    "hosts": {
+      "ian": 8.0,
+      "liam": 7.0,
+      "georgia": 7.5
+    },
+    "fifthSeatAvg": 9.0,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul Komoroski",
+        "score": 10,
+        "quote": "9.5 in spirit \u2014 fresh, inventive, great cast."
+      },
+      {
+        "name": "Aashrey",
+        "score": 8
+      }
+    ],
+    "combinedScore": 7.88
+  },
+  "310": {
+    "epNum": 310,
+    "title": "Episode 310 - The Holiday (and BFE Christmas Party)",
+    "slug": "episode-310-the-holiday-and-bfe-christmas-party",
+    "wordCount": 46204,
+    "hasTranscript": true
+  },
+  "309": {
+    "epNum": 309,
+    "title": "Episode 309 - The Fighter",
+    "slug": "episode-309-the-fighter",
+    "wordCount": 40856,
+    "hasTranscript": true
+  },
+  "308": {
+    "epNum": 308,
+    "title": "Episode 308 - Black Swan",
+    "slug": "episode-308-black-swan",
+    "wordCount": 37773,
+    "hasTranscript": true,
+    "beetrootPct": 87
+  },
+  "307": {
+    "epNum": 307,
+    "title": "Episode 307 - Once Upon A Time In Hollywood",
+    "slug": "episode-307-once-upon-a-time-in-hollywood",
+    "wordCount": 42912,
+    "hasTranscript": true
+  },
+  "306": {
+    "epNum": 306,
+    "title": "Episode 306 - Shutter Island",
+    "slug": "episode-306-shutter-island",
+    "wordCount": 43563,
+    "hasTranscript": true
+  },
+  "305": {
+    "epNum": 305,
+    "title": "Episode 305 - One Flew Over The Cuckoo's Nest",
+    "slug": "episode-305-one-flew-over-the-cuckoos-nest",
+    "wordCount": 34447,
+    "hasTranscript": true
+  },
+  "304": {
+    "epNum": 304,
+    "title": "Episode 304 - Sweeney Todd: The Demon Barber of Fleet Street (feat. Beadle Steve)",
+    "slug": "episode-304-sweeney-todd-the-demon-barber-of-fleet-street-feat-beadle-steve",
+    "wordCount": 47287,
+    "hasTranscript": true
+  },
+  "303": {
+    "epNum": 303,
+    "title": "Episode 303 - Mask (w/ BFF of the BFE: Ariannah who Loves BFE the Most)",
+    "slug": "episode-303-mask-w-bff-of-the-bfe-ariannah-who-loves-bfe-the-most",
+    "wordCount": 36121,
+    "hasTranscript": true
+  },
+  "302": {
+    "epNum": 302,
+    "title": "Episode 302 - It",
+    "slug": "episode-302-it",
+    "wordCount": 51270,
+    "hasTranscript": true,
+    "filmTitle": "It",
+    "beetrootPct": 76,
+    "beetrootBreakdown": {
+      "great": 29,
+      "good": 47,
+      "ok": 6,
+      "poor": 18
+    }
+  },
+  "301": {
+    "epNum": 301,
+    "title": "Episode 301 - Poltergeist",
+    "slug": "episode-301-poltergeist",
+    "wordCount": 29361,
+    "hasTranscript": true
+  }
+}

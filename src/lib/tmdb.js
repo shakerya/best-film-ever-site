@@ -106,13 +106,103 @@ export async function getMovieBundle(movieId) {
 
   const director = pickDirector(credits?.crew || []);
   const cast = topCast(credits?.cast || [], 10);
+  const ageGameCast = await buildAgeGameCast(details, cast.slice(0, 5)).catch(() => []);
 
   return {
     details,
     director,
     cast,
     images,
+    ageGameCast,
   };
+}
+
+export async function getMovieByIdCached(movieId) {
+  if (!movieId) return null;
+  return tmdbFetch(
+    `/movie/${movieId}`,
+    {},
+    { cache: "force-cache", next: { revalidate: 86400 } }
+  );
+}
+
+export async function getMovieWatchProviders(movieId) {
+  if (!movieId) return { US: null, GB: null };
+  const data = await tmdbFetch(
+    `/movie/${movieId}/watch/providers`,
+    {},
+    { cache: "force-cache", next: { revalidate: 43200 } }
+  );
+  const results = data?.results || {};
+  const mapList = (arr = [], max = 4) =>
+    arr.slice(0, max).map((p) => ({
+      id: p.provider_id,
+      name: p.provider_name,
+      logoUrl: p.logo_path ? tmdbImageUrl(p.logo_path, "w92") : "",
+    }));
+  const pickRegion = (r) => {
+    if (!r) return null;
+    const stream = mapList([...(r.flatrate || []), ...(r.free || [])], 5);
+    const rent = mapList(r.rent || [], 3);
+    if (!stream.length && !rent.length) return null;
+    return {
+      link: r.link || "",
+      stream,
+      rent,
+    };
+  };
+  return {
+    US: pickRegion(results.US),
+    GB: pickRegion(results.GB),
+  };
+}
+
+export async function getPersonDetailsCached(personId) {
+  if (!personId) return null;
+  return tmdbFetch(
+    `/person/${personId}`,
+    {},
+    { cache: "force-cache", next: { revalidate: 604800 } }
+  );
+}
+
+function calculateAgeAtRelease(birthdayIso, releaseDateIso) {
+  if (!birthdayIso || !releaseDateIso) return null;
+  const b = new Date(birthdayIso);
+  const r = new Date(releaseDateIso);
+  if (Number.isNaN(b.getTime()) || Number.isNaN(r.getTime())) return null;
+  let age = r.getUTCFullYear() - b.getUTCFullYear();
+  const mDiff = r.getUTCMonth() - b.getUTCMonth();
+  if (mDiff < 0 || (mDiff === 0 && r.getUTCDate() < b.getUTCDate())) {
+    age -= 1;
+  }
+  return age > 0 && age < 110 ? age : null;
+}
+
+export async function buildAgeGameCast(details, castSlice = []) {
+  const releaseDate = details?.release_date;
+  if (!releaseDate || !Array.isArray(castSlice) || !castSlice.length) return [];
+
+  const people = await Promise.all(
+    castSlice.map((c) => getPersonDetailsCached(c.id).catch(() => null))
+  );
+
+  const items = [];
+  for (let i = 0; i < castSlice.length; i++) {
+    const c = castSlice[i];
+    const p = people[i];
+    const age = calculateAgeAtRelease(p?.birthday, releaseDate);
+    if (age === null) continue;
+    items.push({
+      id: c.id,
+      name: c.name,
+      character: c.character || "",
+      profileUrl: c.profile_path ? tmdbImageUrl(c.profile_path, "w342") : "",
+      ageAtRelease: age,
+      birthday: p.birthday,
+    });
+  }
+  return items;
 }
 
 /* -----------------------------

@@ -5,15 +5,16 @@ import { getEpisodesFromRss } from "@/lib/podcast";
 import { resolveEpisodeMovieCached, getMovieBundle, tmdbImageUrl } from "@/lib/tmdb";
 import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "@/lib/episodeMeta";
 import { hostsForKeys } from "@/lib/hosts";
+import { getMergedEpisodeDataByNumber, BFE_LINKS } from "@/lib/bfeStore";
+import EpisodePlayButton from "@/components/EpisodePlayButton";
+import BfeEndgameGames from "@/components/BfeEndgameGames";
 
-export const revalidate = 3600; // 1 hour
+export const dynamic = "force-dynamic";
 
-// --- Formatting (SSR-safe) ---
 function formatDateStable(isoOrPubDate) {
   if (!isoOrPubDate) return "";
   const d = new Date(isoOrPubDate);
   if (Number.isNaN(d.getTime())) return "";
-  // Force stable timezone so SSR != client
   return new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
     month: "short",
@@ -32,7 +33,6 @@ function formatRuntime(mins) {
   return `${h}h ${r}m`;
 }
 
-// --- UI components ---
 function GenreChip({ children }) {
   return (
     <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs text-white/90 ring-1 ring-white/10">
@@ -99,7 +99,6 @@ function HostStrip({ hostKeys }) {
 }
 
 function CastStripItem({ person }) {
-  // Bigger + higher-res headshots
   const img = person?.profile_path ? tmdbImageUrl(person.profile_path, "w342") : "";
   const name = person?.name || "";
   const character = person?.character || "";
@@ -178,10 +177,10 @@ export async function generateMetadata({ params }) {
   const episodes = await getEpisodesFromRss();
   const ep = episodes.find((e) => e.slug === slug);
 
-  if (!ep) return { title: "Episode not found - Best Film Ever" };
+  if (!ep) return { title: "Episode not found" };
 
   return {
-    title: `${ep.title} - Best Film Ever`,
+    title: ep.title,
     description: (ep.descriptionText || "").slice(0, 160),
   };
 }
@@ -195,11 +194,11 @@ export default async function EpisodePage({ params }) {
 
   const epNum = getEpisodeNumberIfFullReview(ep.title);
   const isFullReview = epNum !== null;
+  const bfeScorecard = epNum ? getMergedEpisodeDataByNumber(epNum) : null;
 
   let resolved = null;
   let bundle = null;
 
-  // Guardrail: only attempt TMDB matching for full-review episodes
   if (isFullReview) {
     try {
       resolved = await resolveEpisodeMovieCached(ep.title, { revalidate: 86400, minScore: 55 });
@@ -215,18 +214,18 @@ export default async function EpisodePage({ params }) {
   const director = bundle?.director || null;
   const cast = Array.isArray(bundle?.cast) ? bundle.cast : [];
   const images = bundle?.images || null;
+  const ageGameCast = Array.isArray(bundle?.ageGameCast) ? bundle.ageGameCast : [];
 
   const tmdbId = resolved?.movieId ? String(resolved.movieId) : "";
   const fallbackTitle = isFullReview ? stripLeadingEpisodeNumber(ep.title) : ep.title;
 
   const movieTitle = details?.title || resolved?.movie?.title || fallbackTitle || "Episode";
 
-  const year =
-    details?.release_date
-      ? String(details.release_date).slice(0, 4)
-      : resolved?.movie?.release_date
-        ? String(resolved.movie.release_date).slice(0, 4)
-        : "";
+  const year = details?.release_date
+    ? String(details.release_date).slice(0, 4)
+    : resolved?.movie?.release_date
+      ? String(resolved.movie.release_date).slice(0, 4)
+      : "";
 
   const runtime = details?.runtime ? formatRuntime(details.runtime) : "";
   const directorName = director?.name || "";
@@ -234,7 +233,10 @@ export default async function EpisodePage({ params }) {
 
   const posterPath = details?.poster_path || resolved?.movie?.poster_path || "";
   const backdropPath =
-    details?.backdrop_path || images?.backdrops?.[0]?.file_path || resolved?.movie?.backdrop_path || "";
+    details?.backdrop_path ||
+    images?.backdrops?.[0]?.file_path ||
+    resolved?.movie?.backdrop_path ||
+    "";
 
   const posterUrl = posterPath ? tmdbImageUrl(posterPath, "w780") : "";
   const backdropUrl = backdropPath ? tmdbImageUrl(backdropPath, "w1280") : "";
@@ -246,7 +248,6 @@ export default async function EpisodePage({ params }) {
       : "https://letterboxd.com/";
 
   const tmdbUrl = tmdbId ? `https://www.themoviedb.org/movie/${tmdbId}` : "";
-
   const published = formatDateStable(ep.isoDate || ep.pubDate);
 
   const notesPreview = (ep.descriptionText || "")
@@ -256,7 +257,6 @@ export default async function EpisodePage({ params }) {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      {/* Subtle page background using backdrop */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         {backdropUrl ? (
           <div
@@ -267,13 +267,15 @@ export default async function EpisodePage({ params }) {
           <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/85 to-zinc-950" />
-        <div className="absolute inset-0 bg-[radial-gradient(900px_circle_at_20%_0%,rgba(255,255,255,0.06),transparent_60%)]" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
-        <div className="mb-6">
+      <div className="mx-auto max-w-6xl px-6 pb-16 pt-8">
+        <div className="mb-6 flex items-center justify-between gap-4">
           <Link href="/" className="text-sm text-white/70 hover:text-white transition">
             ← Back to episodes
+          </Link>
+          <Link href="/leaderboard" className="text-xs text-emerald-300 hover:underline">
+            🏆 View All-Time BFE Leaderboard →
           </Link>
         </div>
 
@@ -319,21 +321,24 @@ export default async function EpisodePage({ params }) {
                     </ButtonGhost>
                   ) : null}
                 </div>
-
-                {!tmdbId && isFullReview ? (
-                  <div className="mt-4 rounded-2xl bg-black/45 p-3 text-xs text-white/75 ring-1 ring-white/10">
-                    <div className="font-semibold text-white/90">No TMDB match</div>
-                    <div className="mt-1">
-                      This episode didn’t map cleanly to a specific movie on TMDB. Podcast audio + show notes still work.
-                    </div>
-                  </div>
-                ) : null}
               </div>
 
               {/* Title + meta */}
               <div className="min-w-0">
-                <div className="inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-[11px] tracking-[0.25em] text-white/70 ring-1 ring-white/10">
-                  {tmdbId ? "MOVIE" : "EPISODE"}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center rounded-full bg-black/35 px-3 py-1 text-[11px] tracking-[0.25em] text-white/70 ring-1 ring-white/10">
+                    {tmdbId ? "MOVIE" : "EPISODE"}
+                  </span>
+                  {bfeScorecard?.combinedScore ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-bold text-emerald-300 ring-1 ring-emerald-400/40">
+                      ★ {bfeScorecard.combinedScore.toFixed(2)} / 10 Official BFE Score
+                    </span>
+                  ) : null}
+                  {bfeScorecard?.beetrootPct !== undefined ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-500/20 px-3 py-1 text-xs font-semibold text-fuchsia-200 ring-1 ring-fuchsia-400/35">
+                      🥬 {bfeScorecard.beetrootPct}% Beetroot Metric
+                    </span>
+                  ) : null}
                 </div>
 
                 <h1 className="mt-3 text-4xl md:text-6xl font-semibold leading-none">
@@ -353,10 +358,7 @@ export default async function EpisodePage({ params }) {
                   {ep.durationPretty ? <span>Episode length {ep.durationPretty}</span> : null}
                 </div>
 
-                {/* HOSTS (new) */}
                 <HostStrip hostKeys={ep.hostKeys} />
-
-                <div className="mt-2 text-sm text-white/60">{ep.title}</div>
 
                 {tmdbId && genres.length ? (
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -369,6 +371,101 @@ export default async function EpisodePage({ params }) {
             </div>
           </div>
         </section>
+
+        {/* Official BFE Scorecard + Patron Fifth-Seat Breakdown */}
+        {bfeScorecard && (bfeScorecard.combinedScore || bfeScorecard.fifthSeatCount !== undefined) ? (
+          <section className="mt-6 rounded-3xl bg-white/5 p-6 ring-1 ring-white/15">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
+                  🏆 OFFICIAL EPISODE SCORECARD
+                </div>
+                <h2 className="mt-1 text-xl font-semibold text-white">
+                  Host Verdicts & The Patron Fifth-Seat
+                </h2>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                {bfeScorecard.randomWord ? (
+                  <Link
+                    href="/gif"
+                    className="rounded-2xl bg-amber-400/15 px-3.5 py-2 text-xs font-semibold text-amber-200 ring-1 ring-amber-400/30 hover:bg-amber-400/25 transition"
+                  >
+                    🎬 Play #BFERandomWord GIF Game →
+                  </Link>
+                ) : null}
+                <Link
+                  href="/fifth-seat"
+                  className="rounded-2xl bg-emerald-400 px-3.5 py-2 text-xs font-semibold text-zinc-950 hover:bg-emerald-300 transition"
+                >
+                  🪑 Rate Upcoming Films →
+                </Link>
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+              {Object.entries(bfeScorecard.hosts || {}).map(([hk, val]) => (
+                <div
+                  key={hk}
+                  className="rounded-2xl bg-black/35 p-3.5 text-center ring-1 ring-white/10"
+                >
+                  <div className="text-xs capitalize text-white/60">{hk}</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{val}</div>
+                </div>
+              ))}
+
+              {(bfeScorecard.guests || []).map((g) => (
+                <div
+                  key={g.name}
+                  className="rounded-2xl bg-indigo-500/15 p-3.5 text-center ring-1 ring-indigo-400/30"
+                >
+                  <div className="truncate text-xs text-indigo-200">{g.name}</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{g.score}</div>
+                </div>
+              ))}
+
+              <div className="rounded-2xl bg-emerald-500/15 p-3.5 text-center ring-1 ring-emerald-400/35">
+                <div className="text-xs font-semibold text-emerald-300">🪑 5th Seat</div>
+                <div className="mt-1 text-2xl font-bold text-white">
+                  {bfeScorecard.fifthSeatAvg ?? "—"}
+                </div>
+                <div className="text-[10px] text-white/60">
+                  {bfeScorecard.fifthSeatCount || 0} patron
+                  {bfeScorecard.fifthSeatCount === 1 ? "" : "s"}
+                </div>
+              </div>
+
+              {bfeScorecard.combinedScore ? (
+                <div className="rounded-2xl bg-white text-zinc-950 p-3.5 text-center">
+                  <div className="text-xs font-bold uppercase">Official BFE</div>
+                  <div className="mt-1 text-2xl font-black">
+                    {bfeScorecard.combinedScore.toFixed(2)}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+
+            {bfeScorecard.fifthSeatVoters?.length ? (
+              <div className="mt-5 border-t border-white/10 pt-4">
+                <div className="text-xs font-semibold uppercase tracking-wider text-white/50">
+                  Patrons in the Fifth Seat on This Episode
+                </div>
+                <div className="mt-2.5 flex flex-wrap gap-2">
+                  {bfeScorecard.fifthSeatVoters.map((v) => (
+                    <div
+                      key={v.name}
+                      className="rounded-2xl bg-black/40 px-3.5 py-2 text-xs ring-1 ring-white/10"
+                    >
+                      <span className="font-semibold text-white">{v.name}</span>{" "}
+                      <span className="ml-1 font-bold text-emerald-300">{v.score}/10</span>
+                      {v.quote ? <p className="mt-1 text-white/70">“{v.quote}”</p> : null}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </section>
+        ) : null}
 
         {/* Cast strip */}
         {tmdbId && cast.length ? (
@@ -386,29 +483,48 @@ export default async function EpisodePage({ params }) {
           </section>
         ) : null}
 
-        {/* Director callout */}
-        {tmdbId && director ? <DirectorCard director={director} /> : null}
-
         {/* BODY */}
         <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_360px]">
-          {/* Main column */}
           <section className="space-y-8">
             {/* Play episode */}
             {ep.audioUrl ? (
               <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-                <div className="text-[11px] tracking-[0.25em] text-white/60">LISTEN</div>
-                <h2 className="mt-2 text-lg font-semibold text-white">Play the episode</h2>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="text-[11px] tracking-[0.25em] text-white/60">LISTEN</div>
+                    <h2 className="mt-1 text-lg font-semibold text-white">Play the episode</h2>
+                  </div>
+                  <EpisodePlayButton
+                    title={ep.title}
+                    slug={ep.slug}
+                    audioUrl={ep.audioUrl}
+                    posterUrl={posterUrl}
+                  />
+                </div>
                 <div className="mt-4">
                   <audio controls preload="metadata" src={ep.audioUrl} className="w-full" />
                 </div>
               </div>
             ) : null}
 
+            {/* Interactive BFE Endgame Games */}
+            {isFullReview ? (
+              <BfeEndgameGames
+                movieTitle={movieTitle}
+                releaseYear={year}
+                ageGameCast={ageGameCast}
+                budget={details?.budget || 0}
+                revenue={details?.revenue || 0}
+              />
+            ) : null}
+
             {/* Movie overview */}
             {tmdbId && details?.overview ? (
               <div className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
                 <h2 className="text-lg font-semibold text-white">Overview</h2>
-                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/80">{details.overview}</p>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-white/80">
+                  {details.overview}
+                </p>
               </div>
             ) : null}
 
@@ -447,21 +563,24 @@ export default async function EpisodePage({ params }) {
 
           {/* Sidebar */}
           <aside className="space-y-8">
-            <section className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
-              <h2 className="text-lg font-semibold text-white">Links</h2>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
-                  Letterboxd →
-                </ButtonPrimary>
-                {tmdbUrl ? (
-                  <ButtonGhost href={tmdbUrl} title="Open on TMDB">
-                    TMDB →
-                  </ButtonGhost>
-                ) : null}
-              </div>
+            {tmdbId && director ? <DirectorCard director={director} /> : null}
 
-              <div className="mt-4 text-xs text-white/60">
-                {tmdbId ? "Letterboxd is a direct TMDB ID link." : "Letterboxd link is a search fallback (no TMDB match)."}
+            <section className="rounded-3xl bg-white/5 p-6 ring-1 ring-white/10">
+              <h2 className="text-lg font-semibold text-white">Join the Fifth Seat</h2>
+              <p className="mt-2 text-xs leading-relaxed text-white/70">
+                BFE Patrons vote on upcoming films, submit Fifth-Seat rankings (which equal 1 full
+                co-host chair!), and unlock the advance film slate.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <ButtonPrimary href={BFE_LINKS.patreon} title="Support BFE on Patreon">
+                  Join Patreon →
+                </ButtonPrimary>
+                <Link
+                  href="/fifth-seat"
+                  className="inline-flex items-center justify-center rounded-2xl bg-white/10 px-4 py-2 text-sm font-semibold text-white ring-1 ring-white/10 hover:bg-white/15 transition"
+                >
+                  This Week’s Slate
+                </Link>
               </div>
             </section>
 
@@ -498,14 +617,6 @@ export default async function EpisodePage({ params }) {
                   <div className="text-white/60">Episode length</div>
                   <div className="text-white/85">{ep.durationPretty || "—"}</div>
                 </div>
-
-                {/* Hosts in sidebar too (optional but nice) */}
-                {Array.isArray(ep.hostKeys) && ep.hostKeys.length ? (
-                  <div className="pt-2">
-                    <div className="text-white/60 text-sm mb-2">Hosts</div>
-                    <HostStrip hostKeys={ep.hostKeys} />
-                  </div>
-                ) : null}
               </div>
             </section>
           </aside>
