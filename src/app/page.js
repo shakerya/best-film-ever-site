@@ -6,6 +6,7 @@ import {
   tmdbImageUrl,
   resolveEpisodeMovieCached,
   getMovieByIdCached,
+  getVerifiedEpisodeTmdb,
 } from "../lib/tmdb";
 import { getEpisodeNumberIfFullReview, stripLeadingEpisodeNumber } from "../lib/episodeMeta";
 import { HOSTS, hostsForKeys } from "../lib/hosts";
@@ -355,7 +356,9 @@ export default async function Home({ searchParams }) {
   if (q) {
     const qLower = q.toLowerCase();
     working = working.filter((ep) => {
-      const hay = `${decodeEntities(ep.title)} ${decodeEntities(ep.descriptionText || "")}`.toLowerCase();
+      const v = getVerifiedEpisodeTmdb(ep.title);
+      const canonical = v?.movie?.title || "";
+      const hay = `${decodeEntities(ep.title)} ${canonical} ${decodeEntities(ep.descriptionText || "")}`.toLowerCase();
       return hay.includes(qLower);
     });
   }

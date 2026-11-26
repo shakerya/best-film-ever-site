@@ -321,6 +321,17 @@ export default async function EpisodePage({ params }) {
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black/90" />
               <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/35" />
             </div>
+          ) : rssCoverUrl ? (
+            <div className="absolute inset-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={rssCoverUrl}
+                alt=""
+                className="h-full w-full object-cover scale-110 blur-2xl opacity-35"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/50 via-zinc-950/80 to-zinc-950/95" />
+            </div>
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
           )}
@@ -329,7 +340,7 @@ export default async function EpisodePage({ params }) {
             <div className="flex items-start gap-4 sm:gap-6 md:gap-10">
               <div className="w-24 sm:w-40 md:w-[210px] shrink-0">
                 <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-black/30 ring-1 ring-white/15 shadow-2xl">
-                  {posterUrl ? (
+                  {posterPath ? (
                     <Image
                       src={posterUrl}
                       alt={`${movieTitle} poster`}
@@ -338,21 +349,30 @@ export default async function EpisodePage({ params }) {
                       className="h-auto w-full object-cover"
                       priority={false}
                     />
+                  ) : rssCoverUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={rssCoverUrl}
+                      alt={`${movieTitle} cover art`}
+                      className="aspect-square w-full object-cover"
+                    />
                   ) : (
                     <div className="aspect-[2/3] bg-gradient-to-br from-zinc-800 to-zinc-950" />
                   )}
                 </div>
 
-                <div className="mt-3 hidden sm:flex flex-wrap gap-2">
-                  <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
-                    Letterboxd ↗
-                  </ButtonPrimary>
-                  {tmdbUrl ? (
-                    <ButtonGhost href={tmdbUrl} title="Open on TMDB">
-                      TMDB ↗
-                    </ButtonGhost>
-                  ) : null}
-                </div>
+                {isFullReview ? (
+                  <div className="mt-3 hidden sm:flex flex-wrap gap-2">
+                    <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
+                      Letterboxd ↗
+                    </ButtonPrimary>
+                    {tmdbUrl ? (
+                      <ButtonGhost href={tmdbUrl} title="Open on TMDB">
+                        TMDB ↗
+                      </ButtonGhost>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
 
               <div className="min-w-0 flex-1">
@@ -394,25 +414,27 @@ export default async function EpisodePage({ params }) {
             </div>
 
             {/* Mobile External Links + Genre Row */}
-            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 sm:hidden">
-              <div className="flex items-center gap-2">
-                <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
-                  Letterboxd ↗
-                </ButtonPrimary>
-                {tmdbUrl ? (
-                  <ButtonGhost href={tmdbUrl} title="Open on TMDB">
-                    TMDB ↗
-                  </ButtonGhost>
+            {isFullReview ? (
+              <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 sm:hidden">
+                <div className="flex items-center gap-2">
+                  <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
+                    Letterboxd ↗
+                  </ButtonPrimary>
+                  {tmdbUrl ? (
+                    <ButtonGhost href={tmdbUrl} title="Open on TMDB">
+                      TMDB ↗
+                    </ButtonGhost>
+                  ) : null}
+                </div>
+                {tmdbId && genres.length ? (
+                  <div className="flex flex-wrap gap-1">
+                    {genres.slice(0, 2).map((g) => (
+                      <GenreChip key={g.id || g.name}>{g.name}</GenreChip>
+                    ))}
+                  </div>
                 ) : null}
               </div>
-              {tmdbId && genres.length ? (
-                <div className="flex flex-wrap gap-1">
-                  {genres.slice(0, 2).map((g) => (
-                    <GenreChip key={g.id || g.name}>{g.name}</GenreChip>
-                  ))}
-                </div>
-              ) : null}
-            </div>
+            ) : null}
           </div>
         </section>
 
