@@ -195,10 +195,10 @@ export default function GifArenaClient({ activeRound, pastRounds = [] }) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
-              GIF of the Week · Episode {activeRound.epNum}
+              GIF of the Week · EP {activeRound.epNum} · #BFERandomWord
             </div>
             <h1 className="mt-1.5 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white">
-              {activeRound.filmTitle} — #BFERandomWord
+              {activeRound.filmTitle}
             </h1>
             <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400">
               Listen until the Endgame segment of Episode {activeRound.epNum} to catch this week’s

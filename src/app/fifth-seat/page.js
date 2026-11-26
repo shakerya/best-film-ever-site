@@ -66,11 +66,21 @@ export default async function FifthSeatPage({ searchParams }) {
     enrichedSchedule.find((s) => s.id === activeFilm?.id) || enrichedSchedule[0] || null;
   const contributors = await getPatronContributorLeaderboard(state);
 
+  const formattedSpotlightDate = spotlight?.episodeDate
+    ? /^\d{4}-\d{2}-\d{2}$/.test(spotlight.episodeDate)
+      ? new Date(`${spotlight.episodeDate}T12:00:00Z`).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : spotlight.episodeDate
+    : "";
+
   const eyebrow = spotlight
     ? [
         spotlight.status === "open" ? "Up Next on BFE" : "Past Slate",
         spotlight.episodeNum ? `EP ${spotlight.episodeNum}` : "",
-        spotlight.episodeDate || "",
+        formattedSpotlightDate,
       ]
         .filter(Boolean)
         .join(" · ")

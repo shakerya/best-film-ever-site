@@ -120,8 +120,8 @@ export default function SiteHeader() {
           </div>
         </div>
 
-        {/* Mobile Single-Row Segmented Bar (4 equal columns, never wraps into 2 rows) */}
-        <nav className="mt-2 grid grid-cols-4 gap-1 rounded-full bg-white/[0.04] p-1 ring-1 ring-white/[0.08] md:hidden">
+        {/* Mobile Single-Row Segmented Bar (4 equal columns, never wraps or clips) */}
+        <nav className="mt-2 grid grid-cols-4 gap-0.5 rounded-full bg-white/[0.04] p-1 ring-1 ring-white/[0.08] md:hidden">
           {NAV_ITEMS.map((item) => {
             const active =
               item.href === "/"
@@ -132,7 +132,7 @@ export default function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`truncate text-center rounded-full px-2 py-1 text-[11px] font-medium transition ${
+                className={`whitespace-nowrap text-center rounded-full px-1 py-1 text-[11px] font-medium transition ${
                   active
                     ? "bg-white text-zinc-950 font-semibold shadow-sm"
                     : "text-zinc-400 hover:text-white"

@@ -76,18 +76,18 @@ export default function BfeEndgameGames({
             {ageResults.map((actor) => (
               <div
                 key={actor.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-zinc-900/70 p-3 ring-1 ring-white/[0.06]"
+                className="flex items-center justify-between gap-2.5 rounded-xl bg-zinc-900/70 p-2.5 sm:p-3 ring-1 ring-white/[0.06]"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex flex-1 items-center gap-2.5 sm:gap-3 min-w-0">
                   {actor.profileUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={actor.profileUrl}
                       alt={actor.name}
-                      className="h-10 w-10 rounded-lg object-cover shrink-0"
+                      className="h-9 w-9 sm:h-10 sm:w-10 rounded-lg object-cover shrink-0"
                     />
                   ) : null}
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-medium text-white">{actor.name}</div>
                     {actor.character ? (
                       <div className="truncate text-xs text-zinc-400">as {actor.character}</div>
@@ -95,7 +95,7 @@ export default function BfeEndgameGames({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2.5 shrink-0">
+                <div className="flex items-center gap-2 shrink-0">
                   <input
                     type="number"
                     min={1}
@@ -106,14 +106,16 @@ export default function BfeEndgameGames({
                       setGuesses((prev) => ({ ...prev, [actor.id]: e.target.value }))
                     }
                     placeholder="Age"
-                    className="w-16 sm:w-20 rounded-xl bg-zinc-950 px-2.5 py-1.5 sm:px-3 sm:py-2 text-center text-sm font-semibold text-white ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
+                    className="w-14 sm:w-20 rounded-xl bg-zinc-950 px-2 py-1.5 sm:px-3 sm:py-2 text-center text-sm font-semibold text-white ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
                   />
                   {ageRevealed ? (
-                    <div className="text-right min-w-[110px] sm:min-w-[125px] tabular-nums">
+                    <div className="text-right min-w-[88px] sm:min-w-[120px] tabular-nums">
                       <div className="text-xs font-semibold text-white">
                         Actual: {actor.ageAtRelease}
                       </div>
-                      <div className="text-[11px] text-amber-300">{actor.result.label}</div>
+                      <div className="text-[10px] sm:text-[11px] text-amber-300">
+                        {actor.result.label}
+                      </div>
                     </div>
                   ) : null}
                 </div>

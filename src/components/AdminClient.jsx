@@ -370,23 +370,24 @@ export default function AdminClient() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="grid grid-cols-3 sm:inline-flex items-center gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08]">
           {[
-            ["tweets", "Tweet & Post Kit"],
-            ["broadcast", "Recording Screen"],
-            ["schedule", "Film Slate"],
-          ].map(([key, lbl]) => (
+            ["tweets", "Post Kit", "Tweet & Post Kit"],
+            ["broadcast", "Recording", "Recording Screen"],
+            ["schedule", "Film Slate", "Film Slate"],
+          ].map(([key, mobileLbl, desktopLbl]) => (
             <button
               key={key}
               type="button"
               onClick={() => setTab(key)}
-              className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+              className={`whitespace-nowrap text-center rounded-full px-2 sm:px-3.5 py-1.5 text-[11px] sm:text-xs font-medium transition ${
                 tab === key
                   ? "bg-white text-zinc-950 font-semibold"
                   : "text-zinc-400 hover:text-white"
               }`}
             >
-              {lbl}
+              <span className="sm:hidden">{mobileLbl}</span>
+              <span className="hidden sm:inline">{desktopLbl}</span>
             </button>
           ))}
         </div>
