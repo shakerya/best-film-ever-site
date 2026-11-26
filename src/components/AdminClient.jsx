@@ -495,20 +495,53 @@ export default function AdminClient() {
           <aside className="space-y-6 h-fit lg:sticky lg:top-20">
             <div className="rounded-3xl bg-zinc-900/60 p-5 ring-1 ring-white/[0.08] space-y-3">
               <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-                Automatic X / Twitter Card Preview
+                How It Looks on X / Twitter
               </div>
               <p className="text-xs text-zinc-400">
-                Whenever Ian tweets{" "}
+                Whenever you tweet{" "}
                 <code className="text-zinc-200">bestfilmeverpod.fyi/fifth-seat</code>, X
-                automatically renders this live poster card for the active film:
+                automatically turns it into this live poster post:
               </p>
-              <div className="overflow-hidden rounded-2xl bg-zinc-950 ring-1 ring-white/15">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/fifth-seat/opengraph-image"
-                  alt="Live X OpenGraph Card Preview"
-                  className="w-full h-auto object-cover"
-                />
+
+              {/* Simulated X / Twitter Dark-Mode Timeline Post */}
+              <div
+                id="x-post-preview-card"
+                className="rounded-2xl bg-black p-4 ring-1 ring-zinc-800 space-y-3"
+              >
+                <div className="flex items-start gap-2.5">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-rose-600 text-xs font-black tracking-tight text-white ring-1 ring-white/15">
+                    BFE
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <span className="truncate font-bold text-white">Best Film Ever</span>
+                      <span className="truncate text-zinc-500">@bestfilmeverpod · 2m</span>
+                    </div>
+                    <p className="mt-1.5 text-xs leading-relaxed text-zinc-100">
+                      Put out a fleece! Next up on Best Film Ever we’re tackling{" "}
+                      <strong>{filmWithYear}</strong>. Where do you land for the Beetroot Metric —
+                      Great, Good, OK, or Poor?{" "}
+                      <span className="text-sky-400">#BFEPoll {filmHashtag}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden rounded-xl bg-zinc-950 ring-1 ring-zinc-800">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/fifth-seat/opengraph-image"
+                    alt="Live X OpenGraph Card Preview"
+                    className="w-full h-auto object-cover block"
+                  />
+                  <span className="absolute bottom-2 left-2 rounded bg-black/80 px-1.5 py-0.5 text-[10px] font-medium text-white ring-1 ring-white/10">
+                    bestfilmeverpod.fyi
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between px-1 text-[11px] text-zinc-500">
+                  <span>From bestfilmeverpod.fyi</span>
+                  <span>💬 6 · 🔁 9 · ❤️ 28</span>
+                </div>
               </div>
             </div>
 
