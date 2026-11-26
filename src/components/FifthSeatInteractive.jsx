@@ -20,6 +20,7 @@ export default function FifthSeatInteractive({
   googleFormLink,
   initialFifthSeatCount = 0,
   initialBeetroot,
+  initialMyBeetChoice = "",
 }) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(isPatron ? "fifth-seat" : "beetroot");
@@ -40,22 +41,28 @@ export default function FifthSeatInteractive({
   const [fifthCount, setFifthCount] = useState(initialFifthSeatCount);
 
   const [beetSummary, setBeetSummary] = useState(initialBeetroot);
-  const [myBeetChoice, setMyBeetChoice] = useState("");
+  const [myBeetChoice, setMyBeetChoice] = useState(initialMyBeetChoice || "");
   const [beetComment, setBeetComment] = useState("");
   const [submittingBeet, setSubmittingBeet] = useState(false);
   const [beetError, setBeetError] = useState("");
   const [beetSaved, setBeetSaved] = useState(false);
+  const [beetStatusNote, setBeetStatusNote] = useState("");
 
   useEffect(() => {
     try {
       const savedName = localStorage.getItem("bfe_patron_name") || "";
       if (savedName) setName(savedName);
-      const savedVote = localStorage.getItem(`bfe_beetroot_${film.id}`) || "";
-      if (savedVote) setMyBeetChoice(savedVote);
+      if (initialMyBeetChoice) {
+        setMyBeetChoice(initialMyBeetChoice);
+        localStorage.setItem(`bfe_beetroot_${film.id}`, initialMyBeetChoice);
+      } else {
+        const savedVote = localStorage.getItem(`bfe_beetroot_${film.id}`) || "";
+        if (savedVote) setMyBeetChoice(savedVote);
+      }
     } catch {
       // ignore
     }
-  }, [film.id]);
+  }, [film.id, initialMyBeetChoice]);
 
   async function handlePassphraseUnlock(e) {
     e.preventDefault();
@@ -135,13 +142,18 @@ export default function FifthSeatInteractive({
 
   async function handleBeetrootVote(choiceKey, withComment = false) {
     setBeetError("");
-    setSubmittingBeet(true);
-    let prevChoice = "";
-    try {
-      prevChoice = localStorage.getItem(`bfe_beetroot_${film.id}`) || "";
-    } catch {
-      // ignore
+    if (film.status === "closed") {
+      setBeetError("Voting has closed for this episode.");
+      return;
     }
+    // Ignore repeat clicks on the already-locked-in choice (unless posting a comment)
+    if (!withComment && myBeetChoice === choiceKey) {
+      setBeetStatusNote("Your vote is already locked in — tap a different option anytime to switch.");
+      return;
+    }
+
+    setSubmittingBeet(true);
+    setBeetStatusNote("");
 
     try {
       const res = await fetch("/api/beetroot", {
@@ -150,7 +162,6 @@ export default function FifthSeatInteractive({
         body: JSON.stringify({
           filmId: film.id,
           choice: choiceKey,
-          prevChoice: withComment ? choiceKey : prevChoice,
           name: name.trim(),
           comment: withComment ? beetComment.trim() : "",
         }),
@@ -162,7 +173,16 @@ export default function FifthSeatInteractive({
         setMyBeetChoice(choiceKey);
         setBeetSummary(data.summary);
         setBeetSaved(true);
-        if (withComment) setBeetComment("");
+        if (withComment) {
+          setBeetComment("");
+          setBeetStatusNote("Your take is saved for Fledgling Fandom.");
+        } else if (data.switchedFrom) {
+          setBeetStatusNote(`Switched your single ballot from ${data.switchedFrom.toUpperCase()} to ${choiceKey.toUpperCase()}.`);
+        } else if (data.alreadySameChoice) {
+          setBeetStatusNote("1 vote per listener — your ballot is already counted.");
+        } else {
+          setBeetStatusNote("Ballot locked in (1 vote per listener — tap another option to change).");
+        }
         try {
           localStorage.setItem(`bfe_beetroot_${film.id}`, choiceKey);
         } catch {
@@ -466,9 +486,10 @@ export default function FifthSeatInteractive({
             </div>
             <h3 className="mt-1 text-xl font-semibold text-white">{film.title} is a…</h3>
             <p className="mt-1 text-xs text-zinc-400">
-              Open to every listener. <strong className="text-zinc-200">Great + Good</strong>{" "}
-              combine for the episode’s <strong className="text-zinc-200">Beetroot Metric %</strong>{" "}
-              (10+ votes required for official qualification).
+              Open to every listener (1 ballot per person).{" "}
+              <strong className="text-zinc-200">Great + Good</strong> combine for the episode’s{" "}
+              <strong className="text-zinc-200">Beetroot Metric %</strong> (10+ votes required for
+              official qualification).
             </p>
           </div>
 
@@ -477,17 +498,18 @@ export default function FifthSeatInteractive({
               const count = Number(beetSummary?.[opt.key] || 0);
               const pct = totalBeet > 0 ? Math.round((count / totalBeet) * 100) : 0;
               const selected = myBeetChoice === opt.key;
+              const pollClosed = film.status === "closed";
 
               return (
                 <button
                   key={opt.key}
                   type="button"
-                  disabled={submittingBeet}
+                  disabled={submittingBeet || pollClosed}
                   onClick={() => handleBeetrootVote(opt.key, false)}
                   className={`relative overflow-hidden rounded-2xl p-4 text-left transition ${
                     selected
                       ? "bg-white/[0.10] ring-1 ring-amber-300"
-                      : "bg-zinc-900/70 ring-1 ring-white/[0.08] hover:bg-zinc-900 hover:ring-white/20"
+                      : "bg-zinc-900/70 ring-1 ring-white/[0.08] hover:bg-zinc-900 hover:ring-white/20 disabled:opacity-60"
                   }`}
                 >
                   {totalBeet > 0 ? (
@@ -498,19 +520,26 @@ export default function FifthSeatInteractive({
                   ) : null}
                   <div className="relative flex items-center justify-between gap-2">
                     <div>
-                      <div className="text-[15px] font-semibold text-white">{opt.label}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[15px] font-semibold text-white">{opt.label}</span>
+                        {selected ? (
+                          <span className="rounded-full bg-amber-300/20 px-2 py-0.5 text-[10px] font-semibold text-amber-300 ring-1 ring-amber-300/40">
+                            ✓ Your Vote
+                          </span>
+                        ) : null}
+                      </div>
                       <div className="mt-0.5 text-xs text-zinc-400">{opt.desc}</div>
                     </div>
                     {totalBeet > 0 ? (
-                      <div className="text-right tabular-nums">
+                      <div className="text-right tabular-nums shrink-0">
                         <div className="text-base font-semibold text-white">{pct}%</div>
                         <div className="text-[11px] text-zinc-500">
                           {count} vote{count === 1 ? "" : "s"}
                         </div>
                       </div>
                     ) : (
-                      <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-zinc-300">
-                        Vote
+                      <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] text-zinc-300 shrink-0">
+                        {pollClosed ? "Closed" : "Vote"}
                       </span>
                     )}
                   </div>
@@ -518,6 +547,10 @@ export default function FifthSeatInteractive({
               );
             })}
           </div>
+
+          {beetStatusNote ? (
+            <div className="text-xs text-amber-300/90">{beetStatusNote}</div>
+          ) : null}
 
           {totalBeet > 0 ? (
             <div className="rounded-2xl bg-zinc-900/70 p-4 ring-1 ring-white/[0.08]">

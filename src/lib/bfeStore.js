@@ -1,4 +1,5 @@
 // src/lib/bfeStore.js
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import seedEpisodes from "@/data/seedEpisodes.json";
@@ -460,11 +461,91 @@ export function buildGoogleFormLink(film, evergreenConfig = {}) {
   };
 }
 
+const VOTER_HASH_SALT = process.env.BFE_VOTER_SALT || "bfe-beetroot-ballot-v1";
+
+function sha256Short(input) {
+  return crypto
+    .createHash("sha256")
+    .update(`${VOTER_HASH_SALT}:${input}`)
+    .digest("hex")
+    .slice(0, 24);
+}
+
+/**
+ * Normalizes OS/device family (ignoring browser engine differences like X-WebView vs Safari vs Chrome
+ * or Incognito mode) so one physical device on one IP maps to one stable deviceHash, while different
+ * devices in the same household (e.g. an iPhone and a Mac or Android on the same Wi-Fi) stay distinct.
+ */
+export function buildVoterFingerprints({ voterToken = "", ip = "", userAgent = "" } = {}) {
+  const cleanToken = String(voterToken || "").trim();
+  const cookieHash = cleanToken ? `tok_${sha256Short(cleanToken)}` : "";
+
+  const cleanIp = String(ip || "")
+    .split(",")[0]
+    .trim();
+  const ua = String(userAgent || "").toLowerCase();
+  let deviceClass = "other";
+  if (ua.includes("iphone")) deviceClass = "iphone";
+  else if (ua.includes("ipad")) deviceClass = "ipad";
+  else if (ua.includes("android")) deviceClass = "android";
+  else if (ua.includes("macintosh") || ua.includes("mac os")) deviceClass = "mac";
+  else if (ua.includes("windows")) deviceClass = "windows";
+  else if (ua.includes("linux")) deviceClass = "linux";
+
+  const deviceHash =
+    cleanIp && cleanIp !== "unknown" ? `dev_${sha256Short(`${cleanIp}|${deviceClass}`)}` : "";
+
+  return { cookieHash, deviceHash };
+}
+
+export function findExistingBeetrootBallot(pollData, { cookieHash = "", deviceHash = "" } = {}) {
+  const ballots = pollData?.ballots;
+  if (!ballots || typeof ballots !== "object") return null;
+
+  if (cookieHash && ballots[cookieHash]) {
+    const b = ballots[cookieHash];
+    const choice = typeof b === "string" ? b : b?.choice;
+    if (choice) return { voterKey: cookieHash, choice };
+  }
+
+  if (deviceHash) {
+    if (ballots[deviceHash]) {
+      const b = ballots[deviceHash];
+      const choice = typeof b === "string" ? b : b?.choice;
+      if (choice) return { voterKey: deviceHash, choice };
+    }
+    for (const [k, v] of Object.entries(ballots)) {
+      if (v && typeof v === "object" && v.deviceHash && v.deviceHash === deviceHash && v.choice) {
+        return { voterKey: k, choice: v.choice };
+      }
+    }
+  }
+
+  return null;
+}
+
+export function tallyBeetrootBallots(ballots = {}) {
+  const counts = { great: 0, good: 0, ok: 0, poor: 0 };
+  for (const val of Object.values(ballots || {})) {
+    const c = typeof val === "string" ? val : val?.choice;
+    if (c && Object.prototype.hasOwnProperty.call(counts, c)) {
+      counts[c] += 1;
+    }
+  }
+  return counts;
+}
+
 export function computeBeetrootSummary(pollData) {
-  const great = Number(pollData?.great || 0);
-  const good = Number(pollData?.good || 0);
-  const ok = Number(pollData?.ok || 0);
-  const poor = Number(pollData?.poor || 0);
+  const hasBallots =
+    pollData?.ballots &&
+    typeof pollData.ballots === "object" &&
+    Object.keys(pollData.ballots).length > 0;
+  const tallied = hasBallots ? tallyBeetrootBallots(pollData.ballots) : null;
+
+  const great = tallied ? tallied.great : Number(pollData?.great || 0);
+  const good = tallied ? tallied.good : Number(pollData?.good || 0);
+  const ok = tallied ? tallied.ok : Number(pollData?.ok || 0);
+  const poor = tallied ? tallied.poor : Number(pollData?.poor || 0);
   const total = great + good + ok + poor;
   const pct = total > 0 ? Math.round(((great + good) / total) * 100) : null;
   return {

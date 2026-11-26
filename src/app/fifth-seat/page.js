@@ -1,11 +1,14 @@
 // src/app/fifth-seat/page.js
 import Link from "next/link";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   readBfeState,
   buildGoogleFormLink,
   computeFifthSeatSummary,
   computeBeetrootSummary,
+  buildVoterFingerprints,
+  findExistingBeetrootBallot,
   getPatronContributorLeaderboard,
   BFE_LINKS,
 } from "@/lib/bfeStore";
@@ -65,6 +68,18 @@ export default async function FifthSeatPage({ searchParams }) {
   const spotlight =
     enrichedSchedule.find((s) => s.id === activeFilm?.id) || enrichedSchedule[0] || null;
   const contributors = await getPatronContributorLeaderboard(state);
+
+  const [cookieStore, reqHeaders] = await Promise.all([cookies(), headers()]);
+  const voterToken = cookieStore.get("bfe_voter_token")?.value || "";
+  const clientIp =
+    reqHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    reqHeaders.get("x-real-ip")?.trim() ||
+    "";
+  const userAgent = reqHeaders.get("user-agent") || "";
+  const voterFp = buildVoterFingerprints({ voterToken, ip: clientIp, userAgent });
+  const initialMyBeetChoice = spotlight
+    ? findExistingBeetrootBallot(state.beetroot?.[spotlight.id], voterFp)?.choice || ""
+    : "";
 
   const formattedSpotlightDate = spotlight?.episodeDate
     ? /^\d{4}-\d{2}-\d{2}$/.test(spotlight.episodeDate)
@@ -232,6 +247,7 @@ export default async function FifthSeatPage({ searchParams }) {
                 googleFormLink={spotlight.googleFormLink}
                 initialFifthSeatCount={spotlight.fifthSummary.count}
                 initialBeetroot={spotlight.beetSummary}
+                initialMyBeetChoice={initialMyBeetChoice}
               />
             </div>
           </section>
