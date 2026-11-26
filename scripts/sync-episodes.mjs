@@ -15,9 +15,12 @@ import zlib from "node:zlib";
 import { XMLParser } from "fast-xml-parser";
 
 const execFileAsync = promisify(execFile);
-const LOCAL_WHISPER_BIN = "/Users/aashrey/.gemini/antigravity/scratch/whisper-engine/main";
+const LOCAL_WHISPER_BIN =
+  process.env.WHISPER_BIN || "/Users/aashrey/.gemini/antigravity/scratch/whisper-engine/main";
 const LOCAL_WHISPER_MODEL =
+  process.env.WHISPER_MODEL ||
   "/Users/aashrey/.gemini/antigravity/scratch/whisper-engine/models/ggml-base.en.bin";
+const DEFAULT_PODCAST_RSS_URL = "https://feed.podbean.com/bestfilmever/feed.xml";
 
 try {
   dns.setDefaultResultOrder("ipv4first");
@@ -147,8 +150,7 @@ export function getIndexedSlugsAndEpNums() {
 }
 
 export async function fetchRssEpisodes() {
-  const rssUrl = process.env.PODCAST_RSS_URL;
-  if (!rssUrl) throw new Error("Missing PODCAST_RSS_URL in .env.local");
+  const rssUrl = process.env.PODCAST_RSS_URL || DEFAULT_PODCAST_RSS_URL;
   const res = await fetchRetry(rssUrl, {}, { retries: 3, timeoutMs: 30000 });
   if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`);
   const xml = await res.text();
@@ -323,21 +325,38 @@ async function transcribeWithLocalMetalWhisper(buf, slug) {
   try {
     fs.writeFileSync(mp3Path, buf);
     const t0 = Date.now();
-    console.log("  [Local M3 Metal] Decoding MP3 -> 16kHz WAV via macOS CoreAudio (afconvert)...");
-    await execFileAsync("/usr/bin/afconvert", [
-      "-f",
-      "WAVE",
-      "-d",
-      "LEI16@16000",
-      "-c",
-      "1",
-      mp3Path,
-      wavPath,
-    ]);
+    if (fs.existsSync("/usr/bin/afconvert")) {
+      console.log("  [Local M3 Metal] Decoding MP3 -> 16kHz WAV via macOS CoreAudio (afconvert)...");
+      await execFileAsync("/usr/bin/afconvert", [
+        "-f",
+        "WAVE",
+        "-d",
+        "LEI16@16000",
+        "-c",
+        "1",
+        mp3Path,
+        wavPath,
+      ]);
+    } else {
+      console.log("  [Whisper CLI] Decoding MP3 -> 16kHz WAV via ffmpeg...");
+      await execFileAsync("ffmpeg", [
+        "-y",
+        "-i",
+        mp3Path,
+        "-ar",
+        "16000",
+        "-ac",
+        "1",
+        "-c:a",
+        "pcm_s16le",
+        wavPath,
+      ]);
+    }
     // Free MP3 immediately so temp disk footprint stays minimal
     fs.unlinkSync(mp3Path);
 
-    console.log("  [Local M3 Metal] Running Apple Metal GPU whisper.cpp (ggml-base.en)...");
+    const threads = String(Math.max(4, Math.min(8, os.cpus()?.length || 4)));
+    console.log(`  [Whisper CLI] Running whisper.cpp (${threads} threads)...`);
     await execFileAsync(
       LOCAL_WHISPER_BIN,
       [
@@ -352,7 +371,7 @@ async function transcribeWithLocalMetalWhisper(buf, slug) {
         "-of",
         outPrefix,
         "-t",
-        "6",
+        threads,
       ],
       { maxBuffer: 64 * 1024 * 1024 }
     );
@@ -364,7 +383,7 @@ async function transcribeWithLocalMetalWhisper(buf, slug) {
       .filter(Boolean)
       .join("\n");
     const elapsedSec = ((Date.now() - t0) / 1000).toFixed(1);
-    console.log(`  [Local M3 Metal] Transcribed in ${elapsedSec}s!`);
+    console.log(`  [Whisper CLI] Transcribed in ${elapsedSec}s!`);
     return cleaned;
   } finally {
     for (const f of [mp3Path, wavPath, outTxtPath]) {
@@ -378,12 +397,8 @@ async function transcribeWithLocalMetalWhisper(buf, slug) {
 }
 
 async function transcribeMp3Buffer(buf, filename) {
-  // Priority 1: Local Apple Silicon Metal Whisper (100% free, zero rate limits, zero 503s!)
-  if (
-    fs.existsSync(LOCAL_WHISPER_BIN) &&
-    fs.existsSync(LOCAL_WHISPER_MODEL) &&
-    fs.existsSync("/usr/bin/afconvert")
-  ) {
+  // Priority 1: Local whisper.cpp (Apple Metal on macOS or cached CPU binary in GitHub Actions)
+  if (fs.existsSync(LOCAL_WHISPER_BIN) && fs.existsSync(LOCAL_WHISPER_MODEL)) {
     return transcribeWithLocalMetalWhisper(buf, filename);
   }
 

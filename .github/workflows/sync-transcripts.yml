@@ -1,0 +1,86 @@
+name: Sync Weekly BFE Podcast Transcripts
+
+on:
+  schedule:
+    # Tuesday 13:30 UTC & 21:30 UTC (catches weekly Tuesday drops + late uploads)
+    - cron: "30 13 * * 2"
+    - cron: "30 21 * * 2"
+    # Sunday 20:30 UTC (catches weekend See It or Skip It? / Media Madness bonus episodes)
+    - cron: "30 20 * * 0"
+  workflow_dispatch:
+    inputs:
+      latest_count:
+        description: "How many recent RSS episodes to check and transcribe if missing"
+        required: false
+        default: "3"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bfe-transcript-sync
+  cancel-in-progress: false
+
+jobs:
+  sync-transcripts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache whisper.cpp binary and ggml-base.en model
+        id: whisper-cache
+        uses: actions/cache@v4
+        with:
+          path: /tmp/whisper-cache
+          key: whisper-cpp-v1.7.2-base-en-ubuntu-x64
+
+      - name: Build whisper.cpp and download model (on cache miss)
+        if: steps.whisper-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update && sudo apt-get install -y build-essential cmake ffmpeg curl
+          git clone --depth 1 --branch v1.7.2 https://github.com/ggerganov/whisper.cpp.git /tmp/whisper-src
+          cmake -B /tmp/whisper-src/build -S /tmp/whisper-src -DCMAKE_BUILD_TYPE=Release
+          cmake --build /tmp/whisper-src/build --config Release -j 4
+          mkdir -p /tmp/whisper-cache
+          cp /tmp/whisper-src/build/bin/whisper-cli /tmp/whisper-cache/whisper-bin || cp /tmp/whisper-src/build/bin/main /tmp/whisper-cache/whisper-bin
+          chmod +x /tmp/whisper-cache/whisper-bin
+          curl -L --fail -o /tmp/whisper-cache/ggml-base.en.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin
+
+      - name: Ensure ffmpeg is installed
+        run: which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Check RSS and transcribe any new unindexed episodes
+        env:
+          PODCAST_RSS_URL: "https://feed.podbean.com/bestfilmever/feed.xml"
+          WHISPER_BIN: "/tmp/whisper-cache/whisper-bin"
+          WHISPER_MODEL: "/tmp/whisper-cache/ggml-base.en.bin"
+        run: |
+          COUNT="${{ github.event.inputs.latest_count || '3' }}"
+          node scripts/sync-episodes.mjs --latest "$COUNT"
+
+      - name: Commit and push new transcripts to main (triggers Vercel deploy)
+        run: |
+          if [ -n "$(git status --porcelain src/data/synced-transcripts/)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/data/synced-transcripts/
+            git commit -m "Auto-sync latest BFE episode transcript(s)"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          else
+            echo "No new transcripts needed — archive is already up to date."
+          fi
