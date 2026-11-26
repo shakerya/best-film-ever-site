@@ -1,4 +1,6 @@
 // src/lib/tmdb.js
+import episodeTmdbMap from "@/data/episodeTmdbMap.json";
+import { getEpisodeNumberIfFullReview } from "@/lib/episodeMeta";
 
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
@@ -209,6 +211,16 @@ export async function buildAgeGameCast(details, castSlice = []) {
    Episode title → TMDB matching
 -------------------------------- */
 
+function decodeEntities(s) {
+  return String(s || "")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;|&#8217;|&#8216;/gi, "'")
+    .replace(/&#8211;|&#8212;/gi, "-")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+}
+
 function stripDiacritics(s) {
   try {
     return s.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
@@ -217,29 +229,69 @@ function stripDiacritics(s) {
   }
 }
 
-function normalizeTitle(s) {
-  return stripDiacritics(String(s || ""))
+// Preserves leading/inner articles ("The Batman" !== "Batman", "The Mask" !== "Mask")
+function exactNormalizeTitle(s) {
+  return stripDiacritics(decodeEntities(String(s || "")))
     .toLowerCase()
     .replace(/&/g, " and ")
-    .replace(/['’]/g, "")
+    .replace(/\+/g, " plus ")
+    .replace(/['’‘`]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function looseNormalizeTitle(s) {
+  return exactNormalizeTitle(s)
     .replace(/\b(the|a|an)\b/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function extractYear(raw) {
-  const s = String(raw || "");
-  const m = s.match(/\((19|20)\d{2}\)/) || s.match(/\b(19|20)\d{2}\b/);
-  if (!m) return "";
-  const y = m[0].replace(/[()]/g, "");
-  return /^\d{4}$/.test(y) ? y : "";
+export function getVerifiedEpisodeTmdb(epTitleOrNum) {
+  const epNum =
+    typeof epTitleOrNum === "number"
+      ? epTitleOrNum
+      : /^\d+$/.test(String(epTitleOrNum || "").trim())
+        ? Number(epTitleOrNum)
+        : getEpisodeNumberIfFullReview(epTitleOrNum);
+
+  if (!epNum) return null;
+  const entry = episodeTmdbMap[String(epNum)];
+  if (!entry || !entry.tmdbId) return null;
+
+  return {
+    movieId: Number(entry.tmdbId),
+    movie: {
+      id: Number(entry.tmdbId),
+      title: entry.title,
+      release_date: entry.year ? `${entry.year}-01-01` : "",
+      poster_path: entry.posterPath || "",
+      backdrop_path: entry.backdropPath || "",
+    },
+    guess: {
+      query: entry.title,
+      year: entry.year || "",
+    },
+    score: 999,
+    verified: true,
+  };
+}
+
+function extractExplicitYear(raw) {
+  const s = decodeEntities(String(raw || ""));
+  const m = s.match(/\(((?:19|20)\d{2})\)/);
+  return m ? m[1] : "";
+}
+
+function extractYearsFromDescription(desc) {
+  const matches = decodeEntities(String(desc || "")).match(/\b(19\d{2}|20[0-3]\d)\b/g) || [];
+  return new Set(matches);
 }
 
 function stripEpisodePrefixes(raw) {
-  let t = String(raw || "").trim();
+  let t = decodeEntities(String(raw || "")).replace(/\s+/g, " ").trim();
 
-  // Common prefixes / formats
   t = t
     .replace(/^episode\s*\d+\s*[-:–—]\s*/i, "")
     .replace(/^ep\.?\s*\d+\s*[-:–—]\s*/i, "")
@@ -252,38 +304,23 @@ function stripEpisodePrefixes(raw) {
   return t;
 }
 
-function stripTrailingGuestParens(t) {
-  // Remove trailing "(w/ ...)" or "(with ...)" etc, but keep "(YYYY)"
-  return String(t || "")
-    .replace(/\s*\((?!\d{4}\)).*?\)\s*$/g, "")
-    .trim();
-}
-
-function likelyNonMovieEpisode(raw) {
-  const n = normalizeTitle(raw);
-  // Keep this conservative: only flags “likely” non-movie; we still attempt matching.
-  const needles = [
-    "mailbag",
-    "roundtable",
-    "draft",
-    "rank",
-    "ranking",
-    "top",
-    "best of",
-    "year in review",
-    "preview",
-    "predictions",
-    "oscars",
-    "awards",
-    "trailer",
-    "interview",
-    "q a",
-    "q and a",
-    "patreon",
-    "bonus",
-    "special",
-  ];
-  return needles.some((k) => n.includes(normalizeTitle(k)));
+function cleanEpisodeMovieTitle(tRaw) {
+  let t = String(tRaw || "").replace(/\*+$/, "").trim();
+  let prev = "";
+  while (t !== prev) {
+    prev = t;
+    t = t
+      .replace(/\s*\((?!(?:19|20)\d{2}\))[^()]*\)\s*$/g, "")
+      .replace(/\s*\[[^\]]*\]\s*$/g, "")
+      .replace(
+        /\s+[-–—]\s*(?:feat\.?|featuring|with|w\/|bonus|special|live\b|updated\b|warning\b|audience\b).*$/i,
+        ""
+      )
+      .replace(/\s+(?:&|and)\s+(?:remembering\b|bfe\b).*$/i, "")
+      .replace(/\*+$/, "")
+      .trim();
+  }
+  return t;
 }
 
 function tokenSet(norm) {
@@ -302,93 +339,105 @@ function jaccard(a, b) {
   return union ? inter / union : 0;
 }
 
-function scoreResult(candidateQuery, resultTitle, resultYear, desiredYear, result) {
-  const qn = normalizeTitle(candidateQuery);
-  const rn = normalizeTitle(resultTitle);
+function scoreResult(candidateQuery, resultTitle, resultYear, desiredYear, result, descYears) {
+  const qExact = exactNormalizeTitle(candidateQuery);
+  const rExact = exactNormalizeTitle(resultTitle);
+  const rOrigExact = exactNormalizeTitle(result?.original_title || "");
+  const qLoose = looseNormalizeTitle(candidateQuery);
+  const rLoose = looseNormalizeTitle(resultTitle);
 
   let score = 0;
 
-  // Title similarity (dominant)
-  const jac = jaccard(qn, rn);
-  score += jac * 60;
-
-  if (rn === qn) score += 40;
-  else if (rn.startsWith(qn) || qn.startsWith(rn)) score += 25;
-
-  // Year alignment (helpful but not required)
-  if (desiredYear && resultYear) {
-    const diff = Math.abs(Number(resultYear) - Number(desiredYear));
-    if (diff === 0) score += 20;
-    else if (diff === 1) score += 10;
-    else score -= Math.min(diff * 2, 20);
+  if (rExact === qExact || (rOrigExact && rOrigExact === qExact)) {
+    score += 100;
+  } else if (qLoose && rLoose === qLoose) {
+    // Lower than exact match so "Mask" prefers "Mask" over "The Mask" and "Batman" prefers "Batman" over "The Batman"
+    score += 72;
+  } else {
+    score += jaccard(qExact, rExact) * 65;
+    if (rExact.startsWith(qExact) || qExact.startsWith(rExact)) score += 18;
   }
 
-  // Prefer more “real” movies
+  // Explicit year in title
+  if (desiredYear && resultYear) {
+    const diff = Math.abs(Number(resultYear) - Number(desiredYear));
+    if (diff === 0) score += 40;
+    else if (diff === 1) score += 20; // Festival vs wide theatrical year (e.g. Crash 2004/2005)
+    else score -= Math.min(diff * 3, 35);
+  }
+
+  // Release year mentioned in podcast show notes disambiguates remakes (e.g. The Karate Kid 1984 vs 2010)
+  if (resultYear && descYears && descYears.has(resultYear)) {
+    score += 30;
+  }
+
+  // Prefer established theatrical releases over 0-vote shorts with colliding titles
   const voteCount = Number(result?.vote_count || 0);
   const popularity = Number(result?.popularity || 0);
-  score += Math.log10(voteCount + 1) * 3;
+  score += Math.log10(voteCount + 1) * 4;
   score += Math.log10(popularity + 1);
+  if (voteCount < 15) score -= 25;
 
   return score;
 }
 
 function buildCandidates(epTitle) {
-  const raw = String(epTitle || "").trim();
-  const year = extractYear(raw);
+  const raw = decodeEntities(String(epTitle || "")).trim();
+  const year = extractExplicitYear(raw);
 
   let t = stripEpisodePrefixes(raw);
-  t = stripTrailingGuestParens(t);
+  t = cleanEpisodeMovieTitle(t);
 
   // Remove any explicit year tag from the query itself
-  t = t.replace(/\s*\((19|20)\d{2}\)\s*/g, " ").replace(/\s+/g, " ").trim();
+  t = t.replace(/\s*\((?:19|20)\d{2}\)\s*/g, " ").replace(/\s+/g, " ").trim();
 
   const candidates = [];
-
   if (t) candidates.push({ query: t, year });
 
-  // Extra candidates: sometimes titles have "Movie Title: Subtitle"
-  if (t.includes(":")) {
-    const beforeColon = t.split(":")[0].trim();
-    if (beforeColon && beforeColon.length >= 2) candidates.push({ query: beforeColon, year });
-  }
-
-  // Extra candidate: remove trailing “ - Live” style suffixes (only if spaced dash)
-  if (t.includes(" - ")) {
-    const first = t.split(" - ")[0].trim();
-    if (first && first.length >= 2) candidates.push({ query: first, year });
-  }
-  if (t.includes(" – ")) {
-    const first = t.split(" – ")[0].trim();
+  // Note: NEVER split on ":" (splitting "Star Wars: Revenge of the Sith" or "Robin Hood: Prince of Thieves"
+  // into "Star Wars" or "Robin Hood" falsely matches the parent franchise's first film!)
+  if (t.includes(" / ")) {
+    const first = t.split(" / ")[0].trim();
     if (first && first.length >= 2) candidates.push({ query: first, year });
   }
 
-  // De-dupe by normalized query
   const seen = new Set();
   const uniq = [];
   for (const c of candidates) {
-    const key = `${normalizeTitle(c.query)}|${c.year || ""}`;
+    const key = `${exactNormalizeTitle(c.query)}|${c.year || ""}`;
     if (seen.has(key)) continue;
     seen.add(key);
     uniq.push(c);
   }
 
-  return { raw, year, cleanedTitle: t, candidates: uniq, isLikelyNonMovie: likelyNonMovieEpisode(raw) };
+  return { raw, year, cleanedTitle: t, candidates: uniq };
 }
 
 /**
  * Resolve an episode title to the best TMDB movie match (or null).
- * Returns:
- *  - null (no confident match)
- *  - { movieId, movie, guess, score }
  */
-export async function resolveEpisodeMovie(epTitle) {
+export async function resolveEpisodeMovie(
+  epTitle,
+  { epNum, tmdbId, descriptionText = "", minScore = 55 } = {}
+) {
+  if (tmdbId) {
+    const m = await getMovieDetails(tmdbId).catch(() => null);
+    if (m?.id) {
+      const yr = m.release_date ? String(m.release_date).slice(0, 4) : "";
+      return { movieId: m.id, movie: m, guess: { query: m.title, year: yr }, score: 999, verified: true };
+    }
+  }
+
+  const verified = getVerifiedEpisodeTmdb(epNum || epTitle);
+  if (verified) return verified;
+
   const { candidates } = buildCandidates(epTitle);
   if (!candidates.length) return null;
+  const descYears = extractYearsFromDescription(descriptionText);
 
   let best = null;
 
   for (const c of candidates) {
-    // Try with year first (if present), then without year
     const attempts = c.year
       ? [{ query: c.query, year: c.year }, { query: c.query, year: "" }]
       : [{ query: c.query, year: "" }];
@@ -397,10 +446,9 @@ export async function resolveEpisodeMovie(epTitle) {
       const results = await searchMovie(a.query, { year: a.year || undefined });
       if (!results.length) continue;
 
-      // Evaluate top few results only
-      for (const r of results.slice(0, 7)) {
+      for (const r of results.slice(0, 10)) {
         const rYear = r?.release_date ? String(r.release_date).slice(0, 4) : "";
-        const s = scoreResult(a.query, r?.title || "", rYear, c.year, r);
+        const s = scoreResult(a.query, r?.title || "", rYear, c.year, r, descYears);
 
         if (!best || s > best.score) {
           best = { movieId: r.id, movie: r, guess: { query: a.query, year: c.year || "" }, score: s };
@@ -409,19 +457,32 @@ export async function resolveEpisodeMovie(epTitle) {
     }
   }
 
-  // Threshold to avoid obviously wrong matches
-  if (!best || best.score < 55) return null;
-
+  if (!best || best.score < minScore) return null;
   return best;
 }
 
 /**
  * Cached resolver for SSR pages that revalidate.
- * Uses cached TMDB search results; adjustable minScore for stricter home tiles.
+ * Checks the verified 358-episode map (0ms, zero API calls) before falling back to live TMDB search for Ep 359+.
  */
-export async function resolveEpisodeMovieCached(epTitle, { revalidate = 86400, minScore = 55 } = {}) {
+export async function resolveEpisodeMovieCached(
+  epTitle,
+  { epNum, tmdbId, descriptionText = "", revalidate = 86400, minScore = 55 } = {}
+) {
+  const verified = getVerifiedEpisodeTmdb(epNum || epTitle);
+  if (verified) return verified;
+
+  if (tmdbId) {
+    const m = await getMovieByIdCached(tmdbId).catch(() => null);
+    if (m?.id) {
+      const yr = m.release_date ? String(m.release_date).slice(0, 4) : "";
+      return { movieId: m.id, movie: m, guess: { query: m.title, year: yr }, score: 999, verified: true };
+    }
+  }
+
   const { candidates } = buildCandidates(epTitle);
   if (!candidates.length) return null;
+  const descYears = extractYearsFromDescription(descriptionText);
 
   let best = null;
 
@@ -434,9 +495,9 @@ export async function resolveEpisodeMovieCached(epTitle, { revalidate = 86400, m
       const results = await searchMovieCached(a.query, { year: a.year || undefined, revalidate });
       if (!results.length) continue;
 
-      for (const r of results.slice(0, 7)) {
+      for (const r of results.slice(0, 10)) {
         const rYear = r?.release_date ? String(r.release_date).slice(0, 4) : "";
-        const s = scoreResult(a.query, r?.title || "", rYear, c.year, r);
+        const s = scoreResult(a.query, r?.title || "", rYear, c.year, r, descYears);
 
         if (!best || s > best.score) {
           best = { movieId: r.id, movie: r, guess: { query: a.query, year: c.year || "" }, score: s };

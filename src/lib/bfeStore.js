@@ -521,9 +521,15 @@ export function getMergedEpisodeDataWithState(epNum, state) {
   if (!base && !override && !sched) return null;
 
   const merged = {
+    epNum: Number(epNum),
+    title: sched?.title || base?.title || "",
+    tmdbId: sched?.tmdbId || base?.tmdbId || null,
     ...(base || {}),
     ...(override || {}),
   };
+  if (sched?.tmdbId && !merged.tmdbId) {
+    merged.tmdbId = sched.tmdbId;
+  }
 
   if (liveFifth && liveFifth.count > (merged.fifthSeatCount || 0)) {
     merged.fifthSeatCount = liveFifth.count;

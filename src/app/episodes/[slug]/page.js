@@ -212,7 +212,13 @@ export default async function EpisodePage({ params }) {
 
   if (isFullReview) {
     try {
-      resolved = await resolveEpisodeMovieCached(ep.title, { revalidate: 86400, minScore: 55 });
+      resolved = await resolveEpisodeMovieCached(ep.title, {
+        epNum,
+        tmdbId: bfeScorecard?.tmdbId,
+        descriptionText: ep.descriptionText || "",
+        revalidate: 86400,
+        minScore: 55,
+      });
       if (resolved?.movieId) bundle = await getMovieBundle(resolved.movieId);
     } catch (e) {
       console.error("[TMDB] lookup failed:", e);
@@ -234,11 +240,13 @@ export default async function EpisodePage({ params }) {
     details?.title || resolved?.movie?.title || fallbackTitle || "Episode"
   );
 
-  const year = details?.release_date
-    ? String(details.release_date).slice(0, 4)
-    : resolved?.movie?.release_date
-      ? String(resolved.movie.release_date).slice(0, 4)
-      : "";
+  const year =
+    (resolved?.verified && resolved?.guess?.year) ||
+    (details?.release_date
+      ? String(details.release_date).slice(0, 4)
+      : resolved?.movie?.release_date
+        ? String(resolved.movie.release_date).slice(0, 4)
+        : "");
 
   const runtime = details?.runtime ? formatRuntime(details.runtime) : "";
   const directorName = director?.name || "";
@@ -251,7 +259,8 @@ export default async function EpisodePage({ params }) {
     resolved?.movie?.backdrop_path ||
     "";
 
-  const posterUrl = posterPath ? tmdbImageUrl(posterPath, "w780") : "";
+  const rssCoverUrl = ep.posterUrl || ep.image || "";
+  const posterUrl = posterPath ? tmdbImageUrl(posterPath, "w780") : rssCoverUrl;
   const backdropUrl = backdropPath ? tmdbImageUrl(backdropPath, "w1280") : "";
 
   const letterboxdUrl = tmdbId

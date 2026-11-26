@@ -124,8 +124,9 @@ function PosterTile({ ep, resolved, scoreMeta }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle =
-    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle = decodeEntities(
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle)
+  );
 
   const sub = [
     epNum ? `EP ${epNum}` : "",
@@ -135,29 +136,46 @@ function PosterTile({ ep, resolved, scoreMeta }) {
     .filter(Boolean)
     .join(" · ");
 
-  const posterUrl =
-    posterUrlFromResolved(resolved) ||
-    ep.posterUrl ||
-    ep.movie?.posterUrl ||
-    ep.tmdb?.posterUrl ||
-    ep.imageUrl ||
-    ep.image ||
-    "";
+  const tmdbPoster = posterUrlFromResolved(resolved);
+  const rssCover =
+    ep.posterUrl || ep.movie?.posterUrl || ep.tmdb?.posterUrl || ep.imageUrl || ep.image || "";
+  const posterUrl = tmdbPoster || rssCover;
 
   return (
     <Link
       href={`/episodes/${ep.slug}`}
       className="group block overflow-hidden rounded-2xl bg-zinc-900/50 ring-1 ring-white/[0.08] hover:ring-white/25 hover:-translate-y-0.5 transition duration-200"
     >
-      <div className="relative aspect-[2/3]">
-        {posterUrl ? (
+      <div className="relative aspect-[2/3] bg-zinc-950">
+        {tmdbPoster ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={posterUrl}
+            src={tmdbPoster}
             alt={displayTitle}
             className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
             loading="lazy"
           />
+        ) : posterUrl ? (
+          <>
+            {/* Square 1:1 podcast artwork for Extras: blurred backdrop + uncropped cover */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={posterUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover scale-125 blur-xl opacity-45"
+              loading="lazy"
+            />
+            <div className="relative flex h-[68%] w-full items-center justify-center p-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={posterUrl}
+                alt={displayTitle}
+                className="max-h-full max-w-full rounded-xl object-contain shadow-lg ring-1 ring-white/15 group-hover:scale-[1.02] transition duration-300"
+                loading="lazy"
+              />
+            </div>
+          </>
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
         )}
@@ -189,16 +207,13 @@ function FeaturedCard({ ep, resolved, scoreMeta }) {
   const epTitle = decodeEntities(ep.title);
   const epNum = getEpisodeNumberIfFullReview(epTitle);
 
-  const displayTitle =
-    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
+  const displayTitle = decodeEntities(
+    resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle)
+  );
 
-  const posterUrl =
-    posterUrlFromResolved(resolved) ||
-    ep.posterUrl ||
-    ep.movie?.posterUrl ||
-    ep.tmdb?.posterUrl ||
-    ep.image ||
-    "";
+  const tmdbPoster = posterUrlFromResolved(resolved);
+  const rssCover = ep.posterUrl || ep.movie?.posterUrl || ep.tmdb?.posterUrl || ep.image || "";
+  const posterUrl = tmdbPoster || rssCover;
 
   const year = resolved?.movie?.release_date ? String(resolved.movie.release_date).slice(0, 4) : "";
 
@@ -219,15 +234,35 @@ function FeaturedCard({ ep, resolved, scoreMeta }) {
       className="group flex gap-3.5 sm:gap-4 overflow-hidden rounded-2xl bg-zinc-900/60 p-3 ring-1 ring-white/[0.08] hover:bg-zinc-900/85 hover:ring-white/20 transition"
     >
       {/* Contained fixed-ratio poster thumbnail (never bleeds behind text) */}
-      <div className="relative w-20 sm:w-[88px] aspect-[2/3] shrink-0 overflow-hidden rounded-xl bg-zinc-800 ring-1 ring-white/10">
-        {posterUrl ? (
+      <div className="relative w-20 sm:w-[88px] aspect-[2/3] shrink-0 overflow-hidden rounded-xl bg-zinc-950 ring-1 ring-white/10">
+        {tmdbPoster ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={posterUrl}
+            src={tmdbPoster}
             alt={displayTitle}
             className="h-full w-full object-cover group-hover:scale-[1.03] transition duration-300"
             loading="lazy"
           />
+        ) : posterUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={posterUrl}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover scale-125 blur-lg opacity-45"
+              loading="lazy"
+            />
+            <div className="relative flex h-full w-full items-center justify-center p-1.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={posterUrl}
+                alt={displayTitle}
+                className="max-h-full max-w-full rounded-lg object-contain shadow ring-1 ring-white/15"
+                loading="lazy"
+              />
+            </div>
+          </>
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
         )}
@@ -349,10 +384,12 @@ export default async function Home({ searchParams }) {
   async function resolvedForEpisode(ep) {
     const epNum = getEpisodeNumberIfFullReview(ep.title);
     if (!epNum) return null;
-    const key = String(ep.title || "").trim();
-    if (!key) return null;
+    const key = String(epNum);
     if (tmdbCache.has(key)) return tmdbCache.get(key);
     const promise = resolveEpisodeMovieCached(ep.title, {
+      epNum,
+      tmdbId: scoreByEpNum.get(epNum)?.tmdbId,
+      descriptionText: ep.descriptionText || "",
       revalidate: 86400,
       minScore: HOMEPAGE_TMDB_MIN_SCORE,
     });

@@ -17,6 +17,8 @@ export default async function LeaderboardPage() {
   const enriched = await Promise.all(
     ranked.map(async (ep) => {
       const resolved = await resolveEpisodeMovieCached(ep.title, {
+        epNum: ep.epNum,
+        tmdbId: ep.tmdbId,
         revalidate: 86400,
         minScore: 55,
       }).catch(() => null);
@@ -31,7 +33,7 @@ export default async function LeaderboardPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      <div className="mx-auto max-w-6xl px-6 pb-20 pt-8 space-y-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 pt-6 sm:pt-8 space-y-6 sm:space-y-8">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
             The Master Table
