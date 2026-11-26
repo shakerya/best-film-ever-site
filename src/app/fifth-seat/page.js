@@ -66,6 +66,16 @@ export default async function FifthSeatPage({ searchParams }) {
     enrichedSchedule.find((s) => s.id === activeFilm?.id) || enrichedSchedule[0] || null;
   const contributors = await getPatronContributorLeaderboard(state);
 
+  const eyebrow = spotlight
+    ? [
+        spotlight.status === "open" ? "Up Next on BFE" : "Past Slate",
+        spotlight.episodeNum ? `EP ${spotlight.episodeNum}` : "",
+        spotlight.episodeDate || "",
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
+
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
       {spotlight?.backdropUrl ? (
@@ -78,12 +88,13 @@ export default async function FifthSeatPage({ searchParams }) {
         </div>
       ) : null}
 
-      <div className="mx-auto max-w-6xl px-6 pb-20 pt-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-20 pt-5 sm:pt-8">
         {spotlight ? (
-          <section className="rounded-3xl bg-zinc-900/60 p-6 md:p-8 ring-1 ring-white/[0.08]">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-[200px_1fr]">
-              <div className="shrink-0">
-                <div className="overflow-hidden rounded-2xl bg-zinc-900 ring-1 ring-white/15 shadow-2xl">
+          <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-4 sm:p-6 md:p-8 ring-1 ring-white/[0.08]">
+            {/* Compact side-by-side header on mobile so voting sits right near the fold */}
+            <div className="flex items-start gap-4 sm:gap-6 md:gap-8">
+              <div className="w-24 sm:w-36 md:w-[190px] shrink-0">
+                <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-zinc-900 ring-1 ring-white/15 shadow-2xl">
                   {spotlight.posterUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -97,26 +108,12 @@ export default async function FifthSeatPage({ searchParams }) {
                 </div>
               </div>
 
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-[0.16em] text-amber-300">
-                  <span>
-                    {spotlight.status === "open" ? "Up Next on Best Film Ever" : "Past Episode Slate"}
-                  </span>
-                  {spotlight.episodeNum ? (
-                    <>
-                      <span className="text-white/25">•</span>
-                      <span className="text-zinc-300">Episode {spotlight.episodeNum}</span>
-                    </>
-                  ) : null}
-                  {spotlight.episodeDate ? (
-                    <>
-                      <span className="text-white/25">•</span>
-                      <span className="text-zinc-400">{spotlight.episodeDate}</span>
-                    </>
-                  ) : null}
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+                  {eyebrow}
                 </div>
 
-                <h1 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-white">
+                <h1 className="mt-1 sm:mt-2 text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-white">
                   {spotlight.title}{" "}
                   {spotlight.year ? (
                     <span className="font-normal text-zinc-400">({spotlight.year})</span>
@@ -124,19 +121,20 @@ export default async function FifthSeatPage({ searchParams }) {
                 </h1>
 
                 {spotlight.pickNote ? (
-                  <div className="mt-1.5 text-sm font-medium text-zinc-300">
+                  <div className="mt-1 text-xs sm:text-sm font-medium text-zinc-300">
                     {spotlight.pickNote}
                   </div>
                 ) : null}
 
                 {spotlight.overview ? (
-                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-zinc-400">
+                  <p className="mt-2.5 hidden sm:block max-w-3xl text-sm leading-relaxed text-zinc-400">
                     {spotlight.overview}
                   </p>
                 ) : null}
 
-                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                {/* Desktop Stat Strip */}
+                <div className="mt-5 hidden md:grid grid-cols-3 gap-3">
+                  <div className="rounded-2xl bg-zinc-950/70 p-3.5 ring-1 ring-white/[0.08]">
                     <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                       Fifth-Seat Weight
                     </div>
@@ -148,7 +146,7 @@ export default async function FifthSeatPage({ searchParams }) {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                  <div className="rounded-2xl bg-zinc-950/70 p-3.5 ring-1 ring-white/[0.08]">
                     <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                       Patron Submissions
                     </div>
@@ -166,7 +164,7 @@ export default async function FifthSeatPage({ searchParams }) {
                     </div>
                   </div>
 
-                  <div className="rounded-2xl bg-zinc-950/70 p-4 ring-1 ring-white/[0.08]">
+                  <div className="rounded-2xl bg-zinc-950/70 p-3.5 ring-1 ring-white/[0.08]">
                     <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                       Beetroot Metric
                     </div>
@@ -180,14 +178,42 @@ export default async function FifthSeatPage({ searchParams }) {
                         ? `${spotlight.beetSummary.total} listener vote${
                             spotlight.beetSummary.total === 1 ? "" : "s"
                           }`
-                        : "Great + Good % (10+ votes to qualify)"}
+                        : "Great + Good % (10+ votes)"}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-8">
+            {spotlight.overview ? (
+              <p className="mt-3 sm:hidden text-xs leading-relaxed text-zinc-400 line-clamp-3">
+                {spotlight.overview}
+              </p>
+            ) : null}
+
+            {/* Compact 3-col stat bar on mobile */}
+            <div className="mt-4 grid grid-cols-3 gap-2 md:hidden">
+              <div className="rounded-xl bg-zinc-950/70 p-2.5 ring-1 ring-white/[0.08]">
+                <div className="text-[10px] uppercase tracking-wider text-zinc-500">5th Seat</div>
+                <div className="mt-0.5 text-xs font-semibold text-white">1 Equal Chair</div>
+              </div>
+              <div className="rounded-xl bg-zinc-950/70 p-2.5 ring-1 ring-white/[0.08]">
+                <div className="text-[10px] uppercase tracking-wider text-zinc-500">Patrons</div>
+                <div className="mt-0.5 text-xs font-semibold text-white">
+                  {spotlight.fifthSummary.count} in
+                </div>
+              </div>
+              <div className="rounded-xl bg-zinc-950/70 p-2.5 ring-1 ring-white/[0.08]">
+                <div className="text-[10px] uppercase tracking-wider text-zinc-500">Beetroot</div>
+                <div className="mt-0.5 text-xs font-semibold text-amber-300">
+                  {spotlight.beetSummary.beetrootPct !== null && spotlight.beetSummary.total > 0
+                    ? `${spotlight.beetSummary.beetrootPct}%`
+                    : "Vote Open"}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 sm:mt-8">
               <FifthSeatInteractive
                 key={`${spotlight.id}-${isPatron ? "p" : "g"}`}
                 film={spotlight}
@@ -202,10 +228,10 @@ export default async function FifthSeatPage({ searchParams }) {
         ) : null}
 
         {/* Slate + Contributor Standings */}
-        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+        <div className="mt-10 sm:mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
           <section>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 className="text-lg font-semibold tracking-tight text-white">
+              <h2 className="text-base sm:text-lg font-semibold tracking-tight text-white">
                 {isPatron ? "Fifth-Seat Film Slate" : "Active & Recent Fifth-Seat Films"}
               </h2>
               {!isPatron ? (
@@ -215,14 +241,14 @@ export default async function FifthSeatPage({ searchParams }) {
               ) : null}
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+            <div className="mt-3.5 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {enrichedSchedule.map((item) => {
                 const isSelected = item.id === spotlight?.id;
                 return (
                   <Link
                     key={item.id}
                     href={`/fifth-seat?film=${encodeURIComponent(item.id)}`}
-                    className={`flex gap-4 rounded-2xl p-3.5 transition ${
+                    className={`flex gap-3.5 rounded-2xl p-3.5 transition ${
                       isSelected
                         ? "bg-white/[0.09] ring-1 ring-white/35"
                         : "bg-zinc-900/50 ring-1 ring-white/[0.08] hover:bg-zinc-900/80 hover:ring-white/20"
@@ -255,16 +281,21 @@ export default async function FifthSeatPage({ searchParams }) {
                         {item.title}
                       </div>
                       {item.pickNote ? (
-                        <div className="mt-0.5 truncate text-xs text-zinc-400">{item.pickNote}</div>
+                        <div className="mt-0.5 line-clamp-1 text-xs text-zinc-400">
+                          {item.pickNote}
+                        </div>
                       ) : null}
-                      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
-                        <span>
-                          {item.fifthSummary.count} Fifth-Seat
-                          {item.fifthSummary.count === 1 ? "" : "s"}
-                        </span>
-                        {item.fifthSummary.average !== null && item.status === "closed" ? (
-                          <span>· Avg {item.fifthSummary.average}/10</span>
-                        ) : null}
+                      <div className="mt-1.5 text-xs text-zinc-400">
+                        {[
+                          `${item.fifthSummary.count} Fifth-Seat${
+                            item.fifthSummary.count === 1 ? "" : "s"
+                          }`,
+                          item.fifthSummary.average !== null && item.status === "closed"
+                            ? `Avg ${item.fifthSummary.average}/10`
+                            : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </div>
                     </div>
                   </Link>
@@ -273,15 +304,15 @@ export default async function FifthSeatPage({ searchParams }) {
             </div>
           </section>
 
-          <aside className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08] h-fit">
-            <div className="text-[11px] font-medium uppercase tracking-[0.16em] text-amber-300">
+          <aside className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08] h-fit">
+            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
               Patron Contributors
             </div>
             <h2 className="mt-1 text-lg font-semibold tracking-tight text-white">
               Fifth-Seat Hall of Honor
             </h2>
             <p className="mt-1 text-xs text-zinc-400">
-              Verified Fifth-Seat appearances logged from podcast transcripts since Episode 301.
+              Verified Fifth-Seat appearances logged since Episode 301.
             </p>
 
             <div className="mt-4 space-y-2">

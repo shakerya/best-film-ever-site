@@ -95,7 +95,7 @@ export default function BfeEndgameGames({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 shrink-0">
                   <input
                     type="number"
                     min={1}
@@ -106,10 +106,10 @@ export default function BfeEndgameGames({
                       setGuesses((prev) => ({ ...prev, [actor.id]: e.target.value }))
                     }
                     placeholder="Age"
-                    className="w-20 rounded-xl bg-zinc-950 px-3 py-2 text-center text-sm font-semibold text-white ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
+                    className="w-16 sm:w-20 rounded-xl bg-zinc-950 px-2.5 py-1.5 sm:px-3 sm:py-2 text-center text-sm font-semibold text-white ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
                   />
                   {ageRevealed ? (
-                    <div className="text-right min-w-[125px] tabular-nums">
+                    <div className="text-right min-w-[110px] sm:min-w-[125px] tabular-nums">
                       <div className="text-xs font-semibold text-white">
                         Actual: {actor.ageAtRelease}
                       </div>

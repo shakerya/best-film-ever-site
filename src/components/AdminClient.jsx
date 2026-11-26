@@ -339,52 +339,48 @@ export default function AdminClient() {
   return (
     <div className="space-y-8">
       {/* Studio Header & Segmented Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="space-y-4 sm:space-y-0 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
         <div>
-          <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-            <span>Studio of Awesomeness</span>
-            <span className="text-white/25">•</span>
+          <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+            Studio of Awesomeness ·{" "}
             <span className={data?.cloudKvActive ? "text-emerald-300" : "text-zinc-400"}>
               {data?.cloudKvActive ? "Cloud DB Active" : "Local Memory"}
             </span>
           </div>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">
+          <h1 className="mt-1 text-2xl sm:text-3xl font-semibold tracking-tight text-white">
             Ian & Georgia Producer Hub
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-zinc-400">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
             <a
               href={`/api/admin?export=csv&key=${encodeURIComponent(passcode)}`}
-              className="hover:text-white underline transition"
+              className="rounded-full bg-white/[0.06] px-3 py-1 hover:text-white ring-1 ring-white/10 transition"
             >
-              Download Full CSV Backup ↓
+              Download CSV Backup ↓
             </a>
             {data?.googleSheetUrl ? (
-              <>
-                <span className="text-white/20">·</span>
-                <a
-                  href={data.googleSheetUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="hover:text-white underline transition"
-                >
-                  Open Google Sheet Backup ↗
-                </a>
-              </>
+              <a
+                href={data.googleSheetUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-white/[0.06] px-3 py-1 hover:text-white ring-1 ring-white/10 transition"
+              >
+                Google Sheet Backup ↗
+              </a>
             ) : null}
           </div>
         </div>
 
-        <div className="inline-flex flex-wrap gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08]">
+        <div className="flex items-center gap-1 overflow-x-auto rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {[
-            ["tweets", "Tweet & Patreon Kit"],
-            ["broadcast", "Recording-Day Screen"],
-            ["schedule", "Manage Film Slate"],
+            ["tweets", "Tweet & Post Kit"],
+            ["broadcast", "Recording Screen"],
+            ["schedule", "Film Slate"],
           ].map(([key, lbl]) => (
             <button
               key={key}
               type="button"
               onClick={() => setTab(key)}
-              className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
                 tab === key
                   ? "bg-white text-zinc-950 font-semibold"
                   : "text-zinc-400 hover:text-white"
@@ -396,22 +392,22 @@ export default function AdminClient() {
         </div>
       </div>
 
-      {/* Episode Selector Bar (shared across Tweet Kit & Broadcast) */}
+      {/* Episode Selector Bar (horizontally scrollable on mobile) */}
       {tab !== "schedule" && schedule.length > 0 ? (
-        <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-zinc-900/55 p-3 ring-1 ring-white/[0.08]">
-          <span className="px-2 text-xs text-zinc-400">Active Film:</span>
+        <div className="flex items-center gap-2 overflow-x-auto rounded-2xl bg-zinc-900/55 p-2.5 ring-1 ring-white/[0.08] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <span className="shrink-0 px-1.5 text-xs text-zinc-400">Film:</span>
           {schedule.map((s) => (
             <button
               key={s.id}
               type="button"
               onClick={() => setSelectedFilmId(s.id)}
-              className={`rounded-full px-3.5 py-1 text-xs font-medium transition ${
+              className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition ${
                 s.id === activeFilm?.id
                   ? "bg-amber-300 text-zinc-950 font-semibold"
                   : "bg-zinc-950 text-zinc-300 ring-1 ring-white/[0.08] hover:text-white"
               }`}
             >
-              {s.title} {s.status === "open" ? "• UP NEXT" : `(EP ${s.episodeNum})`}
+              {s.title} {s.status === "open" ? "· UP NEXT" : `(EP ${s.episodeNum})`}
             </button>
           ))}
         </div>
@@ -546,12 +542,12 @@ export default function AdminClient() {
       {tab === "broadcast" && activeFilm ? (
         <div className="space-y-8">
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08] space-y-4">
-              <div className="flex items-center justify-between">
+            <div className="rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08] space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="text-base font-semibold text-white">
                   Combined Score Calculator ({activeFilm.title})
                 </h2>
-                <span className="rounded-full bg-amber-300/15 px-3 py-1 text-xs font-semibold text-amber-300">
+                <span className="shrink-0 whitespace-nowrap rounded-full bg-amber-300/15 px-3 py-1 text-xs font-semibold text-amber-300">
                   5th Seat Avg: {fifthAvg !== null ? `${fifthAvg}/10` : "No votes yet"}
                 </span>
               </div>
@@ -560,7 +556,7 @@ export default function AdminClient() {
                 air.
               </p>
 
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {[
                   ["ian", "Ian"],
                   ["liam", "Liam"],
@@ -816,18 +812,12 @@ export default function AdminClient() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                 <input
                   type="number"
                   value={newFilm.episodeNum}
                   onChange={(e) => setNewFilm((p) => ({ ...p, episodeNum: e.target.value }))}
                   placeholder="Episode #"
-                  className="rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
-                />
-                <input
-                  type="date"
-                  value={newFilm.episodeDate}
-                  onChange={(e) => setNewFilm((p) => ({ ...p, episodeDate: e.target.value }))}
                   className="rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
                 />
                 <input
@@ -837,13 +827,19 @@ export default function AdminClient() {
                   placeholder="TMDB ID"
                   className="rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
                 />
+                <input
+                  type="date"
+                  value={newFilm.episodeDate}
+                  onChange={(e) => setNewFilm((p) => ({ ...p, episodeDate: e.target.value }))}
+                  className="col-span-2 sm:col-span-1 rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
+                />
               </div>
 
               <input
                 type="text"
                 value={newFilm.pickNote}
                 onChange={(e) => setNewFilm((p) => ({ ...p, pickNote: e.target.value }))}
-                placeholder="Pick / Cut Note (e.g. James DeGuzman's BFF Pick)"
+                placeholder="Pick note (e.g. Patron BFF Pick)"
                 className="w-full rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
               />
 
@@ -859,7 +855,7 @@ export default function AdminClient() {
                 type="text"
                 value={newFilm.randomWord}
                 onChange={(e) => setNewFilm((p) => ({ ...p, randomWord: e.target.value }))}
-                placeholder="Optional #BFERandomWord for GIF of the Week"
+                placeholder="Optional #BFERandomWord for GIF game"
                 className="w-full rounded-xl bg-zinc-950 px-3.5 py-2.5 text-xs text-white ring-1 ring-white/10"
               />
 

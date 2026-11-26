@@ -18,7 +18,7 @@ export default function ArchiveChatPage() {
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
-      <div className="mx-auto max-w-5xl px-6 pb-20 pt-8">
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 pb-20 pt-6 sm:pt-8">
         <ArchiveChatClient
           stats={stats}
           hasLlmKey={hasLlmKey}

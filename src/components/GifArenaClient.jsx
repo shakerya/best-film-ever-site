@@ -190,26 +190,25 @@ export default function GifArenaClient({ activeRound, pastRounds = [] }) {
   const xThreadLink = threadTweetUrl || BFE_LINKS.xGifThreadSearch;
 
   return (
-    <div className="space-y-12">
-      <section className="rounded-3xl bg-zinc-900/60 p-6 md:p-8 ring-1 ring-white/[0.08]">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
-              GIF of the Week • Episode {activeRound.epNum}
+    <div className="space-y-10 sm:space-y-12">
+      <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 md:p-8 ring-1 ring-white/[0.08]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
+              GIF of the Week · Episode {activeRound.epNum}
             </div>
-            <h1 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-white">
+            <h1 className="mt-1.5 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white">
               {activeRound.filmTitle} — #BFERandomWord
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400">
               Listen until the Endgame segment of Episode {activeRound.epNum} to catch this week’s
               secret Random Word, then type it below to unlock the arena and enter your GIF.
-              Duplicate GIFs are automatically blocked so nobody gets disqualified on air.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-950/80 px-4 py-3 text-right ring-1 ring-white/[0.08]">
-            <div className="text-[11px] uppercase tracking-wider text-zinc-500">Entries</div>
-            <div className="mt-0.5 text-2xl font-semibold text-white tabular-nums">
+          <div className="shrink-0 rounded-xl sm:rounded-2xl bg-zinc-950/80 px-3.5 py-2.5 text-right ring-1 ring-white/[0.08]">
+            <div className="text-[10px] uppercase tracking-wider text-zinc-500">Entries</div>
+            <div className="mt-0.5 text-xl sm:text-2xl font-semibold text-white tabular-nums">
               {entryCount}
             </div>
           </div>
@@ -217,29 +216,29 @@ export default function GifArenaClient({ activeRound, pastRounds = [] }) {
 
         {/* Strict Secret-Word Gate (no reveal-word shortcut) */}
         {!unlockedWord ? (
-          <div className="mt-8 rounded-2xl bg-zinc-950/75 p-6 ring-1 ring-white/[0.08]">
+          <div className="mt-6 sm:mt-8 rounded-2xl bg-zinc-950/75 p-4 sm:p-6 ring-1 ring-white/[0.08]">
             <div className="text-sm font-medium text-white">
-              Enter Episode {activeRound.epNum}’s Secret Random Word to Unlock
+              Enter Episode {activeRound.epNum}’s Secret Random Word
             </div>
             <p className="mt-1 text-xs text-zinc-400">
               {activeRound.hint || "Announced at the start of the Endgame segment."}
             </p>
 
-            <form onSubmit={handleUnlockSubmit} className="mt-4 flex flex-col gap-2.5 sm:flex-row">
+            <form onSubmit={handleUnlockSubmit} className="mt-3.5 flex gap-2">
               <input
                 type="text"
                 value={wordGuess}
                 onChange={(e) => setWordGuess(e.target.value)}
-                placeholder="Type the secret Random Word from the episode…"
+                placeholder="Secret word…"
                 autoComplete="off"
-                className="flex-1 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
+                className="min-w-0 flex-1 rounded-xl bg-zinc-900 px-3.5 py-2.5 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
               />
               <button
                 type="submit"
                 disabled={unlocking || !wordGuess.trim()}
-                className="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 transition"
+                className="shrink-0 rounded-full bg-white px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 transition"
               >
-                {unlocking ? "Checking…" : "Unlock Arena →"}
+                {unlocking ? "…" : "Unlock →"}
               </button>
             </form>
 
@@ -540,23 +539,25 @@ export default function GifArenaClient({ activeRound, pastRounds = [] }) {
               return (
                 <div
                   key={round.id}
-                  className="flex gap-4 rounded-2xl bg-zinc-900/55 p-4 ring-1 ring-white/[0.08]"
+                  className="flex items-start gap-3.5 rounded-2xl bg-zinc-900/55 p-3.5 sm:p-4 ring-1 ring-white/[0.08]"
                 >
                   {winner?.gifUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={winner.gifUrl}
                       alt={round.filmTitle}
-                      className="h-24 w-32 shrink-0 rounded-xl object-cover bg-black"
+                      className="h-20 w-24 sm:h-24 sm:w-32 shrink-0 rounded-xl object-cover bg-black"
                     />
                   ) : null}
-                  <div className="min-w-0">
-                    <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-300">
-                      EP {round.epNum} · Word: “{round.randomWord}”
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-amber-300">
+                      EP {round.epNum} · “{round.randomWord}”
                     </div>
-                    <div className="mt-1 text-base font-semibold text-white">{round.filmTitle}</div>
+                    <div className="mt-0.5 text-sm sm:text-base font-semibold text-white">
+                      {round.filmTitle}
+                    </div>
                     {winner ? (
-                      <div className="mt-1 text-xs text-zinc-400">
+                      <div className="mt-1 text-xs leading-snug text-zinc-400">
                         Winner: <strong className="text-zinc-200">{winner.name}</strong>
                         {winner.caption ? ` — ${winner.caption}` : ""}
                       </div>

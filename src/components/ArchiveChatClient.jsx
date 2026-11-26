@@ -90,17 +90,17 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
   }
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-3xl bg-zinc-900/60 p-6 md:p-8 ring-1 ring-white/[0.08]">
+    <div className="space-y-5 sm:space-y-6">
+      <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 md:p-8 ring-1 ring-white/[0.08]">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+            <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-300">
               Private Archive Search & Q&A
             </div>
-            <h1 className="mt-2 text-3xl md:text-4xl font-semibold tracking-tight text-white">
+            <h1 className="mt-1.5 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-white">
               Best Film Ever Transcript Vault
             </h1>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-400">
+            <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400">
               Search and ask questions across{" "}
               <strong className="text-zinc-200 font-medium">
                 {stats.episodeCount} full transcripts
@@ -111,20 +111,22 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
             </p>
           </div>
 
-          <div className="rounded-2xl bg-zinc-950/80 px-4 py-3 text-xs ring-1 ring-white/[0.08] space-y-1">
-            <div className="text-zinc-500">Index Status</div>
-            <div className="font-semibold text-white tabular-nums">
-              {stats.chunkCount.toLocaleString()} transcript segments
+          <div className="w-full sm:w-auto rounded-2xl bg-zinc-950/80 px-4 py-3 text-xs ring-1 ring-white/[0.08] flex sm:block items-center justify-between gap-2 sm:space-y-1">
+            <div>
+              <div className="text-zinc-500">Index Status</div>
+              <div className="font-semibold text-white tabular-nums">
+                {stats.chunkCount.toLocaleString()} transcript segments
+              </div>
             </div>
             <div className={hasLlmKey ? "text-amber-300 font-medium" : "text-zinc-400"}>
-              {hasLlmKey ? "AI Synthesis Active" : "Direct Transcript Search Mode"}
+              {hasLlmKey ? "AI Synthesis Active" : "Direct Transcript Search"}
             </div>
           </div>
         </div>
       </section>
 
       {!unlocked ? (
-        <section className="mx-auto max-w-md rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+        <section className="mx-auto max-w-md rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
           <h2 className="text-lg font-semibold text-white">Unlock Private Transcript Vault</h2>
           <p className="mt-1 text-xs text-zinc-400">
             Enter your Vault passcode (default:{" "}
@@ -155,7 +157,7 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
           </form>
         </section>
       ) : (
-        <section className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08] space-y-6">
+        <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-4 sm:p-6 ring-1 ring-white/[0.08] space-y-5 sm:space-y-6">
           {messages.length === 0 ? (
             <div>
               <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
@@ -240,19 +242,19 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
               e.preventDefault();
               sendQuestion(input);
             }}
-            className="flex gap-2.5"
+            className="flex gap-2"
           >
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything spoken on Best Film Ever (scores, stories, games, quotes)…"
-              className="flex-1 rounded-xl bg-zinc-950 px-4 py-3 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
+              placeholder="Ask anything spoken on BFE…"
+              className="min-w-0 flex-1 rounded-xl bg-zinc-950 px-3.5 sm:px-4 py-2.5 sm:py-3 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/10 focus:outline-none focus:ring-white/30"
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 transition"
+              className="shrink-0 whitespace-nowrap rounded-full bg-white px-4 sm:px-6 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-zinc-950 hover:bg-zinc-200 disabled:opacity-40 transition"
             >
               Ask Vault
             </button>

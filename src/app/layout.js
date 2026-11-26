@@ -63,7 +63,7 @@ export default function RootLayout({ children }) {
             <div className="flex-1">{children}</div>
 
             <footer className="border-t border-white/10 bg-zinc-950">
-              <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-6 py-6 text-sm text-white/60">
+              <div className="mx-auto flex max-w-7xl flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between px-4 sm:px-6 py-5 sm:py-6 text-xs sm:text-sm text-white/60">
                 <a
                   href="https://x.com/aashrey_"
                   target="_blank"
@@ -74,7 +74,7 @@ export default function RootLayout({ children }) {
                   Made by Aashrey Kapoor
                 </a>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs">
                   <Link href="/fifth-seat" className="hover:text-white transition">
                     Fifth-Seat & Poll
                   </Link>

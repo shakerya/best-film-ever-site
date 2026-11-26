@@ -179,31 +179,31 @@ export default function FifthSeatInteractive({
   const totalBeet = beetSummary?.total || 0;
 
   return (
-    <div className="rounded-2xl bg-zinc-950/75 p-5 sm:p-7 ring-1 ring-white/[0.08]">
-      {/* Segmented Mode Switcher */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
-        <div className="inline-flex flex-wrap gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08]">
+    <div className="rounded-2xl bg-zinc-950/75 p-4 sm:p-7 ring-1 ring-white/[0.08]">
+      {/* Segmented Mode Switcher (2-column grid on mobile so it never wraps awkwardly inside a pill) */}
+      <div className="flex flex-col gap-3 border-b border-white/[0.08] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="grid grid-cols-2 gap-1 rounded-full bg-zinc-900 p-1 ring-1 ring-white/[0.08] sm:inline-flex">
           <button
             type="button"
             onClick={() => setActiveTab("beetroot")}
-            className={`rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium transition ${
+            className={`truncate rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium transition ${
               activeTab === "beetroot"
                 ? "bg-white text-zinc-950 font-semibold"
                 : "text-zinc-400 hover:text-white"
             }`}
           >
-            Public Beetroot Poll{totalBeet > 0 ? ` (${totalBeet})` : ""}
+            Beetroot Poll{totalBeet > 0 ? ` (${totalBeet})` : ""}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("fifth-seat")}
-            className={`rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium transition ${
+            className={`truncate rounded-full px-3 sm:px-4 py-1.5 text-xs sm:text-sm font-medium transition ${
               activeTab === "fifth-seat"
                 ? "bg-white text-zinc-950 font-semibold"
                 : "text-zinc-400 hover:text-white"
             }`}
           >
-            {isPatron ? "Patron Fifth-Seat (1–10)" : "Patron Fifth-Seat (Patrons Only)"}
+            {isPatron ? "Fifth-Seat (1–10)" : "Patron 5th Seat"}
           </button>
         </div>
 

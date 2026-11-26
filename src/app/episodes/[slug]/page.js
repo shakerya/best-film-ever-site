@@ -11,6 +11,17 @@ import BfeEndgameGames from "@/components/BfeEndgameGames";
 
 export const dynamic = "force-dynamic";
 
+function decodeEntities(s) {
+  if (!s) return "";
+  return String(s)
+    .replaceAll("&amp;", "&")
+    .replaceAll("&quot;", '"')
+    .replaceAll("&#39;", "'")
+    .replaceAll("&apos;", "'")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">");
+}
+
 function formatDateStable(isoOrPubDate) {
   if (!isoOrPubDate) return "";
   const d = new Date(isoOrPubDate);
@@ -35,7 +46,7 @@ function formatRuntime(mins) {
 
 function GenreChip({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full bg-white/[0.08] px-3 py-1 text-xs text-zinc-200 ring-1 ring-white/10">
+    <span className="inline-flex items-center rounded-full bg-white/[0.08] px-2.5 py-0.5 sm:px-3 sm:py-1 text-[11px] sm:text-xs text-zinc-200 ring-1 ring-white/10">
       {children}
     </span>
   );
@@ -48,7 +59,7 @@ function ButtonPrimary({ href, children, title }) {
       target="_blank"
       rel="noreferrer"
       title={title}
-      className="inline-flex items-center justify-center rounded-full bg-white px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
+      className="inline-flex items-center justify-center rounded-full bg-white px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
     >
       {children}
     </a>
@@ -62,7 +73,7 @@ function ButtonGhost({ href, children, title }) {
       target="_blank"
       rel="noreferrer"
       title={title}
-      className="inline-flex items-center justify-center rounded-full bg-white/[0.08] px-4 py-2 text-xs font-medium text-white ring-1 ring-white/15 hover:bg-white/15 transition"
+      className="inline-flex items-center justify-center rounded-full bg-white/[0.08] px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-medium text-white ring-1 ring-white/15 hover:bg-white/15 transition"
     >
       {children}
     </a>
@@ -77,18 +88,18 @@ function HostStrip({ hostKeys }) {
   if (!hosts.length) return null;
 
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-2">
+    <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-1.5 sm:gap-2">
       {hosts.slice(0, 6).map((h) => (
         <div
           key={h.key}
-          className="inline-flex items-center gap-2 rounded-full bg-black/45 px-2.5 py-1 ring-1 ring-white/10"
+          className="inline-flex items-center gap-1.5 rounded-full bg-black/45 px-2.5 py-1 ring-1 ring-white/10"
           title={h.name}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={h.image}
             alt={h.name}
-            className="h-6 w-6 rounded-full object-cover"
+            className="h-5 w-5 sm:h-6 sm:w-6 rounded-full object-cover"
             loading="lazy"
           />
           <span className="text-xs font-medium text-zinc-200">{h.name}</span>
@@ -104,8 +115,8 @@ function CastStripItem({ person }) {
   const character = person?.character || "";
 
   return (
-    <div className="flex w-[230px] shrink-0 items-center gap-3.5 rounded-2xl bg-zinc-950/60 p-3.5 ring-1 ring-white/[0.08]">
-      <div className="h-14 w-14 overflow-hidden rounded-2xl bg-zinc-800 ring-1 ring-white/10 shrink-0">
+    <div className="flex w-[200px] sm:w-[230px] shrink-0 snap-start items-center gap-3 rounded-2xl bg-zinc-950/60 p-3 ring-1 ring-white/[0.08]">
+      <div className="h-12 w-12 sm:h-14 sm:w-14 overflow-hidden rounded-xl bg-zinc-800 ring-1 ring-white/10 shrink-0">
         {img ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={img} alt={name} className="h-full w-full object-cover" loading="lazy" />
@@ -117,9 +128,9 @@ function CastStripItem({ person }) {
       </div>
 
       <div className="min-w-0">
-        <div className="truncate text-sm font-semibold text-white">{name}</div>
+        <div className="truncate text-xs sm:text-sm font-semibold text-white">{name}</div>
         {character ? (
-          <div className="mt-0.5 line-clamp-2 text-xs text-zinc-400">{character}</div>
+          <div className="mt-0.5 line-clamp-2 text-[11px] sm:text-xs text-zinc-400">{character}</div>
         ) : (
           <div className="mt-0.5 text-xs text-zinc-500">Cast</div>
         )}
@@ -136,7 +147,7 @@ function DirectorCard({ director }) {
   const personUrl = director?.id ? `https://www.themoviedb.org/person/${director.id}` : "";
 
   return (
-    <section className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+    <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-base font-semibold text-white">Director</h2>
         {personUrl ? (
@@ -152,7 +163,7 @@ function DirectorCard({ director }) {
       </div>
 
       <div className="mt-4 flex items-center gap-4">
-        <div className="h-16 w-16 overflow-hidden rounded-2xl bg-zinc-800 ring-1 ring-white/10 shrink-0">
+        <div className="h-14 w-14 sm:h-16 sm:w-16 overflow-hidden rounded-2xl bg-zinc-800 ring-1 ring-white/10 shrink-0">
           {img ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={img} alt={name} className="h-full w-full object-cover" loading="lazy" />
@@ -180,8 +191,8 @@ export async function generateMetadata({ params }) {
   if (!ep) return { title: "Episode not found" };
 
   return {
-    title: ep.title,
-    description: (ep.descriptionText || "").slice(0, 160),
+    title: decodeEntities(ep.title),
+    description: decodeEntities(ep.descriptionText || "").slice(0, 160),
   };
 }
 
@@ -219,7 +230,9 @@ export default async function EpisodePage({ params }) {
   const tmdbId = resolved?.movieId ? String(resolved.movieId) : "";
   const fallbackTitle = isFullReview ? stripLeadingEpisodeNumber(ep.title) : ep.title;
 
-  const movieTitle = details?.title || resolved?.movie?.title || fallbackTitle || "Episode";
+  const movieTitle = decodeEntities(
+    details?.title || resolved?.movie?.title || fallbackTitle || "Episode"
+  );
 
   const year = details?.release_date
     ? String(details.release_date).slice(0, 4)
@@ -250,10 +263,18 @@ export default async function EpisodePage({ params }) {
   const tmdbUrl = tmdbId ? `https://www.themoviedb.org/movie/${tmdbId}` : "";
   const published = formatDateStable(ep.isoDate || ep.pubDate);
 
-  const notesPreview = (ep.descriptionText || "")
+  const metaItems = [
+    epNum ? `Episode ${epNum}` : "",
+    directorName ? `Dir. ${directorName}` : "",
+    runtime,
+    published,
+    ep.durationPretty ? `${ep.durationPretty} pod` : "",
+  ].filter(Boolean);
+
+  const decodedNotes = decodeEntities(ep.descriptionText || "")
     .trim()
-    .replace(/\s+/g, " ")
-    .slice(0, 320);
+    .replace(/\s+/g, " ");
+  const notesPreview = decodedNotes.slice(0, 320);
 
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
@@ -269,36 +290,36 @@ export default async function EpisodePage({ params }) {
         <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/75 via-zinc-950/90 to-zinc-950" />
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 pb-16 pt-8">
-        <div className="mb-6 flex items-center justify-between gap-4">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 pt-5 sm:pt-8">
+        <div className="mb-4 sm:mb-6 flex items-center justify-between gap-3">
           <Link href="/" className="text-xs font-medium text-zinc-400 hover:text-white transition">
-            ← Back to Library
+            ← Library
           </Link>
           <Link
             href="/leaderboard"
             className="text-xs font-medium text-zinc-400 hover:text-amber-300 transition"
           >
-            View All-Time Leaderboard →
+            Leaderboard →
           </Link>
         </div>
 
-        {/* HERO */}
-        <section className="relative overflow-hidden rounded-3xl ring-1 ring-white/[0.10]">
+        {/* HERO (Compact side-by-side poster on mobile so title & meta appear right above the fold) */}
+        <section className="relative overflow-hidden rounded-2xl sm:rounded-3xl ring-1 ring-white/[0.10]">
           {backdropUrl ? (
             <div className="absolute inset-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={backdropUrl} alt="" className="h-full w-full object-cover" loading="eager" />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black/90" />
-              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/30" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/70 to-black/90" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 to-black/35" />
             </div>
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-zinc-950" />
           )}
 
-          <div className="relative p-6 md:p-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-[220px_1fr] md:gap-10 items-start">
-              <div className="shrink-0">
-                <div className="overflow-hidden rounded-2xl bg-black/30 ring-1 ring-white/15 shadow-[0_20px_60px_rgba(0,0,0,0.55)]">
+          <div className="relative p-4 sm:p-6 md:p-8">
+            <div className="flex items-start gap-4 sm:gap-6 md:gap-10">
+              <div className="w-24 sm:w-40 md:w-[210px] shrink-0">
+                <div className="overflow-hidden rounded-xl sm:rounded-2xl bg-black/30 ring-1 ring-white/15 shadow-2xl">
                   {posterUrl ? (
                     <Image
                       src={posterUrl}
@@ -313,7 +334,7 @@ export default async function EpisodePage({ params }) {
                   )}
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2">
+                <div className="mt-3 hidden sm:flex flex-wrap gap-2">
                   <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
                     Letterboxd ↗
                   </ButtonPrimary>
@@ -325,44 +346,36 @@ export default async function EpisodePage({ params }) {
                 </div>
               </div>
 
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="inline-flex items-center rounded-full bg-black/45 px-3 py-1 text-[11px] font-medium tracking-[0.2em] text-zinc-300 ring-1 ring-white/10">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <span className="inline-flex items-center rounded-full bg-black/50 px-2.5 py-0.5 text-[10px] sm:text-[11px] font-medium tracking-[0.18em] text-zinc-300 ring-1 ring-white/10">
                     {tmdbId ? "FILM REVIEW" : "EPISODE"}
                   </span>
                   {bfeScorecard?.combinedScore ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-300/15 px-3 py-1 text-xs font-semibold text-amber-300 ring-1 ring-amber-300/35">
-                      ★ {bfeScorecard.combinedScore.toFixed(2)} / 10 Official BFE
+                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-300/15 px-2.5 py-0.5 text-[11px] sm:text-xs font-semibold text-amber-300 ring-1 ring-amber-300/35">
+                      ★ {bfeScorecard.combinedScore.toFixed(2)} BFE
                     </span>
                   ) : null}
                   {bfeScorecard?.beetrootPct !== undefined ? (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-zinc-200 ring-1 ring-white/15">
-                      {bfeScorecard.beetrootPct}% Beetroot Metric
+                    <span className="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-medium text-zinc-200 ring-1 ring-white/15">
+                      {bfeScorecard.beetrootPct}% Beetroot
                     </span>
                   ) : null}
                 </div>
 
-                <h1 className="mt-3 text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
+                <h1 className="mt-2 text-2xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
                   {movieTitle}
                   {year ? <span className="font-normal text-zinc-400"> ({year})</span> : null}
                 </h1>
 
-                <div className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-zinc-300">
-                  {epNum ? <span>Episode {epNum}</span> : null}
-                  {epNum ? <span className="text-white/30">·</span> : null}
-                  {directorName ? <span>Directed by {directorName}</span> : null}
-                  {runtime ? <span className="text-white/30">·</span> : null}
-                  {runtime ? <span>{runtime}</span> : null}
-                  {published ? <span className="text-white/30">·</span> : null}
-                  {published ? <span>{published}</span> : null}
-                  {ep.durationPretty ? <span className="text-white/30">·</span> : null}
-                  {ep.durationPretty ? <span>{ep.durationPretty} pod</span> : null}
+                <div className="mt-2 text-xs sm:text-sm text-zinc-300 leading-relaxed">
+                  {metaItems.join(" · ")}
                 </div>
 
                 <HostStrip hostKeys={ep.hostKeys} />
 
                 {tmdbId && genres.length ? (
-                  <div className="mt-4 flex flex-wrap gap-2">
+                  <div className="mt-3 hidden sm:flex flex-wrap gap-1.5">
                     {genres.map((g) => (
                       <GenreChip key={g.id || g.name}>{g.name}</GenreChip>
                     ))}
@@ -370,18 +383,39 @@ export default async function EpisodePage({ params }) {
                 ) : null}
               </div>
             </div>
+
+            {/* Mobile External Links + Genre Row */}
+            <div className="mt-3.5 flex flex-wrap items-center justify-between gap-2 sm:hidden">
+              <div className="flex items-center gap-2">
+                <ButtonPrimary href={letterboxdUrl} title="Open on Letterboxd">
+                  Letterboxd ↗
+                </ButtonPrimary>
+                {tmdbUrl ? (
+                  <ButtonGhost href={tmdbUrl} title="Open on TMDB">
+                    TMDB ↗
+                  </ButtonGhost>
+                ) : null}
+              </div>
+              {tmdbId && genres.length ? (
+                <div className="flex flex-wrap gap-1">
+                  {genres.slice(0, 2).map((g) => (
+                    <GenreChip key={g.id || g.name}>{g.name}</GenreChip>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </div>
         </section>
 
-        {/* Official BFE Scorecard + Patron Fifth-Seat Breakdown */}
+        {/* Official BFE Scorecard */}
         {bfeScorecard && (bfeScorecard.combinedScore || bfeScorecard.fifthSeatCount !== undefined) ? (
-          <section className="mt-6 rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
-            <div className="flex flex-wrap items-center justify-between gap-4">
+          <section className="mt-5 sm:mt-6 rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-4 sm:p-6 ring-1 ring-white/[0.08]">
+            <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
+                <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-300">
                   Official Episode Scorecard
                 </div>
-                <h2 className="mt-1 text-lg font-semibold text-white">
+                <h2 className="mt-0.5 text-base sm:text-lg font-semibold text-white">
                   Host Verdicts & The Patron Fifth-Seat
                 </h2>
               </div>
@@ -390,46 +424,48 @@ export default async function EpisodePage({ params }) {
                 {bfeScorecard.randomWord ? (
                   <Link
                     href="/gif"
-                    className="rounded-full bg-white/[0.08] px-4 py-2 text-xs font-medium text-white ring-1 ring-white/15 hover:bg-white/15 transition"
+                    className="rounded-full bg-white/[0.08] px-3.5 py-1.5 text-xs font-medium text-white ring-1 ring-white/15 hover:bg-white/15 transition"
                   >
-                    Play #BFERandomWord GIF Game →
+                    #BFERandomWord GIF Game →
                   </Link>
                 ) : null}
                 <Link
                   href="/fifth-seat"
-                  className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
+                  className="rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-zinc-950 hover:bg-zinc-200 transition"
                 >
                   Rate Upcoming Film →
                 </Link>
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-6">
               {Object.entries(bfeScorecard.hosts || {}).map(([hk, val]) => (
                 <div
                   key={hk}
-                  className="rounded-2xl bg-zinc-950/75 p-3.5 text-center ring-1 ring-white/[0.08]"
+                  className="rounded-xl sm:rounded-2xl bg-zinc-950/75 p-3 text-center ring-1 ring-white/[0.08]"
                 >
                   <div className="text-xs capitalize text-zinc-400">{hk}</div>
-                  <div className="mt-1 text-2xl font-semibold text-white tabular-nums">{val}</div>
+                  <div className="mt-0.5 text-xl sm:text-2xl font-semibold text-white tabular-nums">
+                    {val}
+                  </div>
                 </div>
               ))}
 
               {(bfeScorecard.guests || []).map((g) => (
                 <div
                   key={g.name}
-                  className="rounded-2xl bg-zinc-950/75 p-3.5 text-center ring-1 ring-white/[0.08]"
+                  className="rounded-xl sm:rounded-2xl bg-zinc-950/75 p-3 text-center ring-1 ring-white/[0.08]"
                 >
                   <div className="truncate text-xs text-zinc-400">{g.name}</div>
-                  <div className="mt-1 text-2xl font-semibold text-white tabular-nums">
+                  <div className="mt-0.5 text-xl sm:text-2xl font-semibold text-white tabular-nums">
                     {g.score}
                   </div>
                 </div>
               ))}
 
-              <div className="rounded-2xl bg-zinc-950/75 p-3.5 text-center ring-1 ring-amber-300/25">
+              <div className="rounded-xl sm:rounded-2xl bg-zinc-950/75 p-3 text-center ring-1 ring-amber-300/25">
                 <div className="text-xs font-medium text-amber-300">5th Seat</div>
-                <div className="mt-1 text-2xl font-semibold text-white tabular-nums">
+                <div className="mt-0.5 text-xl sm:text-2xl font-semibold text-white tabular-nums">
                   {bfeScorecard.fifthSeatAvg ?? "—"}
                 </div>
                 <div className="text-[10px] text-zinc-500">
@@ -439,9 +475,11 @@ export default async function EpisodePage({ params }) {
               </div>
 
               {bfeScorecard.combinedScore ? (
-                <div className="rounded-2xl bg-amber-300 text-zinc-950 p-3.5 text-center">
-                  <div className="text-[11px] font-bold uppercase tracking-wider">Official BFE</div>
-                  <div className="mt-1 text-2xl font-black tabular-nums">
+                <div className="col-span-2 sm:col-span-1 rounded-xl sm:rounded-2xl bg-amber-300 text-zinc-950 p-3 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
+                    Official BFE
+                  </div>
+                  <div className="mt-0.5 text-xl sm:text-2xl font-black tabular-nums">
                     {bfeScorecard.combinedScore.toFixed(2)}
                   </div>
                 </div>
@@ -449,15 +487,15 @@ export default async function EpisodePage({ params }) {
             </div>
 
             {bfeScorecard.fifthSeatVoters?.length ? (
-              <div className="mt-5 border-t border-white/[0.08] pt-4">
+              <div className="mt-4 border-t border-white/[0.08] pt-4">
                 <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
                   Patrons in the Fifth Seat on This Episode
                 </div>
-                <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 items-start">
                   {bfeScorecard.fifthSeatVoters.map((v) => (
                     <div
                       key={v.name}
-                      className="rounded-xl bg-zinc-950/70 px-4 py-3 text-xs ring-1 ring-white/[0.06]"
+                      className="rounded-xl bg-zinc-950/70 px-3.5 py-2.5 text-xs ring-1 ring-white/[0.06]"
                     >
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-white">{v.name}</span>
@@ -466,7 +504,7 @@ export default async function EpisodePage({ params }) {
                         </span>
                       </div>
                       {v.quote ? (
-                        <p className="mt-1.5 text-zinc-400 leading-relaxed">“{v.quote}”</p>
+                        <p className="mt-1 text-zinc-400 leading-relaxed">“{v.quote}”</p>
                       ) : null}
                     </div>
                   ))}
@@ -478,13 +516,13 @@ export default async function EpisodePage({ params }) {
 
         {/* Cast strip */}
         {tmdbId && cast.length ? (
-          <section className="mt-6 rounded-3xl bg-zinc-900/60 p-5 ring-1 ring-white/[0.08]">
+          <section className="mt-5 sm:mt-6 rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-4 sm:p-5 ring-1 ring-white/[0.08]">
             <div className="flex items-baseline justify-between gap-4">
               <h2 className="text-base font-semibold text-white">Top Cast</h2>
-              <div className="text-xs text-zinc-500">Scroll →</div>
+              <div className="text-xs text-zinc-500">Swipe →</div>
             </div>
 
-            <div className="mt-4 flex snap-x snap-mandatory gap-3.5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="mt-3.5 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {cast.slice(0, 12).map((p) => (
                 <CastStripItem key={p.credit_id || `${p.id}-${p.cast_id || ""}`} person={p} />
               ))}
@@ -493,25 +531,25 @@ export default async function EpisodePage({ params }) {
         ) : null}
 
         {/* BODY */}
-        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px]">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-[1fr_340px]">
           <section className="space-y-6">
             {ep.audioUrl ? (
-              <div className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
-                <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-4 sm:p-6 ring-1 ring-white/[0.08]">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">
+                    <div className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-500">
                       Audio
                     </div>
                     <h2 className="mt-0.5 text-base font-semibold text-white">Listen to Episode</h2>
                   </div>
                   <EpisodePlayButton
-                    title={ep.title}
+                    title={decodeEntities(ep.title)}
                     slug={ep.slug}
                     audioUrl={ep.audioUrl}
                     posterUrl={posterUrl}
                   />
                 </div>
-                <div className="mt-4">
+                <div className="mt-3.5">
                   <audio controls preload="metadata" src={ep.audioUrl} className="w-full" />
                 </div>
               </div>
@@ -528,36 +566,34 @@ export default async function EpisodePage({ params }) {
             ) : null}
 
             {tmdbId && details?.overview ? (
-              <div className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+              <div className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
                 <h2 className="text-base font-semibold text-white">Synopsis</h2>
-                <p className="mt-2.5 max-w-3xl text-sm leading-relaxed text-zinc-300">
+                <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-300">
                   {details.overview}
                 </p>
               </div>
             ) : null}
 
-            <div className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
-              <div className="flex items-baseline justify-between gap-4">
-                <h2 className="text-base font-semibold text-white">Show Notes</h2>
-              </div>
+            <div className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
+              <h2 className="text-base font-semibold text-white">Show Notes</h2>
 
               {notesPreview ? (
-                <p className="mt-2.5 text-sm text-zinc-300 leading-relaxed">
+                <p className="mt-2 text-sm text-zinc-300 leading-relaxed">
                   {notesPreview}
-                  {(ep.descriptionText || "").length > notesPreview.length ? "…" : ""}
+                  {decodedNotes.length > notesPreview.length ? "…" : ""}
                 </p>
               ) : (
-                <p className="mt-2.5 text-sm text-zinc-500">No show notes.</p>
+                <p className="mt-2 text-sm text-zinc-500">No show notes.</p>
               )}
 
-              <details className="mt-4 rounded-2xl bg-zinc-950/70 ring-1 ring-white/[0.08] p-4">
+              <details className="mt-4 rounded-xl sm:rounded-2xl bg-zinc-950/70 ring-1 ring-white/[0.08] p-3.5 sm:p-4">
                 <summary className="cursor-pointer select-none text-xs font-semibold text-zinc-200">
                   Read full show notes
                 </summary>
 
                 <div
                   id="full-notes"
-                  className="prose prose-invert mt-4 max-w-none text-sm prose-a:text-amber-300 prose-a:underline hover:prose-a:no-underline"
+                  className="prose prose-invert mt-3.5 max-w-none text-sm prose-a:text-amber-300 prose-a:underline hover:prose-a:no-underline break-words"
                   style={{ lineHeight: 1.65 }}
                   dangerouslySetInnerHTML={{ __html: ep.descriptionHtml || "" }}
                 />
@@ -568,7 +604,7 @@ export default async function EpisodePage({ params }) {
           <aside className="space-y-6">
             {tmdbId && director ? <DirectorCard director={director} /> : null}
 
-            <section className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+            <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
               <h2 className="text-base font-semibold text-white">Join the Fifth Seat</h2>
               <p className="mt-2 text-xs leading-relaxed text-zinc-400">
                 BFE Patrons vote on upcoming films, submit Fifth-Seat rankings (counting as one
@@ -592,7 +628,7 @@ export default async function EpisodePage({ params }) {
               </div>
             </section>
 
-            <section className="rounded-3xl bg-zinc-900/60 p-6 ring-1 ring-white/[0.08]">
+            <section className="rounded-2xl sm:rounded-3xl bg-zinc-900/60 p-5 sm:p-6 ring-1 ring-white/[0.08]">
               <h2 className="text-base font-semibold text-white">Details</h2>
 
               <div className="mt-4 space-y-2.5 text-xs text-zinc-400">

@@ -84,7 +84,7 @@ function buildHref({ q, filter, host, sort, p }) {
   return qs ? `/?${qs}` : "/";
 }
 
-function HostRow({ keys, max = 4, variant = "chip" }) {
+function HostRow({ keys, max = 4, variant = "compact" }) {
   const list = Array.isArray(keys) ? keys.filter(Boolean) : [];
   if (!list.length) return null;
 
@@ -93,8 +93,8 @@ function HostRow({ keys, max = 4, variant = "chip" }) {
 
   if (variant === "compact") {
     return (
-      <div className="mt-2 flex items-center gap-2">
-        <div className="flex -space-x-1.5">
+      <div className="mt-1.5 flex items-center gap-1.5 min-w-0">
+        <div className="flex -space-x-1.5 shrink-0">
           {hosts.slice(0, max).map((h) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -102,12 +102,12 @@ function HostRow({ keys, max = 4, variant = "chip" }) {
               src={h.image}
               alt={h.name}
               title={h.name}
-              className="h-6 w-6 rounded-full object-cover ring-2 ring-zinc-950"
+              className="h-5 w-5 rounded-full object-cover ring-2 ring-zinc-950"
               loading="lazy"
             />
           ))}
         </div>
-        <div className="truncate text-[11px] text-zinc-300/80">
+        <div className="truncate text-[11px] text-zinc-300/90">
           {hosts
             .slice(0, max)
             .map((h) => h.name)
@@ -117,26 +117,7 @@ function HostRow({ keys, max = 4, variant = "chip" }) {
     );
   }
 
-  return (
-    <div className="mt-3 flex flex-wrap items-center gap-1.5">
-      {hosts.slice(0, max).map((h) => (
-        <div
-          key={h.key}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white/[0.06] px-2.5 py-0.5 ring-1 ring-white/[0.08]"
-          title={h.name}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={h.image}
-            alt={h.name}
-            className="h-5 w-5 rounded-full object-cover"
-            loading="lazy"
-          />
-          <span className="text-[11px] font-medium text-zinc-200">{h.name}</span>
-        </div>
-      ))}
-    </div>
-  );
+  return null;
 }
 
 function PosterTile({ ep, resolved, scoreMeta }) {
@@ -146,13 +127,13 @@ function PosterTile({ ep, resolved, scoreMeta }) {
   const displayTitle =
     resolved?.movie?.title || (epNum ? stripLeadingEpisodeNumber(epTitle) : epTitle);
 
-  const subParts = [
+  const sub = [
     epNum ? `EP ${epNum}` : "",
     prettyDateStable(ep.isoDate),
-    ep.durationPretty ? `· ${ep.durationPretty}` : "",
-  ].filter(Boolean);
-
-  const sub = subParts.join(" ");
+    ep.durationPretty || "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   const posterUrl =
     posterUrlFromResolved(resolved) ||
@@ -182,16 +163,19 @@ function PosterTile({ ep, resolved, scoreMeta }) {
         )}
 
         {scoreMeta?.combinedScore ? (
-          <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full bg-zinc-950/80 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 ring-1 ring-white/15 backdrop-blur-md">
+          <div className="absolute top-2 right-2 flex items-center gap-1 rounded-full bg-zinc-950/85 px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold text-amber-300 ring-1 ring-white/15 backdrop-blur-md">
             <span>★ {scoreMeta.combinedScore.toFixed(2)}</span>
           </div>
         ) : null}
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
+        {/* Strong bottom scrim so bright white posters (like Full Metal Jacket) remain readable */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/95 via-black/65 to-transparent" />
 
-        <div className="absolute bottom-0 left-0 right-0 p-3.5">
-          <div className="text-[11px] text-zinc-400">{sub}</div>
-          <div className="mt-0.5 line-clamp-2 text-[15px] font-semibold leading-snug text-white">
+        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-3.5">
+          <div className="truncate text-[10px] sm:text-[11px] text-zinc-300 drop-shadow">
+            {sub}
+          </div>
+          <div className="mt-0.5 line-clamp-2 text-sm sm:text-[15px] font-semibold leading-snug text-white drop-shadow">
             {displayTitle}
           </div>
           <HostRow keys={ep.hostKeys} max={3} variant="compact" />
@@ -221,54 +205,51 @@ function FeaturedCard({ ep, resolved, scoreMeta }) {
   const meta = [
     epNum ? `EP ${epNum}` : "",
     prettyDateStable(ep.isoDate),
-    year ? `· ${year}` : "",
-    ep.durationPretty ? `· ${ep.durationPretty}` : "",
+    year || "",
+    ep.durationPretty || "",
   ]
     .filter(Boolean)
-    .join(" ");
+    .join(" · ");
 
-  const excerpt = decodeEntities(ep.descriptionText || "").slice(0, 135);
+  const excerpt = decodeEntities(ep.descriptionText || "").slice(0, 120);
 
   return (
     <Link
       href={`/episodes/${ep.slug}`}
-      className="group flex gap-4 overflow-hidden rounded-2xl bg-zinc-900/50 ring-1 ring-white/[0.08] hover:bg-zinc-900/80 hover:ring-white/20 transition"
+      className="group flex gap-3.5 sm:gap-4 overflow-hidden rounded-2xl bg-zinc-900/60 p-3 ring-1 ring-white/[0.08] hover:bg-zinc-900/85 hover:ring-white/20 transition"
     >
-      <div className="w-[100px] shrink-0">
-        <div className="h-full aspect-[2/3]">
-          {posterUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={posterUrl}
-              alt={displayTitle}
-              className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
-              loading="lazy"
-            />
-          ) : (
-            <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
-          )}
-        </div>
+      {/* Contained fixed-ratio poster thumbnail (never bleeds behind text) */}
+      <div className="relative w-20 sm:w-[88px] aspect-[2/3] shrink-0 overflow-hidden rounded-xl bg-zinc-800 ring-1 ring-white/10">
+        {posterUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={posterUrl}
+            alt={displayTitle}
+            className="h-full w-full object-cover group-hover:scale-[1.03] transition duration-300"
+            loading="lazy"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-zinc-800 to-zinc-950" />
+        )}
       </div>
 
-      <div className="flex flex-col justify-between min-w-0 py-3.5 pr-4">
+      <div className="flex flex-1 flex-col justify-between min-w-0 py-0.5">
         <div>
-          <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-            <span>{meta}</span>
-          </div>
-          <div className="mt-1 line-clamp-1 text-base font-semibold tracking-tight text-white">
+          <div className="truncate text-[11px] text-zinc-400">{meta}</div>
+          <div className="mt-0.5 line-clamp-1 text-[15px] sm:text-base font-semibold tracking-tight text-white">
             {displayTitle}
           </div>
           {excerpt ? (
-            <div className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-zinc-400">
+            <div className="mt-1 line-clamp-2 text-xs leading-relaxed text-zinc-400">
               {excerpt}…
             </div>
           ) : null}
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="mt-2 flex items-center justify-between gap-2 min-w-0">
           <HostRow keys={ep.hostKeys} max={3} variant="compact" />
           {scoreMeta?.combinedScore ? (
-            <span className="rounded-full bg-amber-300/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 ring-1 ring-amber-300/25">
+            <span className="shrink-0 rounded-full bg-amber-300/10 px-2 py-0.5 text-[11px] font-semibold text-amber-300 ring-1 ring-amber-300/25">
               ★ {scoreMeta.combinedScore.toFixed(2)}
             </span>
           ) : null}
@@ -394,8 +375,7 @@ export default async function Home({ searchParams }) {
         <div className="absolute inset-0 bg-[radial-gradient(800px_circle_at_85%_10%,rgba(251,191,36,0.04),transparent_50%)]" />
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 pb-20 pt-8">
-        {/* Up Next Spotlight */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-20 pt-5 sm:pt-8">
         {activeScheduled ? (
           <FifthSeatBanner
             film={activeScheduled}
@@ -408,22 +388,21 @@ export default async function Home({ searchParams }) {
           />
         ) : null}
 
-        {/* Latest Releases */}
         {!q && host === "all" && filter === "all" && sort === "newest" && p === 1 ? (
-          <section className="mt-10">
+          <section className="mt-8 sm:mt-10">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight text-white">Latest Episodes</h2>
-              </div>
+              <h2 className="text-base sm:text-lg font-semibold tracking-tight text-white">
+                Latest Episodes
+              </h2>
               <Link
                 href="/gif"
                 className="text-xs font-medium text-zinc-400 hover:text-amber-300 transition"
               >
-                Play Episode 358’s #BFERandomWord GIF Game →
+                Play #BFERandomWord GIF Game →
               </Link>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="mt-3.5 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
               {featured.map((ep) => {
                 const num = getEpisodeNumberIfFullReview(ep.title);
                 return (
@@ -440,14 +419,14 @@ export default async function Home({ searchParams }) {
         ) : null}
 
         {/* Search & Clean Segmented Filter Toolbar */}
-        <section className="mt-12">
-          <div className="rounded-2xl bg-zinc-900/55 p-4 ring-1 ring-white/[0.08] space-y-4">
-            <form className="flex items-center gap-2.5" action="/" method="get">
+        <section className="mt-8 sm:mt-12">
+          <div className="rounded-2xl bg-zinc-900/55 p-3.5 sm:p-4 ring-1 ring-white/[0.08] space-y-3">
+            <form className="flex items-center gap-2" action="/" method="get">
               <input
                 name="q"
                 defaultValue={q}
-                placeholder={`Search ${all.length} episodes by movie title, actor, or show notes…`}
-                className="w-full rounded-xl bg-zinc-950/80 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/[0.08] focus:outline-none focus:ring-white/25"
+                placeholder={`Search ${all.length} episodes…`}
+                className="w-full rounded-xl bg-zinc-950/80 px-3.5 py-2 sm:py-2.5 text-sm text-white placeholder:text-zinc-500 ring-1 ring-white/[0.08] focus:outline-none focus:ring-white/25"
               />
               <input type="hidden" name="p" value="1" />
               <input type="hidden" name="filter" value={filter} />
@@ -455,78 +434,42 @@ export default async function Home({ searchParams }) {
               {sort !== "newest" ? <input type="hidden" name="sort" value={sort} /> : null}
               <button
                 type="submit"
-                className="shrink-0 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200 transition"
+                className="shrink-0 rounded-xl bg-white px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold text-zinc-950 hover:bg-zinc-200 transition"
               >
                 Search
               </button>
               {q ? (
                 <Link
                   href={buildHref({ q: "", filter, host, sort, p: 1 })}
-                  className="shrink-0 rounded-xl bg-white/[0.06] px-3.5 py-2.5 text-xs font-medium text-zinc-300 hover:bg-white/10"
+                  className="shrink-0 rounded-xl bg-white/[0.06] px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-white/10"
                 >
                   Clear
                 </Link>
               ) : null}
             </form>
 
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-3">
-                {/* Segmented Type Control */}
-                <div className="inline-flex items-center rounded-full bg-zinc-950 p-1 ring-1 ring-white/[0.08]">
-                  {[
-                    ["all", "All"],
-                    ["full", "Full Reviews"],
-                    ["extras", "Extras"],
-                  ].map(([val, lbl]) => (
-                    <Link
-                      key={val}
-                      href={buildHref({ q, filter: val, host, sort, p: 1 })}
-                      className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                        filter === val
-                          ? "bg-white text-zinc-950 font-semibold"
-                          : "text-zinc-400 hover:text-white"
-                      }`}
-                    >
-                      {lbl}
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Clean Host Strip */}
-                <div className="flex flex-wrap items-center gap-1.5">
+            {/* Type + Sort Row */}
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="inline-flex items-center rounded-full bg-zinc-950 p-1 ring-1 ring-white/[0.08]">
+                {[
+                  ["all", "All"],
+                  ["full", "Full Reviews"],
+                  ["extras", "Extras"],
+                ].map(([val, lbl]) => (
                   <Link
-                    href={buildHref({ q, filter, host: "all", sort, p: 1 })}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                      host === "all"
-                        ? "bg-white/15 text-white ring-1 ring-white/30"
-                        : "text-zinc-400 ring-1 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white"
+                    key={val}
+                    href={buildHref({ q, filter: val, host, sort, p: 1 })}
+                    className={`whitespace-nowrap rounded-full px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium transition ${
+                      filter === val
+                        ? "bg-white text-zinc-950 font-semibold"
+                        : "text-zinc-400 hover:text-white"
                     }`}
                   >
-                    All Hosts
+                    {lbl}
                   </Link>
-                  {HOSTS.map((h) => (
-                    <Link
-                      key={h.key}
-                      href={buildHref({ q, filter, host: h.key, sort, p: 1 })}
-                      className={`inline-flex items-center gap-1.5 rounded-full pl-1.5 pr-2.5 py-1 text-xs font-medium transition ${
-                        host === h.key
-                          ? "bg-white/15 text-white ring-1 ring-white/35"
-                          : "text-zinc-400 ring-1 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white"
-                      }`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={h.image}
-                        alt={h.name}
-                        className="h-4 w-4 rounded-full object-cover"
-                      />
-                      {h.name}
-                    </Link>
-                  ))}
-                </div>
+                ))}
               </div>
 
-              {/* Segmented Sort Control */}
               <div className="inline-flex items-center rounded-full bg-zinc-950 p-1 ring-1 ring-white/[0.08]">
                 {[
                   ["newest", "Newest"],
@@ -536,7 +479,7 @@ export default async function Home({ searchParams }) {
                   <Link
                     key={sVal}
                     href={buildHref({ q, filter, host, sort: sVal, p: 1 })}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition ${
+                    className={`whitespace-nowrap rounded-full px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium transition ${
                       sort === sVal
                         ? "bg-white text-zinc-950 font-semibold"
                         : "text-zinc-400 hover:text-white"
@@ -547,13 +490,45 @@ export default async function Home({ searchParams }) {
                 ))}
               </div>
             </div>
+
+            {/* Single-Line Horizontally Scrollable Host Strip */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <Link
+                href={buildHref({ q, filter, host: "all", sort, p: 1 })}
+                className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition ${
+                  host === "all"
+                    ? "bg-white/15 text-white ring-1 ring-white/30"
+                    : "text-zinc-400 ring-1 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white"
+                }`}
+              >
+                All Hosts
+              </Link>
+              {HOSTS.map((h) => (
+                <Link
+                  key={h.key}
+                  href={buildHref({ q, filter, host: h.key, sort, p: 1 })}
+                  className={`shrink-0 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full pl-1.5 pr-2.5 py-1 text-xs font-medium transition ${
+                    host === h.key
+                      ? "bg-white/15 text-white ring-1 ring-white/35"
+                      : "text-zinc-400 ring-1 ring-white/[0.06] hover:bg-white/[0.06] hover:text-white"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={h.image}
+                    alt={h.name}
+                    className="h-4 w-4 rounded-full object-cover"
+                  />
+                  {h.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          {/* Poster Grid Header */}
-          <div className="mt-8 flex items-baseline justify-between">
-            <h2 className="text-lg font-semibold tracking-tight text-white">
+          <div className="mt-7 flex items-baseline justify-between">
+            <h2 className="text-base sm:text-lg font-semibold tracking-tight text-white">
               Episode Library{" "}
-              <span className="ml-1.5 text-sm font-normal text-zinc-500">({total})</span>
+              <span className="ml-1 text-xs sm:text-sm font-normal text-zinc-500">({total})</span>
             </h2>
             <div className="text-xs text-zinc-500">
               Page <span className="text-zinc-300">{p}</span> of{" "}
@@ -561,7 +536,7 @@ export default async function Home({ searchParams }) {
             </div>
           </div>
 
-          <div className="mt-4 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="mt-3.5 grid grid-cols-2 gap-3.5 sm:gap-5 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
             {pageItems.map((ep) => {
               const num = getEpisodeNumberIfFullReview(ep.title);
               return (
@@ -575,8 +550,7 @@ export default async function Home({ searchParams }) {
             })}
           </div>
 
-          {/* Pagination */}
-          <div className="mt-10 flex items-center justify-between border-t border-white/[0.08] pt-6">
+          <div className="mt-8 flex items-center justify-between border-t border-white/[0.08] pt-5">
             <div className="text-xs text-zinc-500">
               Showing <span className="text-zinc-300">{total ? start + 1 : 0}</span>–
               <span className="text-zinc-300">{Math.min(start + PAGE_SIZE, total)}</span> of{" "}
@@ -585,15 +559,15 @@ export default async function Home({ searchParams }) {
 
             <div className="flex gap-2">
               <Link
-                className={`rounded-full px-4 py-2 text-xs font-medium ring-1 ring-white/10 transition ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-medium ring-1 ring-white/10 transition ${
                   p <= 1 ? "pointer-events-none text-zinc-600" : "text-zinc-300 hover:bg-white/10"
                 }`}
                 href={buildHref({ q, filter, host, sort, p: p - 1 })}
               >
-                ← Previous
+                ← Prev
               </Link>
               <Link
-                className={`rounded-full px-4 py-2 text-xs font-medium ring-1 ring-white/10 transition ${
+                className={`rounded-full px-3.5 py-1.5 text-xs font-medium ring-1 ring-white/10 transition ${
                   p >= totalPages
                     ? "pointer-events-none text-zinc-600"
                     : "text-zinc-300 hover:bg-white/10"
