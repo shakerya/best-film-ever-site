@@ -3,6 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import episodeTmdbMap from "@/data/episodeTmdbMap.json";
+import {
+  PHONETIC_PHRASE_REPLACEMENTS,
+  PHONETIC_TOKEN_ALIASES,
+} from "@/lib/bfeRoster";
 
 const CORPUS_GZ_PATH = path.join(process.cwd(), "src/data/transcriptCorpus.json.gz");
 const EXTRA_TRANSCRIPTS_DIR = path.join(process.cwd(), "src/data/synced-transcripts");
@@ -177,45 +181,16 @@ function readAllTranscriptEpisodesRaw() {
   return episodes;
 }
 
-const PHONETIC_TOKEN_ALIASES = new Map([
-  // Whisper phonetic spellings of Aashrey
-  ["aashrey", "aashrey"],
-  ["ashray", "aashrey"],
-  ["ashrey", "aashrey"],
-  ["ashre", "aashrey"],
-  ["ashree", "aashrey"],
-  ["aashri", "aashrey"],
-  ["oshre", "aashrey"],
-  ["oshray", "aashrey"],
-  ["oshree", "aashrey"],
-  ["ashra", "aashrey"],
-  ["asher", "aashrey"],
-  ["ashera", "aashrey"],
-  ["asherah", "aashrey"],
-  ["oshera", "aashrey"],
-  ["ashrafe", "aashrey"],
-  // Other frequent BFE host & patron phonetic variants
-  ["ariana", "ariannah"],
-  ["ariannah", "ariannah"],
-  ["shy", "shai"],
-  ["shai", "shai"],
-  ["bergerfroind", "shai"],
-  ["bergefroind", "shai"],
-  ["megs", "megan"],
-  ["megan", "megan"],
-  ["kev", "kevin"],
-  ["kevdog", "kevin"],
-  ["kevin", "kevin"],
-  ["komarowski", "komoroski"],
-  ["kamaroski", "komoroski"],
-  ["komeroski", "komoroski"],
-  ["sheezy", "cheesy"],
-]);
+function normalizePhoneticPhrases(raw) {
+  let s = String(raw || "").toLowerCase();
+  for (const [re, replacement] of PHONETIC_PHRASE_REPLACEMENTS) {
+    s = s.replace(re, replacement);
+  }
+  return s;
+}
 
 function tokenize(text) {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/\bash\s+r(?:ay|ey|ee|e|a)\b/g, "aashrey")
+  return normalizePhoneticPhrases(text)
     .replace(/['’]/g, "")
     .split(/[^a-z0-9]+/)
     .filter((t) => t.length >= 2 && !STOPWORDS.has(t))

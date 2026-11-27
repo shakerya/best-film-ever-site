@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import seedEpisodes from "@/data/seedEpisodes.json";
 import { BFE_LINKS, normalizeGifKey } from "./bfeShared";
+import { canonicalizePatronName } from "./bfeRoster";
 
 export { BFE_LINKS, normalizeGifKey };
 
@@ -701,19 +702,8 @@ export async function getPatronContributorLeaderboard(providedState = null) {
   const counts = new Map();
 
   const bump = (rawName, score) => {
-    const clean = String(rawName || "").trim();
-    if (!clean) return;
-    const key = clean.toLowerCase().startsWith("paul")
-      ? "Paul Komoroski"
-      : clean.toLowerCase().startsWith("shai")
-        ? "Shai Bergerfroind"
-        : clean.toLowerCase().startsWith("ariann")
-          ? "Ariannah"
-          : clean.toLowerCase().startsWith("james")
-            ? "James DeGuzman"
-            : clean.toLowerCase().startsWith("dirk")
-              ? "Dirk Diggler"
-              : clean;
+    const key = canonicalizePatronName(rawName);
+    if (!key) return;
 
     const prev = counts.get(key) || { name: key, count: 0, scoredCount: 0, sum: 0 };
     prev.count += 1;

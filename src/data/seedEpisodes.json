@@ -54,7 +54,7 @@
         "quote": "I haven't seen it, but I have a story."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "That's one I haven't seen. It's been on my radar for a while, but I haven't gotten around to it."
       },
@@ -145,7 +145,7 @@
     },
     "guests": [
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": 9
       }
     ],
@@ -445,11 +445,6 @@
     "fifthSeatCount": 2,
     "fifthSeatVoters": [
       {
-        "name": "Kevin",
-        "score": null,
-        "quote": "I watched this film this time last year."
-      },
-      {
         "name": "FJ",
         "score": null,
         "quote": "I'll never understand why they cut out Patrick Stewart's generation."
@@ -484,7 +479,7 @@
         "quote": "Rewatched them with sunshine, loved it before, loved it even more now."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Wanted to get on this."
       },
@@ -548,7 +543,7 @@
         "quote": "Love this film."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "A family fave here."
       },
@@ -607,12 +602,12 @@
         "quote": "I've never seen it."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "Excellent film."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Love it."
       },
@@ -715,7 +710,7 @@
         "quote": "What bad criticism looks like as it approaches the movie and is Neo stopping all the bullets."
       },
       {
-        "name": "Chris P.",
+        "name": "Chris Peterson",
         "score": null,
         "quote": "A brilliant film, all the cast are excellent at their roles."
       },
@@ -740,7 +735,7 @@
         "quote": "Dialogue with questions, 80% of the film."
       },
       {
-        "name": "Grift",
+        "name": "Griff (Paul & Griff Show)",
         "score": null,
         "quote": "One of the greatest cinematic experiences."
       },
@@ -804,12 +799,7 @@
         "quote": "It's a little link out."
       },
       {
-        "name": "Kev",
-        "score": null,
-        "quote": "Christmas is all around period."
-      },
-      {
-        "name": "Stu",
+        "name": "Stu (SWO Podcast)",
         "score": null,
         "quote": "I haven't seen in probably 15 plus years, but I thought it was cute and fun when I saw it."
       },
@@ -992,7 +982,7 @@
     "fifthSeatCount": 6,
     "fifthSeatVoters": [
       {
-        "name": "Katie Gray",
+        "name": "Katie McCray",
         "score": null,
         "quote": "Outstanding cast. Denzel Washington and Gene Hackman give amazing performances. Very suspenseful and a fascinating ethical dilemma."
       },
@@ -1317,11 +1307,6 @@
         "name": "Ashley",
         "score": null,
         "quote": "This is another one of those films I appreciate for existing, but overall, just not my cup of tea."
-      },
-      {
-        "name": "Ashley",
-        "score": null,
-        "quote": "This is such a good film."
       }
     ],
     "combinedScore": 8.6
@@ -1344,28 +1329,8 @@
     "fifthSeatVoters": [
       {
         "name": "Ashley",
-        "score": null,
-        "quote": "I adore the back to the future trilogy and have watched all of them so many times."
-      },
-      {
-        "name": "Ashley",
-        "score": null,
-        "quote": "I love all these films and it's hard for me to think of them separately."
-      },
-      {
-        "name": "Ashley",
         "score": 7,
-        "quote": "It is objectively not that great a film."
-      },
-      {
-        "name": "Ashley",
-        "score": null,
-        "quote": "One and two were unbeatable for me, but Chuck it in the love story for Doc Brown..."
-      },
-      {
-        "name": "Ashley",
-        "score": null,
-        "quote": "It's as bad as the first two and I try to forget the third exists."
+        "quote": "I adore the back to the future trilogy and have watched all of them so many times."
       }
     ],
     "combinedScore": 7.5
@@ -1402,7 +1367,7 @@
         "quote": "This was a good story, excellent performance by Mickey Rourke."
       },
       {
-        "name": "Anthony",
+        "name": "Anthony Davies",
         "score": null,
         "quote": "Everyone seems to love it on the comments here, I really didn't."
       }
@@ -1499,7 +1464,7 @@
     "fifthSeatCount": 5,
     "fifthSeatVoters": [
       {
-        "name": "Carlo Lolo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "It's the only part or I've seen whole idea of halfway through chamber secrets."
       },
@@ -1509,12 +1474,12 @@
         "quote": "Can't wait to hear this episode, this movie was my childhood."
       },
       {
-        "name": "Griffin",
+        "name": "Griff (Paul & Griff Show)",
         "score": null,
         "quote": "Thought you guys would be known, but no posts on Sunday is a winky face."
       },
       {
-        "name": "Shoot the flick",
+        "name": "Shoot the Flick",
         "score": null,
         "quote": "It's the most kid friendly of the series, but it's a little fun."
       }
@@ -1763,7 +1728,7 @@
         "quote": "I watched this about a year ago after seeing the shape of water and adoring that I decided I should give Gailmo del Toro's previous work a look."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "I have horrible memories of this film mainly because a dude I used to date would get hired and system watch in this every weekend."
       },
@@ -1778,7 +1743,7 @@
         "quote": "Tried to watch it but just couldn't get into it had it turned off 20 minutes in."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Excellent film my favorite del Toro film."
       },
@@ -1793,7 +1758,7 @@
         "quote": "I loved it that creature design was amazing."
       },
       {
-        "name": "Shay",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "Amazing film dark and interesting with good performances and truly amazing visuals."
       }
@@ -1846,7 +1811,7 @@
         "quote": "Literally this didn't episode on it lol."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Haven't seen a little while, but I remember being good Harrison Ford does a great job shedding his Indiana Jones Han Solo hero persona."
       },
@@ -1856,7 +1821,7 @@
         "quote": "Get off my plane."
       },
       {
-        "name": "Nostalgia cast",
+        "name": "Nostalgia Cast",
         "score": null,
         "quote": "One of the better die hard clones."
       }
@@ -1900,7 +1865,7 @@
         "quote": "I've had a bit to drink tonight, and frankly feel that that's what it takes to get through this one."
       },
       {
-        "name": "Kate McCray",
+        "name": "Katie McCray",
         "score": null,
         "quote": "I found it interesting that the legacy of Charleston is bank robbery, which makes for an exciting action-adventure movie."
       },
@@ -1915,12 +1880,12 @@
         "quote": "I don't mind admitting that I've struggled a bit with Reverend Bruce's previous choices, but with this one, I am right on board."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "This is a film I didn't want to view twice, so I truly cannot comment on it."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "It's a good film."
       },
@@ -1959,7 +1924,7 @@
         "quote": "I didn't go into it as a huge Muppet fan, but this made me one."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "I haven't seen this one in a long time, but I recall thoroughly enjoying it."
       },
@@ -1969,7 +1934,7 @@
         "quote": "I watched it and enjoyed it, but don't remember much now."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "My experience Muppet films is very limited."
       }
@@ -1997,7 +1962,7 @@
         "quote": "I managed to watch this for the first time today."
       },
       {
-        "name": "Russell",
+        "name": "Russell Osborne",
         "score": null,
         "quote": "Big fan of this iconic movie."
       },
@@ -2007,7 +1972,7 @@
         "quote": "Yes, you took it up to 11."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Haven't seen it in a while, but I remember liking it a lot."
       },
@@ -2071,7 +2036,7 @@
         "quote": "My brother grew up to hate the film because my sister and I made him be our dad's partner."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "Watch this a lot in my teens."
       },
@@ -2081,7 +2046,7 @@
         "quote": "I always hated this movie, but as I get older and as I'm a parent, I hate it more."
       },
       {
-        "name": "Nostalgia cast",
+        "name": "Nostalgia Cast",
         "score": null,
         "quote": "I compare it unfavourably to other 80s musical dramas like Footloose and Flashdance."
       },
@@ -2141,7 +2106,7 @@
         "quote": "I love all of Tarantino, but I don't have this one as high as most do, but that opening may be the best opening scene of all time."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Great film, probably my number three from Tarantino."
       },
@@ -2171,7 +2136,7 @@
         "quote": "Top three Tarantino for me."
       },
       {
-        "name": "Nostalgia cast",
+        "name": "Nostalgia Cast",
         "score": null,
         "quote": "We talk about Tarantino and bastards in our upcoming episode on Pulp Fiction."
       },
@@ -2445,7 +2410,7 @@
         "quote": "This was my first watch of Black Panther and I'd forgotten a first rewatch of Black Panther."
       },
       {
-        "name": "Ryan Kukets",
+        "name": "Ryan Kuketz",
         "score": 10,
         "quote": "I watched for the first time and thought it was incredible."
       },
@@ -2479,7 +2444,7 @@
     "fifthSeatCount": 1,
     "fifthSeatVoters": [
       {
-        "name": "Russell",
+        "name": "Russell Osborne",
         "score": null,
         "quote": "This is my late dad's favorite movie of all time, starring as all time hero, starting to get around to watching it."
       }
@@ -2608,7 +2573,7 @@
     },
     "guests": [
       {
-        "name": "Stu",
+        "name": "Stu (SWO Podcast)",
         "score": 8
       }
     ],
@@ -2800,7 +2765,7 @@
         "quote": "Such a disappointment."
       },
       {
-        "name": "Anthony",
+        "name": "Anthony Davies",
         "score": 7,
         "quote": "I remember having doubts about you and McGregor as Obi-Wan Kenobi, but he did a great job."
       }
@@ -2950,7 +2915,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "Shyberger",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "Phenomenal film."
       },
@@ -2984,7 +2949,7 @@
     "fifthSeatCount": 2,
     "fifthSeatVoters": [
       {
-        "name": "Macheiburger",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "It's a fine film."
       },
@@ -3340,7 +3305,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "David from Scriptical",
+        "name": "Scripticle",
         "score": null,
         "quote": "This is a tough one, love Robin Williams and the character so iconic, but it ascends into an '80s sitcom, and the restaurant scene is good, but not great."
       },
@@ -3350,7 +3315,7 @@
         "quote": "One of Robin Williams' finest performances, very endearing."
       },
       {
-        "name": "Carlo from the movie loop",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Surprisingly. I've never seen it."
       }
@@ -3546,7 +3511,7 @@
     "fifthSeatCount": 4,
     "fifthSeatVoters": [
       {
-        "name": "Schuyberg",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "I really wanted to like this movie."
       },
@@ -3585,7 +3550,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "Shoot the flick",
+        "name": "Shoot the Flick",
         "score": null,
         "quote": "Honestly, between this and snatch, I have a hard time deciding my favorite guy, Richie film."
       },
@@ -3619,7 +3584,7 @@
     "fifthSeatCount": 4,
     "fifthSeatVoters": [
       {
-        "name": "Shyburger Freud",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "Excellent film, but man, is it sad?"
       },
@@ -3658,7 +3623,7 @@
     "fifthSeatCount": 2,
     "fifthSeatVoters": [
       {
-        "name": "Schuyberg",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "Good show. Good film."
       },
@@ -3688,7 +3653,7 @@
     "fifthSeatCount": 5,
     "fifthSeatVoters": [
       {
-        "name": "Shyburger Freud",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "This is a very good movie that worked best at the time when it came out."
       },
@@ -3732,7 +3697,7 @@
     "fifthSeatCount": 2,
     "fifthSeatVoters": [
       {
-        "name": "Ravishing Dirk Rude",
+        "name": "Dirk Diggler",
         "score": 7,
         "quote": "I found this documentary sad and depressing."
       },
@@ -3819,14 +3784,9 @@
     "filmTitle": "Dave",
     "tmdbId": 11566,
     "hosts": {
-      "ian": 9
+      "ian": 9,
+      "georgia": 8
     },
-    "guests": [
-      {
-        "name": "Georgia",
-        "score": 8
-      }
-    ],
     "beetrootPct": 80,
     "fifthSeatAvg": 9,
     "fifthSeatCount": 2,
@@ -3837,7 +3797,7 @@
         "quote": "I love this film."
       },
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": 9,
         "quote": "I give this nine presidential seals out of 10."
       }
@@ -3883,7 +3843,7 @@
     "fifthSeatCount": 1,
     "fifthSeatVoters": [
       {
-        "name": "Schuyberg Freud",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "In a word, I would describe this film and the ones that came after it as unmemorable."
       }
@@ -3899,14 +3859,9 @@
     "filmTitle": "Shrek 2",
     "tmdbId": 809,
     "hosts": {
-      "ian": 8.5
+      "ian": 8.5,
+      "kevin": 7
     },
-    "guests": [
-      {
-        "name": "KevDog",
-        "score": 7
-      }
-    ],
     "beetrootPct": 63,
     "fifthSeatAvg": 7.33,
     "fifthSeatCount": 2,
@@ -4061,20 +4016,15 @@
       "ian": 7.5,
       "liam": 7.5,
       "megan": 8,
-      "georgia": 8
+      "georgia": 8,
+      "kevin": 6
     },
-    "guests": [
-      {
-        "name": "Kevin",
-        "score": 6
-      }
-    ],
     "beetrootPct": 64,
     "fifthSeatAvg": 7,
     "fifthSeatCount": 6,
     "fifthSeatVoters": [
       {
-        "name": "Kirsty",
+        "name": "Kirsti",
         "score": null,
         "quote": "This isn't my favorite Harry Potter film, but it definitely laid the vibe for the following HP movie franchise."
       },
@@ -4089,7 +4039,7 @@
         "quote": "This third year at Hogwarts turned out to be a right roller coaster of a tale."
       },
       {
-        "name": "Schreiberfroid",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "This is the first good Harry Potter film in the series."
       },
@@ -4125,7 +4075,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "Kirsten",
+        "name": "Kirsti",
         "score": null,
         "quote": "I have such amazing memories of this film."
       },
@@ -4196,7 +4146,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "Russell",
+        "name": "Russell Osborne",
         "score": null,
         "quote": "Any movie with Bruce Campbell is going to get a great vote from me."
       },
@@ -4206,7 +4156,7 @@
         "quote": "I'm not a big fan of the Raimi trilogy of Spider-Man movies, but this is easily the best of the three."
       },
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "Probably one of the best superhero films out there."
       }
@@ -4224,14 +4174,9 @@
     "hosts": {
       "ian": 8,
       "liam": 5,
-      "megan": 6
+      "megan": 6,
+      "kevin": 6
     },
-    "guests": [
-      {
-        "name": "Kevin",
-        "score": 6
-      }
-    ],
     "beetrootPct": 42,
     "fifthSeatAvg": 7.5,
     "fifthSeatCount": 2,
@@ -4343,7 +4288,7 @@
     "fifthSeatCount": 6,
     "fifthSeatVoters": [
       {
-        "name": "The Shy Guy",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "First, I must give Hermes his due shout out for selecting this film to review. It's a very good one."
       },
@@ -4461,11 +4406,6 @@
         "quote": "I selected great film. I've seen the extended and theatrical releases countless times and was very glad to have rewatched it."
       },
       {
-        "name": "Kevin",
-        "score": null,
-        "quote": "It's good, but it's the worst of the three."
-      },
-      {
         "name": "Hermes Auslander",
         "score": 10,
         "quote": "Unlike this film, I'll keep it short. It is a cherry whipped cream chocolate drizzle and sprinkle topped all in one and then some perfectly punctuated period on a brilliantly constructed trilogy."
@@ -4481,7 +4421,7 @@
         "quote": "Just like the Matrix, they peaked with the first, but CGI is atrocious."
       },
       {
-        "name": "The Shy Guy",
+        "name": "Shai Bergerfroind",
         "score": 9,
         "quote": "I'll start by saying that all the Lord of the Rings trilogy is my favorite trilogy of films of all time."
       }
@@ -4530,11 +4470,6 @@
         "name": "Richard",
         "score": null,
         "quote": "This is often labeled the best Python film, maybe because it actually has a coherent narrative and story rather than the more loose feeling, collection of sketches like Holy Grail, but it just doesn't make me laugh anywhere near as much."
-      },
-      {
-        "name": "Kevin",
-        "score": null,
-        "quote": "Albeit seen by some as controversial, this is still an absolute gem of a film if you can remember what the world was like when it came out."
       }
     ],
     "combinedScore": 7.58
@@ -4787,7 +4722,7 @@
         "quote": "Nate the great who just gives a score."
       },
       {
-        "name": "Joanne Smith",
+        "name": "Dwayne Smith",
         "score": null,
         "quote": "Pulp Fiction is a hugely important film to me."
       },
@@ -4827,7 +4762,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "John E. H. Wright",
+        "name": "John Humphrey's Right Foot",
         "score": null,
         "quote": "A long forgotten classic that I'm giving in something, Chewbacca, ooh, what a wookie."
       },
@@ -4867,7 +4802,7 @@
     "fifthSeatCount": 1,
     "fifthSeatVoters": [
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "From a technical standpoint, it's very well made, but it's plagued by clumsy exposition and spotty dialogue."
       }
@@ -5386,7 +5321,7 @@
         "quote": "Nate again, didn't say anything, but did give it a score."
       },
       {
-        "name": "Vulfoc Vomus",
+        "name": "Norfolk Domus",
         "score": 7,
         "quote": "V stars."
       }
@@ -5496,7 +5431,7 @@
         "score": 7
       },
       {
-        "name": "Cheezy",
+        "name": "Cheesy",
         "score": 7,
         "quote": "Never heard of this film before and no idea what it was about."
       }
@@ -5530,7 +5465,7 @@
         "quote": "I was pleasantly surprised by how much I enjoyed the film."
       },
       {
-        "name": "Cheezy",
+        "name": "Cheesy",
         "score": 9,
         "quote": "Another film I'd never even heard of and I probably never would have watched if it wasn't for the pod."
       }
@@ -5616,7 +5551,7 @@
         "quote": "A very different movie from what I expected."
       },
       {
-        "name": "Shyberger",
+        "name": "Shai Bergerfroind",
         "score": null,
         "quote": "Really good film."
       },
@@ -5646,7 +5581,7 @@
         "quote": "I think I love this movie."
       },
       {
-        "name": "Ryan Kookas",
+        "name": "Ryan Kuketz",
         "score": null,
         "quote": "I hadn't watched this film since I was a kid."
       }
@@ -5937,7 +5872,7 @@
     "fifthSeatCount": 3,
     "fifthSeatVoters": [
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "I'm going to say great. Even though I have some issues about how some things unfold."
       },
@@ -6098,7 +6033,7 @@
     "fifthSeatCount": 1,
     "fifthSeatVoters": [
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": null,
         "quote": "The film's technical values are top notch and our solo's performance is pretty good."
       }
@@ -6179,7 +6114,7 @@
     },
     "guests": [
       {
-        "name": "Carlo",
+        "name": "Carlo (The Movie Loot)",
         "score": 10
       }
     ],
@@ -6636,20 +6571,6 @@
       "liam": 5.5,
       "megan": 7
     },
-    "fifthSeatAvg": 5.75,
-    "fifthSeatCount": 2,
-    "fifthSeatVoters": [
-      {
-        "name": "Patreon",
-        "score": 6,
-        "quote": "Patreon average score."
-      },
-      {
-        "name": "Liam",
-        "score": 5.5,
-        "quote": "Liam's score."
-      }
-    ],
     "combinedScore": 7.06
   },
   "301": {
@@ -6903,11 +6824,6 @@
         "name": "Paul Komoroski",
         "score": 8,
         "quote": "Black Swan is an appreciable, emotionally painful journey of a film."
-      },
-      {
-        "name": "Ogre Ribeir",
-        "score": 7,
-        "quote": "Went and expected a ballet and left needing therapy and a tetanus shot."
       },
       {
         "name": "Ariannah",
@@ -7915,11 +7831,6 @@
     "fifthSeatCount": 4,
     "fifthSeatVoters": [
       {
-        "name": "Anonymous",
-        "score": 8,
-        "quote": "Foots in the hood. Eight solid ice cubes out of ten."
-      },
-      {
         "name": "Richard",
         "score": 8,
         "quote": "Resident curmudgeon who gives the film an eight out of ten."
@@ -8001,7 +7912,7 @@
     "fifthSeatCount": 2,
     "fifthSeatVoters": [
       {
-        "name": "Shyberger Freund",
+        "name": "Shai Bergerfroind",
         "score": 2,
         "quote": "All I can say is I was so bored with this film, it was just bad and not in a fun bad way."
       },
@@ -8247,7 +8158,7 @@
     },
     "guests": [
       {
-        "name": "Duane Smith",
+        "name": "Dwayne Smith",
         "score": 9.5
       }
     ],
@@ -8278,9 +8189,6 @@
       "ian": 7,
       "liam": 6
     },
-    "fifthSeatAvg": null,
-    "fifthSeatCount": 0,
-    "fifthSeatVoters": [],
     "combinedScore": 6.5,
     "randomWord": "Trans Am",
     "pickNote": "Halloween Month"

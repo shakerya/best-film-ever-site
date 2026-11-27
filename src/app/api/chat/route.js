@@ -7,6 +7,7 @@ import {
   getCatalogSummaryForPrompt,
 } from "@/lib/transcriptSearch";
 import { getAllRankedLeaderboardItems } from "@/lib/bfeStore";
+import { PATRON_NICKNAME_LORE, canonicalizePatronName } from "@/lib/bfeRoster";
 
 // Prevent macOS Node IPv6 DNS flakiness ("TypeError: fetch failed")
 try {
@@ -78,24 +79,55 @@ async function generateGroundedAnswer({
     })
     .join("\n");
 
-  // Dedicated chronological index of Aashrey's Fifth-Seat reviews & quotes across all episodes (including pre-300!)
-  const aashreyHistoryLines = leaderboard
-    .slice()
-    .sort((a, b) => b.epNum - a.epNum)
-    .flatMap((ep) => {
-      const v = (ep.fifthSeatVoters || []).find(
-        (voter) => String(voter?.name || "").toLowerCase() === "aashrey"
+  // Build complete Patron Fifth-Seat Directory across the ENTIRE Patreon roster!
+  const patronMap = new Map();
+  for (const ep of leaderboard.slice().sort((a, b) => b.epNum - a.epNum)) {
+    for (const rawV of ep.fifthSeatVoters || []) {
+      const pName = canonicalizePatronName(rawV?.name);
+      if (!pName) continue;
+      if (!patronMap.has(pName)) {
+        patronMap.set(pName, { name: pName, entries: [] });
+      }
+      patronMap.get(pName).entries.push({
+        epNum: ep.epNum,
+        film: ep.filmTitle || ep.title,
+        score: rawV.score,
+        quote: rawV.quote || "",
+      });
+    }
+  }
+
+  // Sort patrons by submission count descending; include full episode-by-episode scores (and quotes for Aashrey or any queried patron!)
+  const qLower = String(question || "").toLowerCase();
+  const patronDirectoryLines = Array.from(patronMap.values())
+    .filter((p) => p.entries.length >= 2 || qLower.includes(p.name.toLowerCase().split(" ")[0]))
+    .sort((a, b) => b.entries.length - a.entries.length)
+    .map((p) => {
+      const scored = p.entries.filter(
+        (e) => e.score !== null && e.score !== undefined && Number.isFinite(Number(e.score))
       );
-      if (!v) return [];
-      const scoreLabel =
-        v.score !== null && v.score !== undefined ? `${v.score}/10` : "Quote read on air (individual score withheld)";
-      return [
-        `- Ep ${ep.epNum} (${ep.filmTitle || ep.title}): Aashrey = ${scoreLabel}${
-          v.quote ? ` — "${v.quote}"` : ""
-        }`,
-      ];
+      const avg = scored.length
+        ? (scored.reduce((s, e) => s + Number(e.score), 0) / scored.length).toFixed(2)
+        : "—";
+      const isQueriedPatron =
+        p.name === "Aashrey" ||
+        p.name
+          .toLowerCase()
+          .split(/\s+/)
+          .some((part) => part.length >= 3 && qLower.includes(part));
+      const detailList = p.entries
+        .map((e) => {
+          const sc = e.score !== null && e.score !== undefined ? `${e.score}/10` : "read-on-air";
+          return isQueriedPatron && e.quote
+            ? `Ep ${e.epNum} ${e.film}: ${sc} ("${e.quote.slice(0, 140)}")`
+            : `Ep ${e.epNum} ${e.film}: ${sc}`;
+        })
+        .join("; ");
+      return `• ${p.name} (${p.entries.length} Fifth-Seats, avg=${avg}/10): ${detailList}`;
     })
     .join("\n");
+
+  const patronLoreBlock = PATRON_NICKNAME_LORE.map((l) => `- ${l}`).join("\n");
 
   const catalogLine = getCatalogSummaryForPrompt();
 
@@ -120,8 +152,12 @@ HOW TO GIVE GREAT ANSWERS:
    - Structured Official Scorecards below cover all transcribed episodes (Ep ${stats?.minEpNum || 82}–358), plus Aashrey's dedicated Fifth-Seat review log (including pre-300 episodes!). Note that on some mid-200s episodes when Georgia read Fifth-Seat reviews live before the hosts scored, individual scores were read as "blank out of 10" on air — explain that clearly when applicable while sharing his exact review quote!
 4. Never invent scores or quotes not grounded in the scorecards or excerpts below. Format cleanly with short paragraphs or bullet points.
 ${unindexedBanner}
-AASHREY'S VERIFIED FIFTH-SEAT REVIEWS & SCORES ACROSS ALL EPISODES (Newest to Oldest):
-${aashreyHistoryLines || "(None loaded)"}
+BFE PATREON FAMILY, NICKNAMES & PHONETIC AUDIO CATCH GUIDE:
+${patronLoreBlock}
+(Note: Whisper transcripts often misspell patron surnames phonetically — e.g. Shyberger/Schuyberg/The Shy Guy = Shai Bergerfroind; Norfolk Thomas/Vulfoc Vomus = Norfolk Domus; John E. H. Wright/Mr. Foote = John Humphrey's Right Foot; Sheezy = Cheesy; Ryan Kukets/Kookas = Ryan Kuketz; Leon Oberholzer = Lena Oberholzer; Paul Komarowski = Paul Komoroski; Ashray/Ashre/Oshre/Aashri/Asher = Aashrey. Always use their clean canonical name in your reply!)
+
+COMPLETE PATRON FIFTH-SEAT DIRECTORY & SCORES ACROSS ALL EPISODES:
+${patronDirectoryLines || "(None loaded)"}
 
 COMPLETE 358-EPISODE BFE FILM CATALOG (✓ = transcribed, ⏳ = in final transcription queue):
 ${catalogLine}
