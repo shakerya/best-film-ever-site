@@ -2,6 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
+import episodeTmdbMap from "@/data/episodeTmdbMap.json";
 
 const CORPUS_GZ_PATH = path.join(process.cwd(), "src/data/transcriptCorpus.json.gz");
 const EXTRA_TRANSCRIPTS_DIR = path.join(process.cwd(), "src/data/synced-transcripts");
@@ -11,13 +12,22 @@ const STOPWORDS = new Set([
   "had", "not", "but", "what", "when", "where", "who", "why", "how", "from", "they", "them",
   "their", "there", "about", "into", "out", "just", "like", "did", "does", "say", "said",
   "talk", "talked", "episode", "episodes", "movie", "movies", "film", "films", "best", "ever",
-  "bfe", "podcast", "pod", "tell", "give", "gave", "can", "could", "would", "should",
+  "bfe", "podcast", "pod", "tell", "give", "gave", "can", "could", "would", "should", "think",
+  "thought", "thoughts", "guys", "hosts", "host", "review", "reviewed",
+]);
+
+// Single-word movie titles that collide with everyday English words unless capitalized/quoted
+const AMBIGUOUS_SINGLE_WORD_TITLES = new Set([
+  "it", "up", "us", "her", "big", "saw", "heat", "crash", "hook", "mask", "cars", "elf",
+  "ted", "argo", "dune", "life", "snatch", "speed", "seven", "se7en", "drive", "taken",
+  "signs", "twins", "ghost", "alien", "rocky", "fargo", "blade", "clerks", "scream",
 ]);
 
 let cachedIndex = null;
 let cachedSyncedCount = -1;
 let cachedStats = null;
 let cachedStatsSyncedCount = -1;
+let cachedCatalogMatchers = null;
 
 function getSyncedFileCount() {
   try {
@@ -26,6 +36,116 @@ function getSyncedFileCount() {
   } catch {
     return 0;
   }
+}
+
+function normTitle(str) {
+  return String(str || "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/['’‘`]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeRegex(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function getCatalogMatchers() {
+  if (cachedCatalogMatchers) return cachedCatalogMatchers;
+  const list = [];
+  for (const [epKey, item] of Object.entries(episodeTmdbMap || {})) {
+    const epNum = Number(epKey);
+    const title = String(item?.title || "").trim();
+    if (!epNum || !title) continue;
+    const norm = normTitle(title);
+    if (!norm) continue;
+    const words = norm.split(" ").filter(Boolean);
+    // Also strip leading "the " for titles >= 2 non-article words (e.g. "The Departed" -> "departed" if >= 7 chars, "The Shawshank Redemption" -> "shawshank redemption")
+    const strippedThe = norm.startsWith("the ") ? norm.slice(4).trim() : "";
+    const variants = [norm];
+    if (
+      strippedThe &&
+      (strippedThe.includes(" ") || (strippedThe.length >= 7 && !AMBIGUOUS_SINGLE_WORD_TITLES.has(strippedThe)))
+    ) {
+      variants.push(strippedThe);
+    }
+    list.push({
+      epNum,
+      title,
+      year: item?.year || "",
+      norm,
+      wordCount: words.length,
+      variants,
+    });
+  }
+  // Match longest titles first so "Batman Returns" matches before "Batman"
+  list.sort((a, b) => b.norm.length - a.norm.length);
+  cachedCatalogMatchers = list;
+  return cachedCatalogMatchers;
+}
+
+export function detectCatalogEpisodesInText(rawText, { maxMatches = 3 } = {}) {
+  const raw = String(rawText || "");
+  const norm = normTitle(raw);
+  if (!norm) return [];
+
+  const matched = new Map();
+
+  // 1) Explicit episode numbers ("ep 113", "episode 358", "#83")
+  const epRegex = /\b(?:episode|ep\.?)\s*(\d{1,3})\b|#(\d{1,3})\b/gi;
+  let m;
+  while ((m = epRegex.exec(raw)) !== null) {
+    const num = Number(m[1] || m[2]);
+    const entry = episodeTmdbMap[String(num)];
+    if (num && entry) {
+      matched.set(num, { epNum: num, title: entry.title, year: entry.year || "" });
+    }
+  }
+
+  // 2) Canonical movie title match against all 358 reviewed films
+  let consumedNorm = ` ${norm} `;
+  for (const item of getCatalogMatchers()) {
+    if (matched.size >= maxMatches) break;
+    if (matched.has(item.epNum)) continue;
+
+    for (const v of item.variants) {
+      const isSingleWord = !v.includes(" ");
+      if (isSingleWord) {
+        if (v === "300") {
+          if (!/(?:["'“”]\s*300\s*["'“”]|(?:\bmovie|\bfilm|\bepisode|\breview|\bin|\bon)\s+300\b)/i.test(raw)) {
+            continue;
+          }
+        } else if (v.length < 4) {
+          // Very short titles ("Up", "It", "Us", "Her", "Big", "Saw", "Elf", "Ted") require quotes or capitalized title context
+          const capTitle = escapeRegex(item.title);
+          const strictRe = new RegExp(
+            `(?:["'“”]${capTitle}["'“”]|\\b(?:in|on|for|about|review(?:ed)?|watch(?:ed)?|give|gave|score(?:d)?)\\s+${capTitle}\\b)`,
+          );
+          if (!strictRe.test(raw)) continue;
+        } else if (AMBIGUOUS_SINGLE_WORD_TITLES.has(v)) {
+          const capTitle = escapeRegex(item.title);
+          const semiStrictRe = new RegExp(
+            `(?:["'“”]${capTitle}["'“”]|\\b${capTitle}\\b)`
+          );
+          if (!semiStrictRe.test(raw)) continue;
+        }
+      }
+
+      const re = new RegExp(`\\b${escapeRegex(v)}\\b`, "i");
+      if (re.test(consumedNorm)) {
+        matched.set(item.epNum, { epNum: item.epNum, title: item.title, year: item.year });
+        // Blank out matched span so substring titles don't double-match
+        consumedNorm = consumedNorm.replace(re, " ");
+        break;
+      }
+    }
+  }
+
+  return Array.from(matched.values()).slice(0, maxMatches);
 }
 
 function readAllTranscriptEpisodesRaw() {
@@ -74,11 +194,15 @@ function loadCorpus() {
   // Build inverted document frequency stats across chunks for fast BM25 scoring
   const df = new Map();
   const docs = [];
+  const docsByEpNum = new Map();
 
   for (const ep of episodes) {
     const titleLower = String(ep.title || "").toLowerCase();
     const titleTokens = new Set(tokenize(ep.title));
-    for (let idx = 0; idx < (ep.chunks || []).length; idx++) {
+    const epDocs = [];
+    const totalChunks = (ep.chunks || []).length;
+
+    for (let idx = 0; idx < totalChunks; idx++) {
       const ch = ep.chunks[idx];
       const toks = tokenize(ch.t);
       const tf = new Map();
@@ -88,7 +212,10 @@ function loadCorpus() {
       for (const tok of tf.keys()) {
         df.set(tok, (df.get(tok) || 0) + 1);
       }
-      docs.push({
+      const docObj = {
+        docId: `${ep.slug}#${idx}`,
+        chunkIdx: idx,
+        totalChunks,
         epNum: ep.epNum,
         isFull: ep.isFull,
         title: ep.title,
@@ -102,7 +229,13 @@ function loadCorpus() {
         text: ch.t,
         len: toks.length,
         tf,
-      });
+      };
+      docs.push(docObj);
+      epDocs.push(docObj);
+    }
+
+    if (ep.epNum) {
+      docsByEpNum.set(Number(ep.epNum), epDocs);
     }
   }
 
@@ -110,12 +243,16 @@ function loadCorpus() {
     ? docs.reduce((s, d) => s + d.len, 0) / docs.length
     : 350;
 
+  const indexedEpNums = new Set(docsByEpNum.keys());
+
   cachedIndex = {
     episodeCount: episodes.length,
     fullReviewCount: episodes.filter((e) => e.isFull).length,
     extrasCount: episodes.filter((e) => !e.isFull).length,
     totalWords: episodes.reduce((s, e) => s + (e.words || 0), 0),
     chunkCount: docs.length,
+    indexedEpNums,
+    docsByEpNum,
     episodesMeta: episodes.map((e) => ({
       epNum: e.epNum,
       isFull: e.isFull,
@@ -181,19 +318,52 @@ export function getArchiveStats() {
   return cachedStats;
 }
 
-export function searchTranscripts(rawQuery, { topK = 10 } = {}) {
+export function getCatalogSummaryForPrompt() {
+  const idx = loadCorpus();
+  const entries = Object.entries(episodeTmdbMap || {})
+    .map(([k, v]) => ({ epNum: Number(k), title: v.title, year: v.year || "" }))
+    .sort((a, b) => b.epNum - a.epNum);
+
+  return entries
+    .map((e) => {
+      const status = idx.indexedEpNums.has(e.epNum) ? "✓" : "⏳";
+      return `Ep ${e.epNum}: ${e.title}${e.year ? ` (${e.year})` : ""} [${status}]`;
+    })
+    .join(" | ");
+}
+
+export function searchTranscripts(rawQuery, { topK = 14, recentContextText = "" } = {}) {
   const idx = loadCorpus();
   const qLower = String(rawQuery || "").toLowerCase().trim();
-  if (!qLower) return [];
+  if (!qLower) return { sources: [], targetEpisodes: [], unindexedTargets: [] };
 
-  const qTokens = tokenize(rawQuery);
-  // Check if user mentioned a specific episode number ("ep 357", "episode 321", "#358")
-  const epMatch = qLower.match(/(?:episode|ep\.?|#)\s*(\d{1,4})\b/);
-  const targetEpNum = epMatch ? Number(epMatch[1]) : null;
+  // Detect targeted movie(s) from the question first; if none in current question (e.g. "what score did Liam give it?"),
+  // fall back to movies mentioned in the immediately preceding chat turn!
+  let detectedCatalog = detectCatalogEpisodesInText(rawQuery, { maxMatches: 3 });
+  if (detectedCatalog.length === 0 && recentContextText) {
+    detectedCatalog = detectCatalogEpisodesInText(recentContextText, { maxMatches: 2 });
+  }
+
+  const indexedTargets = detectedCatalog.filter((t) => idx.indexedEpNums.has(t.epNum));
+  const unindexedTargets = detectedCatalog.filter((t) => !idx.indexedEpNums.has(t.epNum));
+  const targetEpSet = new Set(indexedTargets.map((t) => t.epNum));
+
+  const combinedQueryForTokens =
+    detectedCatalog.length > 0 && !detectCatalogEpisodesInText(rawQuery).length
+      ? `${rawQuery} ${detectedCatalog.map((d) => d.title).join(" ")}`
+      : rawQuery;
+  const qTokens = tokenize(combinedQueryForTokens);
 
   // Detect segment intent boosts
-  const wantsScore = /\b(score|scores|rating|ratings|ranked|out of 10|fifth seat|5th seat|patreon|beetroot|verdict)\b/i.test(qLower);
-  const wantsEndgame = /\b(age game|box office|money|budget|random word|gif|oscar|ebes|ebert|cast)\b/i.test(qLower);
+  const wantsScoreOrVerdict =
+    /\b(score|scores|rating|ratings|ranked|out of 10|ten|fifth seat|5th seat|patreon|beetroot|verdict|verdicts|like|liked|hate|hated|favorite|favourite|overall|summary|opinion|opinions|say|said)\b/i.test(
+      qLower
+    );
+  const wantsEndgame =
+    /\b(age game|box office|money|budget|random word|gif|oscar|oscars|ebes|ebert|cast|trivia)\b/i.test(
+      qLower
+    );
+  const wantsHostsOrGuest = /\b(guest|who was on|hosts|panel|joined|lineup|bff)\b/i.test(qLower);
 
   const N = idx.docs.length || 1;
   const k1 = 1.5;
@@ -202,12 +372,13 @@ export function searchTranscripts(rawQuery, { topK = 10 } = {}) {
   const scored = [];
   for (const doc of idx.docs) {
     let score = 0;
+    const isTargetedEp = doc.epNum && targetEpSet.has(Number(doc.epNum));
 
-    if (targetEpNum !== null && doc.epNum === targetEpNum) {
-      score += 18;
+    if (isTargetedEp) {
+      score += 26;
     }
 
-    // Boost when query tokens match the episode's movie title!
+    // Boost when query tokens match the episode's movie title
     let titleHits = 0;
     for (const qt of qTokens) {
       if (doc.titleTokens.has(qt)) titleHits += 1;
@@ -229,15 +400,16 @@ export function searchTranscripts(rawQuery, { topK = 10 } = {}) {
 
     if (score <= 0) continue;
 
-    if (wantsScore && doc.pct >= 78) score *= 1.35;
-    if (wantsEndgame && doc.pct >= 62) score *= 1.25;
+    if (wantsScoreOrVerdict && doc.pct >= 80) score *= 1.45;
+    if (wantsEndgame && doc.pct >= 62) score *= 1.3;
+    if (wantsHostsOrGuest && doc.chunkIdx <= 1) score *= 1.5;
 
     // Exact multi-word phrase boost
     if (qTokens.length >= 2) {
       const textLower = doc.text.toLowerCase();
       const phrase = qTokens.slice(0, 3).join(" ");
       if (phrase.length >= 6 && textLower.includes(phrase)) {
-        score += 6;
+        score += 7;
       }
     }
 
@@ -246,27 +418,76 @@ export function searchTranscripts(rawQuery, { topK = 10 } = {}) {
 
   scored.sort((a, b) => b.score - a.score);
 
-  // Diversify slightly so one single chunk range doesn't crowd out other relevant episodes unless targeted
-  const picked = [];
-  const perEpCount = new Map();
-  const maxPerEp = targetEpNum !== null ? 6 : 3;
+  const pickedDocs = [];
+  const pickedIds = new Set();
 
-  for (const item of scored) {
-    const key = item.doc.slug;
-    const c = perEpCount.get(key) || 0;
-    if (c >= maxPerEp) continue;
-    perEpCount.set(key, c + 1);
-    picked.push({
-      epNum: item.doc.epNum,
-      title: item.doc.title,
-      slug: item.doc.slug,
-      section: item.doc.section,
-      pct: item.doc.pct,
-      score: Math.round(item.score * 100) / 100,
-      text: item.doc.text,
-    });
-    if (picked.length >= topK) break;
+  const pushDoc = (doc, scoreVal) => {
+    if (!doc || pickedIds.has(doc.docId)) return;
+    pickedIds.add(doc.docId);
+    pickedDocs.push({ doc, score: scoreVal });
+  };
+
+  // Pin key structural segments for targeted episode(s) so host lineup + final scores/verdicts are NEVER missed!
+  if (indexedTargets.length > 0) {
+    const perTargetBudget = indexedTargets.length === 1 ? 10 : 6;
+    for (const t of indexedTargets) {
+      const epDocs = idx.docsByEpNum.get(t.epNum) || [];
+      if (!epDocs.length) continue;
+
+      // 1) Opening roll-call chunk (identifies exact hosts & guest voices on the episode)
+      pushDoc(epDocs[0], 99);
+
+      // 2) Final Endgame / Verdict chunks (last 3 chunks ~85-100% where hosts give out-of-10 scores & final thoughts)
+      const tailStart = Math.max(1, epDocs.length - 3);
+      for (let i = tailStart; i < epDocs.length; i++) {
+        pushDoc(epDocs[i], 98 - (epDocs.length - i));
+      }
+
+      // 3) Top query-specific BM25 chunks from within this targeted episode
+      let addedMid = 0;
+      for (const item of scored) {
+        if (item.doc.epNum !== t.epNum) continue;
+        if (pickedIds.has(item.doc.docId)) continue;
+        pushDoc(item.doc, item.score);
+        addedMid += 1;
+        if (addedMid >= Math.max(2, perTargetBudget - 4)) break;
+      }
+    }
   }
 
-  return picked;
+  // Fill remaining slots with top diverse matches across the archive
+  const perEpCount = new Map();
+  for (const p of pickedDocs) {
+    perEpCount.set(p.doc.slug, (perEpCount.get(p.doc.slug) || 0) + 1);
+  }
+  const maxPerUntargetedEp = indexedTargets.length > 0 ? 2 : 4;
+
+  for (const item of scored) {
+    if (pickedDocs.length >= topK) break;
+    if (pickedIds.has(item.doc.docId)) continue;
+    const key = item.doc.slug;
+    const isTarget = item.doc.epNum && targetEpSet.has(Number(item.doc.epNum));
+    const limit = isTarget ? 10 : maxPerUntargetedEp;
+    const c = perEpCount.get(key) || 0;
+    if (c >= limit) continue;
+    perEpCount.set(key, c + 1);
+    pushDoc(item.doc, item.score);
+  }
+
+  // Sort picked chunks grouped cleanly by episode and chronological position inside each episode
+  const sources = pickedDocs.slice(0, topK).map(({ doc, score }) => ({
+    epNum: doc.epNum,
+    title: doc.title,
+    slug: doc.slug,
+    section: doc.section,
+    pct: doc.pct,
+    score: Math.round(score * 100) / 100,
+    text: doc.text,
+  }));
+
+  return {
+    sources,
+    targetEpisodes: indexedTargets,
+    unindexedTargets,
+  };
 }

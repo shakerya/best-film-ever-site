@@ -37,6 +37,10 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
     const question = String(qText || input).trim();
     if (!question || loading) return;
 
+    const priorHistory = messages.slice(-6).map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
     setAuthError("");
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: question }]);
@@ -49,7 +53,7 @@ export default function ArchiveChatClient({ stats, hasLlmKey, requiresPasscode }
           "Content-Type": "application/json",
           "x-bfe-passcode": passcode,
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, history: priorHistory }),
       });
       const data = await res.json();
       if (res.status === 401) {
