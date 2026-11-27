@@ -177,12 +177,49 @@ function readAllTranscriptEpisodesRaw() {
   return episodes;
 }
 
+const PHONETIC_TOKEN_ALIASES = new Map([
+  // Whisper phonetic spellings of Aashrey
+  ["aashrey", "aashrey"],
+  ["ashray", "aashrey"],
+  ["ashrey", "aashrey"],
+  ["ashre", "aashrey"],
+  ["ashree", "aashrey"],
+  ["aashri", "aashrey"],
+  ["oshre", "aashrey"],
+  ["oshray", "aashrey"],
+  ["oshree", "aashrey"],
+  ["ashra", "aashrey"],
+  ["asher", "aashrey"],
+  ["ashera", "aashrey"],
+  ["asherah", "aashrey"],
+  ["oshera", "aashrey"],
+  ["ashrafe", "aashrey"],
+  // Other frequent BFE host & patron phonetic variants
+  ["ariana", "ariannah"],
+  ["ariannah", "ariannah"],
+  ["shy", "shai"],
+  ["shai", "shai"],
+  ["bergerfroind", "shai"],
+  ["bergefroind", "shai"],
+  ["megs", "megan"],
+  ["megan", "megan"],
+  ["kev", "kevin"],
+  ["kevdog", "kevin"],
+  ["kevin", "kevin"],
+  ["komarowski", "komoroski"],
+  ["kamaroski", "komoroski"],
+  ["komeroski", "komoroski"],
+  ["sheezy", "cheesy"],
+]);
+
 function tokenize(text) {
   return String(text || "")
     .toLowerCase()
+    .replace(/\bash\s+r(?:ay|ey|ee|e|a)\b/g, "aashrey")
     .replace(/['’]/g, "")
     .split(/[^a-z0-9]+/)
-    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t))
+    .map((t) => PHONETIC_TOKEN_ALIASES.get(t) || t);
 }
 
 function loadCorpus() {
@@ -348,10 +385,21 @@ export function searchTranscripts(rawQuery, { topK = 14, recentContextText = "" 
   const unindexedTargets = detectedCatalog.filter((t) => !idx.indexedEpNums.has(t.epNum));
   const targetEpSet = new Set(indexedTargets.map((t) => t.epNum));
 
-  const combinedQueryForTokens =
+  const asksMyScore =
+    /\b(my|mine|i)\b/i.test(rawQuery) &&
+    /\b(score|scores|rating|ratings|review|reviews|gave|give|voted|fifth seat|5th seat|patreon)\b/i.test(
+      rawQuery
+    );
+
+  const combinedQueryForTokens = [
+    rawQuery,
+    asksMyScore ? "aashrey" : "",
     detectedCatalog.length > 0 && !detectCatalogEpisodesInText(rawQuery).length
-      ? `${rawQuery} ${detectedCatalog.map((d) => d.title).join(" ")}`
-      : rawQuery;
+      ? detectedCatalog.map((d) => d.title).join(" ")
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const qTokens = tokenize(combinedQueryForTokens);
 
   // Detect segment intent boosts
@@ -437,10 +485,14 @@ export function searchTranscripts(rawQuery, { topK = 14, recentContextText = "" 
       // 1) Opening roll-call chunk (identifies exact hosts & guest voices on the episode)
       pushDoc(epDocs[0], 99);
 
-      // 2) Final Endgame / Verdict chunks (last 3 chunks ~85-100% where hosts give out-of-10 scores & final thoughts)
-      const tailStart = Math.max(1, epDocs.length - 3);
-      for (let i = tailStart; i < epDocs.length; i++) {
-        pushDoc(epDocs[i], 98 - (epDocs.length - i));
+      // 2) Endgame / Fifth-Seat & Host Verdict chunks (86%–98% is where Beetroot, Patron Fifth-Seat, and Host scores live!)
+      const endgameChunks = epDocs.filter((d) => d.pct >= 86 && d.pct <= 98);
+      const sampledEndgame =
+        endgameChunks.length <= 6
+          ? endgameChunks
+          : endgameChunks.filter((d) => d.pct >= 90 && d.pct <= 97).slice(0, 6);
+      for (let i = 0; i < sampledEndgame.length; i++) {
+        pushDoc(sampledEndgame[i], 98 - i * 0.5);
       }
 
       // 3) Top query-specific BM25 chunks from within this targeted episode

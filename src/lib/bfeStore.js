@@ -570,16 +570,19 @@ export function computeBeetrootSummary(pollData) {
 }
 
 export function computeFifthSeatSummary(entries = []) {
-  const valid = (entries || []).filter((e) => Number.isFinite(Number(e.score)));
-  if (!valid.length) {
-    return { count: 0, average: null, entries: [] };
+  const allEntries = (entries || []).filter(Boolean);
+  const validScored = allEntries.filter(
+    (e) => e.score !== null && e.score !== undefined && e.score !== "" && Number.isFinite(Number(e.score))
+  );
+  if (!validScored.length) {
+    return { count: allEntries.length, average: null, entries: allEntries };
   }
-  const sum = valid.reduce((acc, e) => acc + Number(e.score), 0);
-  const avg = Math.round((sum / valid.length) * 100) / 100;
+  const sum = validScored.reduce((acc, e) => acc + Number(e.score), 0);
+  const avg = Math.round((sum / validScored.length) * 100) / 100;
   return {
-    count: valid.length,
+    count: allEntries.length,
     average: avg,
-    entries: valid,
+    entries: allEntries,
   };
 }
 
@@ -712,9 +715,12 @@ export async function getPatronContributorLeaderboard(providedState = null) {
               ? "Dirk Diggler"
               : clean;
 
-    const prev = counts.get(key) || { name: key, count: 0, sum: 0 };
+    const prev = counts.get(key) || { name: key, count: 0, scoredCount: 0, sum: 0 };
     prev.count += 1;
-    if (Number.isFinite(Number(score))) prev.sum += Number(score);
+    if (score !== null && score !== undefined && score !== "" && Number.isFinite(Number(score))) {
+      prev.scoredCount += 1;
+      prev.sum += Number(score);
+    }
     counts.set(key, prev);
   };
 
@@ -742,7 +748,7 @@ export async function getPatronContributorLeaderboard(providedState = null) {
     .map((p) => ({
       name: p.name,
       submissions: p.count,
-      avgScoreGiven: p.count ? Math.round((p.sum / p.count) * 10) / 10 : null,
+      avgScoreGiven: p.scoredCount ? Math.round((p.sum / p.scoredCount) * 10) / 10 : null,
       tierBadge:
         p.count >= 10
           ? "Iron Fifth-Seater"

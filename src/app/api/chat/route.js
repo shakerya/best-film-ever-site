@@ -58,18 +58,42 @@ async function generateGroundedAnswer({
     )
     .join("\n\n");
 
-  // Provide ALL verified structured scorecards (ranked #1 to #N) so top/bottom/host-score queries are 100% exact
+  // Provide ALL verified structured scorecards (ranked #1 to #N) including Fifth-Seat voter scores!
   const scoreTableSummary = leaderboard
     .map((ep) => {
       const guestsStr = (ep.guests || []).length
         ? `, Guests=${ep.guests.map((g) => `${g.name}:${g.score}`).join(",")}`
         : "";
       const beetStr = ep.beetrootPct !== undefined ? `, Beetroot=${ep.beetrootPct}%` : "";
+      const votersStr = (ep.fifthSeatVoters || []).length
+        ? ` | Patrons=[${ep.fifthSeatVoters
+            .map((v) => `${v.name}:${v.score ?? "read-on-air"}`)
+            .join(", ")}]`
+        : "";
       return `#${ep.rank} Ep ${ep.epNum} (${ep.filmTitle || ep.title}): OfficialBFE=${ep.combinedScore}/10 | Hosts=${JSON.stringify(
         ep.hosts || {}
-      )}${guestsStr} | 5thSeat=${ep.fifthSeatAvg ?? "none"} (${ep.fifthSeatCount || 0} patrons)${beetStr}${
-        ep.randomWord ? ` | RandomWord=${ep.randomWord}` : ""
+      )}${guestsStr} | 5thSeat=${ep.fifthSeatAvg ?? "none"} (${ep.fifthSeatCount || 0})${votersStr}${beetStr}${
+        ep.randomWord ? ` | Word=${ep.randomWord}` : ""
       }`;
+    })
+    .join("\n");
+
+  // Dedicated chronological index of Aashrey's Fifth-Seat reviews & quotes across all episodes (including pre-300!)
+  const aashreyHistoryLines = leaderboard
+    .slice()
+    .sort((a, b) => b.epNum - a.epNum)
+    .flatMap((ep) => {
+      const v = (ep.fifthSeatVoters || []).find(
+        (voter) => String(voter?.name || "").toLowerCase() === "aashrey"
+      );
+      if (!v) return [];
+      const scoreLabel =
+        v.score !== null && v.score !== undefined ? `${v.score}/10` : "Quote read on air (individual score withheld)";
+      return [
+        `- Ep ${ep.epNum} (${ep.filmTitle || ep.title}): Aashrey = ${scoreLabel}${
+          v.quote ? ` — "${v.quote}"` : ""
+        }`,
+      ];
     })
     .join("\n");
 
@@ -86,19 +110,23 @@ async function generateGroundedAnswer({
     : "";
 
   const systemPrompt = `You are the Best Film Ever (BFE) Podcast Vault Assistant — a sharp, knowledgeable superfan and archivist for hosts Ian, Liam, Megan ("Megs"), Kevin ("Kev"), Georgia, and BFF Patreon guests.
+NOTE ABOUT THE USER: The owner using this private Vault is **Aashrey** (a regular BFE Patron & Fifth-Seat contributor since Episode 247). Whenever the user says "my score", "my scores", "my review", "what did I give...", etc., they mean **Aashrey**! Also note that in raw audio transcripts, Whisper speech-to-text frequently spells "Aashrey" phonetically as "Ashray", "Ashrey", "Ashre", "Ashree", "Oshre", "Oshray", "Aashri", "Asher", "Ashera", "Asherah", "Ashra", or "Ash Ray" — ALL of those refer to **Aashrey**!
 
 HOW TO GIVE GREAT ANSWERS:
-1. Be specific, vivid, and thorough: cite exact Episode numbers + Movie titles, quote or paraphrase memorable jokes/stories/arguments from the transcript excerpts, and break down individual host opinions & out-of-10 scores whenever available.
-2. Speaker attribution tip: Transcripts come from audio speech-to-text without speaker tags, so infer who said what carefully from context (e.g. the opening roll-call at ~0% lists which hosts are on the episode, and Ian calls on each host by name during the ~85–100% Endgame score round!). If it isn't 100% clear which specific host spoke a line, say "one of the hosts noted..." rather than guessing the wrong person.
+1. Be specific, vivid, and thorough: cite exact Episode numbers + Movie titles, quote or paraphrase memorable jokes/stories/arguments from the transcript excerpts, and break down individual host & patron out-of-10 scores whenever available.
+2. Speaker attribution tip: Transcripts come from audio speech-to-text without speaker tags, so infer who said what carefully from context (e.g. the opening roll-call at ~0% lists which hosts are on the episode, and Ian calls on each host by name during the ~88–98% Endgame score round!).
 3. Master Catalog & Scorecards:
-   - Below is the COMPLETE 358-episode BFE Master Film List (\`✓\` = full transcript indexed right now [${stats?.episodeCount || 290} episodes]; \`⏳\` = audio in final Ep 1–${(stats?.minEpNum || 83) - 1} transcription queue). Use this to answer "Have they ever reviewed X?", "Which Spielberg/90s/sequel films did they cover?", etc. with 100% accuracy.
-   - Structured Official Scorecards below cover Episodes 301–358. For older transcribed episodes (Ep 83–300), read the hosts' out-of-10 scores directly from the ~85–100% Endgame transcript excerpts!
-4. Never invent scores or quotes not grounded in the scorecards or excerpts below. Format cleanly with short paragraphs or bullet points so it's easy to scan.
+   - Below is the COMPLETE 358-episode BFE Master Film List (\`✓\` = full transcript indexed right now [${stats?.episodeCount || 295} episodes]; \`⏳\` = audio in final Ep 1–${(stats?.minEpNum || 82) - 1} transcription queue).
+   - Structured Official Scorecards below cover all transcribed episodes (Ep ${stats?.minEpNum || 82}–358), plus Aashrey's dedicated Fifth-Seat review log (including pre-300 episodes!). Note that on some mid-200s episodes when Georgia read Fifth-Seat reviews live before the hosts scored, individual scores were read as "blank out of 10" on air — explain that clearly when applicable while sharing his exact review quote!
+4. Never invent scores or quotes not grounded in the scorecards or excerpts below. Format cleanly with short paragraphs or bullet points.
 ${unindexedBanner}
+AASHREY'S VERIFIED FIFTH-SEAT REVIEWS & SCORES ACROSS ALL EPISODES (Newest to Oldest):
+${aashreyHistoryLines || "(None loaded)"}
+
 COMPLETE 358-EPISODE BFE FILM CATALOG (✓ = transcribed, ⏳ = in final transcription queue):
 ${catalogLine}
 
-VERIFIED OFFICIAL SCORECARDS (Episodes 301–358, Ranked High-to-Low):
+VERIFIED OFFICIAL SCORECARDS (Episodes ${stats?.minEpNum || 82}–358, Ranked High-to-Low):
 ${scoreTableSummary}
 
 RETRIEVED TRANSCRIPT EXCERPTS FOR THIS QUERY:

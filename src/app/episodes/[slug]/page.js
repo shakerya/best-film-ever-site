@@ -537,7 +537,7 @@ export default async function EpisodePage({ params }) {
                       <div className="flex items-center justify-between">
                         <span className="font-semibold text-white">{v.name}</span>
                         <span className="font-semibold text-amber-300 tabular-nums">
-                          {v.score}/10
+                          {v.score !== null && v.score !== undefined ? `${v.score}/10` : "Read on air"}
                         </span>
                       </div>
                       {v.quote ? (
