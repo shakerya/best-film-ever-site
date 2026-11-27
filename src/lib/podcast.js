@@ -1,7 +1,15 @@
+import http from "node:http";
+import https from "node:https";
+import zlib from "node:zlib";
 import { XMLParser } from "fast-xml-parser";
 import seedEpisodes from "@/data/seedEpisodes.json";
 import { getEpisodeNumberIfFullReview } from "@/lib/episodeMeta";
 import { HOSTS, parseEpisodeHosts } from "@/lib/hosts";
+
+const RSS_CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes in-memory per Fluid instance
+let cachedEpisodes = null;
+let cachedEpisodesAt = 0;
+let inflightRssPromise = null;
 
 function toArray(x) {
   if (!x) return [];
@@ -139,14 +147,83 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
-    clearTimeout(t);
-  }
+function fetchTextViaNodeHttp(urlString, timeoutMs = 15000, redirectsLeft = 5) {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const finish = (fn, val) => {
+      if (settled) return;
+      settled = true;
+      fn(val);
+    };
+
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(urlString);
+    } catch (err) {
+      return finish(reject, err);
+    }
+
+    const lib = parsedUrl.protocol === "http:" ? http : https;
+    const req = lib.get(
+      parsedUrl,
+      {
+        headers: {
+          "User-Agent": "BestFilmEverSite/1.0 (+https://www.bestfilmeverpod.fyi)",
+          Accept: "application/rss+xml, application/xml, text/xml, */*",
+          "Accept-Encoding": "gzip, deflate",
+        },
+      },
+      (res) => {
+        const status = res.statusCode || 0;
+        if ([301, 302, 303, 307, 308].includes(status) && res.headers.location) {
+          clearTimeout(timer);
+          res.resume();
+          if (redirectsLeft <= 0) {
+            return finish(reject, new Error("Too many RSS redirects"));
+          }
+          const nextUrl = new URL(res.headers.location, parsedUrl).toString();
+          return fetchTextViaNodeHttp(nextUrl, timeoutMs, redirectsLeft - 1).then(
+            (v) => finish(resolve, v),
+            (e) => finish(reject, e)
+          );
+        }
+
+        if (status < 200 || status >= 300) {
+          clearTimeout(timer);
+          res.resume();
+          return finish(reject, new Error(`HTTP ${status} ${res.statusMessage || ""}`.trim()));
+        }
+
+        const encoding = String(res.headers["content-encoding"] || "").toLowerCase();
+        let stream = res;
+        if (encoding === "gzip" || encoding === "x-gzip") {
+          stream = res.pipe(zlib.createGunzip());
+        } else if (encoding === "deflate") {
+          stream = res.pipe(zlib.createInflate());
+        }
+
+        const chunks = [];
+        stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)));
+        stream.on("end", () => {
+          clearTimeout(timer);
+          finish(resolve, Buffer.concat(chunks).toString("utf-8"));
+        });
+        stream.on("error", (err) => {
+          clearTimeout(timer);
+          finish(reject, err);
+        });
+      }
+    );
+
+    const timer = setTimeout(() => {
+      req.destroy(new Error("RSS request timed out"));
+    }, timeoutMs);
+
+    req.on("error", (err) => {
+      clearTimeout(timer);
+      finish(reject, err);
+    });
+  });
 }
 
 function isNetworkishError(err) {
@@ -165,39 +242,28 @@ function isNetworkishError(err) {
   );
 }
 
-export async function getEpisodesFromRss() {
-  const rssUrlRaw = process.env.PODCAST_RSS_URL;
-  if (!rssUrlRaw) throw new Error("Missing PODCAST_RSS_URL in .env.local");
-
-  const rssUrl = String(rssUrlRaw).replace(/^"|"$/g, "").trim();
-
-  // no-store prevents Next from trying (and failing) to cache a >2MB RSS response
-  // Add timeout + retry to avoid dev-only DNS hiccups taking down the whole page.
-  let res;
+async function fetchAndParseEpisodesFromRss(rssUrl) {
+  let xml;
   try {
-    res = await fetchWithTimeout(rssUrl, { cache: "no-store" }, 15000);
+    xml = await fetchTextViaNodeHttp(rssUrl, 15000);
   } catch (e) {
     if (isNetworkishError(e)) {
-      // one short retry
       await sleep(350);
       try {
-        res = await fetchWithTimeout(rssUrl, { cache: "no-store" }, 15000);
+        xml = await fetchTextViaNodeHttp(rssUrl, 15000);
       } catch (e2) {
         console.error("[RSS] fetch failed after retry:", e2);
-        return [];
+        return cachedEpisodes || [];
       }
     } else {
-      throw e;
+      console.error("[RSS] unexpected fetch error:", e);
+      return cachedEpisodes || [];
     }
   }
 
-  if (!res || !res.ok) {
-    const status = res ? `${res.status} ${res.statusText}` : "no response";
-    console.error("[RSS] fetch not ok:", status);
-    return [];
+  if (!xml) {
+    return cachedEpisodes || [];
   }
-
-  const xml = await res.text();
 
   const parser = new XMLParser({
     ignoreAttributes: false,
@@ -256,7 +322,6 @@ export async function getEpisodesFromRss() {
         image: imageUrl,
         posterUrl: imageUrl,
 
-        // ✅ New
         hostKeys,
       };
     })
@@ -265,5 +330,31 @@ export async function getEpisodesFromRss() {
   // newest first
   episodes.sort((a, b) => (b.isoDate || "").localeCompare(a.isoDate || ""));
 
+  if (episodes.length > 0) {
+    cachedEpisodes = episodes;
+    cachedEpisodesAt = Date.now();
+  }
+
   return episodes;
+}
+
+export async function getEpisodesFromRss({ forceFresh = false } = {}) {
+  const rssUrlRaw = process.env.PODCAST_RSS_URL;
+  if (!rssUrlRaw) throw new Error("Missing PODCAST_RSS_URL in .env.local");
+
+  const now = Date.now();
+  if (!forceFresh && cachedEpisodes && now - cachedEpisodesAt < RSS_CACHE_TTL_MS) {
+    return cachedEpisodes;
+  }
+
+  if (!forceFresh && inflightRssPromise) {
+    return inflightRssPromise;
+  }
+
+  const rssUrl = String(rssUrlRaw).replace(/^"|"$/g, "").trim();
+  inflightRssPromise = fetchAndParseEpisodesFromRss(rssUrl).finally(() => {
+    inflightRssPromise = null;
+  });
+
+  return inflightRssPromise;
 }

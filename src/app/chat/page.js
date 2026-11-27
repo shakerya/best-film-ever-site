@@ -2,7 +2,7 @@
 import { getArchiveStats } from "@/lib/transcriptSearch";
 import ArchiveChatClient from "@/components/ArchiveChatClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export const metadata = {
   title: "BFE Transcript Vault (Private)",

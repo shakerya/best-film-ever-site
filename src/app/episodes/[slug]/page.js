@@ -9,7 +9,11 @@ import { getMergedEpisodeDataByNumber, BFE_LINKS } from "@/lib/bfeStore";
 import EpisodePlayButton from "@/components/EpisodePlayButton";
 import BfeEndgameGames from "@/components/BfeEndgameGames";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  return [];
+}
 
 function decodeEntities(s) {
   if (!s) return "";
@@ -205,7 +209,9 @@ export default async function EpisodePage({ params }) {
 
   const epNum = getEpisodeNumberIfFullReview(ep.title);
   const isFullReview = epNum !== null;
-  const bfeScorecard = epNum ? await getMergedEpisodeDataByNumber(epNum) : null;
+  const bfeScorecard = epNum
+    ? await getMergedEpisodeDataByNumber(epNum, { revalidate: 3600 })
+    : null;
 
   let resolved = null;
   let bundle = null;

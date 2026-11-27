@@ -3,7 +3,7 @@ import { getAllRankedLeaderboardItems } from "@/lib/bfeStore";
 import { resolveEpisodeMovieCached, tmdbImageUrl } from "@/lib/tmdb";
 import LeaderboardClient from "@/components/LeaderboardClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 600;
 
 export const metadata = {
   title: "Leaderboard",
@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 export default async function LeaderboardPage() {
-  const ranked = await getAllRankedLeaderboardItems();
+  const ranked = await getAllRankedLeaderboardItems(null, { revalidate: 600 });
 
   const enriched = await Promise.all(
     ranked.map(async (ep) => {

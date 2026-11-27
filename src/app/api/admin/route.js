@@ -1,5 +1,6 @@
 // src/app/api/admin/route.js
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import {
   readBfeState,
   writeBfeState,
@@ -194,6 +195,10 @@ export async function POST(req) {
         },
         { type: "upsert_schedule", title: film.title, episodeNum: film.episodeNum }
       );
+      revalidatePath("/");
+      revalidatePath("/fifth-seat");
+      revalidatePath("/gif");
+      revalidatePath("/leaderboard");
       return NextResponse.json({ ok: true });
     }
 

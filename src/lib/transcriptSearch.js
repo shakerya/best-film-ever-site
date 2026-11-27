@@ -16,6 +16,8 @@ const STOPWORDS = new Set([
 
 let cachedIndex = null;
 let cachedSyncedCount = -1;
+let cachedStats = null;
+let cachedStatsSyncedCount = -1;
 
 function getSyncedFileCount() {
   try {
@@ -26,18 +28,7 @@ function getSyncedFileCount() {
   }
 }
 
-function tokenize(text) {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/['’]/g, "")
-    .split(/[^a-z0-9]+/)
-    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
-}
-
-function loadCorpus() {
-  const currentSynced = getSyncedFileCount();
-  if (cachedIndex && cachedSyncedCount === currentSynced) return cachedIndex;
-
+function readAllTranscriptEpisodesRaw() {
   let episodes = [];
   if (fs.existsSync(CORPUS_GZ_PATH)) {
     const gzBuf = fs.readFileSync(CORPUS_GZ_PATH);
@@ -63,6 +54,22 @@ function loadCorpus() {
       }
     }
   }
+  return episodes;
+}
+
+function tokenize(text) {
+  return String(text || "")
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .split(/[^a-z0-9]+/)
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+}
+
+function loadCorpus() {
+  const currentSynced = getSyncedFileCount();
+  if (cachedIndex && cachedSyncedCount === currentSynced) return cachedIndex;
+
+  const episodes = readAllTranscriptEpisodesRaw();
 
   // Build inverted document frequency stats across chunks for fast BM25 scoring
   const df = new Map();
@@ -126,17 +133,52 @@ function loadCorpus() {
 }
 
 export function getArchiveStats() {
-  const idx = loadCorpus();
-  const epNums = idx.episodesMeta.map((e) => e.epNum).filter(Boolean);
-  return {
-    episodeCount: idx.episodeCount,
-    fullReviewCount: idx.fullReviewCount,
-    extrasCount: idx.extrasCount,
-    totalWords: idx.totalWords,
-    chunkCount: idx.chunkCount,
+  const currentSynced = getSyncedFileCount();
+  if (cachedStats && cachedStatsSyncedCount === currentSynced) {
+    return cachedStats;
+  }
+  if (cachedIndex && cachedSyncedCount === currentSynced) {
+    const epNums = cachedIndex.episodesMeta.map((e) => e.epNum).filter(Boolean);
+    cachedStats = {
+      episodeCount: cachedIndex.episodeCount,
+      fullReviewCount: cachedIndex.fullReviewCount,
+      extrasCount: cachedIndex.extrasCount,
+      totalWords: cachedIndex.totalWords,
+      chunkCount: cachedIndex.chunkCount,
+      minEpNum: epNums.length ? Math.min(...epNums) : null,
+      maxEpNum: epNums.length ? Math.max(...epNums) : null,
+    };
+    cachedStatsSyncedCount = currentSynced;
+    return cachedStats;
+  }
+
+  // Lightweight metadata pass (skips expensive BM25 tokenization across 25,000+ chunks)
+  const episodes = readAllTranscriptEpisodesRaw();
+  const epNums = [];
+  let fullReviewCount = 0;
+  let extrasCount = 0;
+  let totalWords = 0;
+  let chunkCount = 0;
+
+  for (const ep of episodes) {
+    if (ep.isFull) fullReviewCount += 1;
+    else extrasCount += 1;
+    if (ep.epNum) epNums.push(ep.epNum);
+    totalWords += ep.words || 0;
+    chunkCount += Array.isArray(ep.chunks) ? ep.chunks.length : 0;
+  }
+
+  cachedStats = {
+    episodeCount: episodes.length,
+    fullReviewCount,
+    extrasCount,
+    totalWords,
+    chunkCount,
     minEpNum: epNums.length ? Math.min(...epNums) : null,
     maxEpNum: epNums.length ? Math.max(...epNums) : null,
   };
+  cachedStatsSyncedCount = currentSynced;
+  return cachedStats;
 }
 
 export function searchTranscripts(rawQuery, { topK = 10 } = {}) {

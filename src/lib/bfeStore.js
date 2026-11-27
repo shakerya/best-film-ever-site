@@ -211,11 +211,18 @@ export function hasCloudKv() {
 let memoryState = null;
 let memoryFetchedAt = 0;
 
-async function fetchKvStateRaw(kv) {
-  const res = await fetch(`${kv.url}/get/${REDIS_STATE_KEY}`, {
-    headers: { Authorization: `Bearer ${kv.token}` },
-    cache: "no-store",
-  });
+async function fetchKvStateRaw(kv, { revalidate } = {}) {
+  const fetchInit =
+    typeof revalidate === "number"
+      ? {
+          headers: { Authorization: `Bearer ${kv.token}` },
+          next: { revalidate },
+        }
+      : {
+          headers: { Authorization: `Bearer ${kv.token}` },
+          cache: "no-store",
+        };
+  const res = await fetch(`${kv.url}/get/${REDIS_STATE_KEY}`, fetchInit);
   if (!res.ok) {
     throw new Error(`Upstash GET failed: ${res.status}`);
   }
@@ -231,32 +238,34 @@ async function fetchKvStateRaw(kv) {
   return null;
 }
 
-export async function readBfeState({ fresh = false } = {}) {
+export async function readBfeState({ fresh = false, revalidate } = {}) {
   const now = Date.now();
-  if (!fresh && memoryState && now - memoryFetchedAt < 1500) {
+  if (!fresh && memoryState && now - memoryFetchedAt < 5000) {
     return memoryState;
   }
 
   const kv = getKvConfig();
   if (kv) {
     try {
-      const remote = await fetchKvStateRaw(kv);
+      const remote = await fetchKvStateRaw(kv, { revalidate });
       if (remote) {
         memoryState = remote;
         memoryFetchedAt = Date.now();
         return memoryState;
       }
-      // Seed initial v2 state into Redis on first read
+      // Seed initial v2 state into Redis on first read (skip during static/ISR builds)
       const initial = getDefaultState();
-      await fetch(`${kv.url}/pipeline`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${kv.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify([["SET", REDIS_STATE_KEY, JSON.stringify(initial)]]),
-        cache: "no-store",
-      });
+      if (typeof revalidate !== "number") {
+        await fetch(`${kv.url}/pipeline`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${kv.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([["SET", REDIS_STATE_KEY, JSON.stringify(initial)]]),
+          cache: "no-store",
+        });
+      }
       memoryState = initial;
       memoryFetchedAt = Date.now();
       return memoryState;
@@ -638,14 +647,14 @@ export function getMergedEpisodeDataWithState(epNum, state) {
   return merged;
 }
 
-export async function getMergedEpisodeDataByNumber(epNum) {
+export async function getMergedEpisodeDataByNumber(epNum, options = {}) {
   if (!epNum) return null;
-  const state = await readBfeState();
+  const state = await readBfeState(options);
   return getMergedEpisodeDataWithState(epNum, state);
 }
 
-export async function getAllRankedLeaderboardItems(providedState = null) {
-  const state = providedState || (await readBfeState());
+export async function getAllRankedLeaderboardItems(providedState = null, options = {}) {
+  const state = providedState || (await readBfeState(options));
   const allNums = new Set([
     ...Object.keys(seedEpisodes),
     ...Object.keys(state.episodeOverrides || {}),
