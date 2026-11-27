@@ -1,4 +1,2369 @@
 {
+  "1": {
+    "epNum": 1,
+    "title": "Episode 1 - Back To The Future",
+    "slug": "episode-1-back-to-the-future",
+    "wordCount": 11977,
+    "hasTranscript": true,
+    "filmTitle": "Back to the Future",
+    "tmdbId": 105,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8.5
+    },
+    "combinedScore": 8.5
+  },
+  "2": {
+    "epNum": 2,
+    "title": "Episode 2 - Amelie",
+    "slug": "episode-2-amelie",
+    "wordCount": 11252,
+    "hasTranscript": true,
+    "filmTitle": "Amélie",
+    "tmdbId": 194,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 6.5
+    },
+    "combinedScore": 7.56
+  },
+  "3": {
+    "epNum": 3,
+    "title": "Episode 3 - In Bruges",
+    "slug": "episode-3-in-bruges",
+    "wordCount": 18933,
+    "hasTranscript": true,
+    "filmTitle": "In Bruges",
+    "tmdbId": 8321,
+    "hosts": {
+      "ian": 9,
+      "liam": 7.5
+    },
+    "fifthSeatAvg": 7.25,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Ellie",
+        "score": 7.25,
+        "quote": "I want to go somewhere in between."
+      }
+    ],
+    "combinedScore": 7.92
+  },
+  "4": {
+    "epNum": 4,
+    "title": "Episode 4 - The Dark Knight",
+    "slug": "episode-4-the-dark-knight",
+    "wordCount": 17743,
+    "hasTranscript": true,
+    "filmTitle": "The Dark Knight",
+    "tmdbId": 155,
+    "hosts": {
+      "ian": 9.5,
+      "liam": 9.5
+    },
+    "combinedScore": 9.5
+  },
+  "5": {
+    "epNum": 5,
+    "title": "Episode 5 - Joker",
+    "slug": "episode-5-joker",
+    "wordCount": 21398,
+    "hasTranscript": true,
+    "filmTitle": "Joker",
+    "tmdbId": 475557,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.5,
+      "georgia": 8.5
+    },
+    "combinedScore": 8.17
+  },
+  "6": {
+    "epNum": 6,
+    "title": "Episode 6 - The Theory of Everything",
+    "slug": "episode-6-the-theory-of-everything",
+    "wordCount": 21186,
+    "hasTranscript": true,
+    "filmTitle": "The Theory of Everything",
+    "tmdbId": 266856,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8,
+      "georgia": 7.8
+    },
+    "combinedScore": 8.1
+  },
+  "7": {
+    "epNum": 7,
+    "title": "Episode 7 - The Princess Bride",
+    "slug": "episode-7-the-princess-bride",
+    "wordCount": 21012,
+    "hasTranscript": true,
+    "filmTitle": "The Princess Bride",
+    "tmdbId": 2493,
+    "hosts": {
+      "ian": 9,
+      "liam": 8,
+      "georgia": 9.75
+    },
+    "combinedScore": 8.92
+  },
+  "8": {
+    "epNum": 8,
+    "title": "Episode 8 - Moulin Rouge (with Debbie)",
+    "slug": "episode-8-moulin-rouge-with-debbie",
+    "wordCount": 21124,
+    "hasTranscript": true,
+    "filmTitle": "Moulin Rouge!",
+    "tmdbId": 824,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8.5,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Debbie",
+        "score": 8.5
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "9": {
+    "epNum": 9,
+    "title": "Episode 9 - Star Wars (A New Hope)",
+    "slug": "episode-9-star-wars-a-new-hope",
+    "wordCount": 22612,
+    "hasTranscript": true,
+    "filmTitle": "Star Wars",
+    "tmdbId": 11,
+    "hosts": {
+      "ian": 8,
+      "liam": 7,
+      "georgia": 7.5
+    },
+    "combinedScore": 7.5
+  },
+  "10": {
+    "epNum": 10,
+    "title": "Episode 10 - Chicago",
+    "slug": "episode-10-chicago",
+    "wordCount": 22826,
+    "hasTranscript": true,
+    "filmTitle": "Chicago",
+    "tmdbId": 1574,
+    "hosts": {
+      "ian": 9,
+      "liam": 8,
+      "georgia": 8.7
+    },
+    "combinedScore": 8.57
+  },
+  "11": {
+    "epNum": 11,
+    "title": "Episode 11 - Some Like It Hot (Feat: Lil' Bitch Podcast) - Audience Selection",
+    "slug": "episode-11-some-like-it-hot-feat-lil-bitch-podcast-audience-selection",
+    "wordCount": 23747,
+    "hasTranscript": true,
+    "filmTitle": "Some Like It Hot",
+    "tmdbId": 239,
+    "hosts": {
+      "ian": 8,
+      "liam": 7,
+      "georgia": 3
+    },
+    "combinedScore": 6
+  },
+  "12": {
+    "epNum": 12,
+    "title": "Episode 12 - Gladiator",
+    "slug": "episode-12-gladiator",
+    "wordCount": 18826,
+    "hasTranscript": true,
+    "filmTitle": "Gladiator",
+    "tmdbId": 98,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "georgia": 7
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "combinedScore": 7.5
+  },
+  "13": {
+    "epNum": 13,
+    "title": "Episode 13 - Die Hard With A Vengeance",
+    "slug": "episode-13-die-hard-with-a-vengeance",
+    "wordCount": 22557,
+    "hasTranscript": true,
+    "filmTitle": "Die Hard: With a Vengeance",
+    "tmdbId": 1572,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "combinedScore": 8.13
+  },
+  "14": {
+    "epNum": 14,
+    "title": "Episode 14 - The Breakfast Club",
+    "slug": "episode-14-the-breakfast-club",
+    "wordCount": 21606,
+    "hasTranscript": true,
+    "filmTitle": "The Breakfast Club",
+    "tmdbId": 2108,
+    "hosts": {
+      "ian": 9,
+      "liam": 8.5,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7
+      }
+    ],
+    "combinedScore": 8
+  },
+  "15": {
+    "epNum": 15,
+    "title": "Episode 15 - Fight Club (Audience Request)",
+    "slug": "episode-15-fight-club-audience-request",
+    "wordCount": 22340,
+    "hasTranscript": true,
+    "filmTitle": "Fight Club",
+    "tmdbId": 550,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.5,
+      "georgia": 3
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 9
+      }
+    ],
+    "combinedScore": 7
+  },
+  "16": {
+    "epNum": 16,
+    "title": "Episode 16 - Days of Thunder (with Richard)",
+    "slug": "episode-16-days-of-thunder-with-richard",
+    "wordCount": 21183,
+    "hasTranscript": true,
+    "filmTitle": "Days of Thunder",
+    "tmdbId": 2119,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "georgia": 4.5
+    },
+    "guests": [
+      {
+        "name": "Richard",
+        "score": 8
+      },
+      {
+        "name": "Ellie",
+        "score": 4.5
+      }
+    ],
+    "combinedScore": 6.7
+  },
+  "17": {
+    "epNum": 17,
+    "title": "Episode 17 - Apollo 13",
+    "slug": "episode-17-apollo-13",
+    "wordCount": 23414,
+    "hasTranscript": true,
+    "filmTitle": "Apollo 13",
+    "tmdbId": 568,
+    "hosts": {
+      "ian": 8,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "combinedScore": 8
+  },
+  "18": {
+    "epNum": 18,
+    "title": "Episode 18 - The Grand Budapest Hotel (Audience Request)",
+    "slug": "episode-18-the-grand-budapest-hotel-audience-request",
+    "wordCount": 20041,
+    "hasTranscript": true,
+    "filmTitle": "The Grand Budapest Hotel",
+    "tmdbId": 120467,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 6,
+      "georgia": 5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8.5
+      }
+    ],
+    "combinedScore": 6.75
+  },
+  "19": {
+    "epNum": 19,
+    "title": "Episode 19 - The Crow",
+    "slug": "episode-19-the-crow",
+    "wordCount": 21619,
+    "hasTranscript": true,
+    "filmTitle": "The Crow",
+    "tmdbId": 9495,
+    "hosts": {
+      "ian": 6,
+      "liam": 9.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "combinedScore": 7.33
+  },
+  "20": {
+    "epNum": 20,
+    "title": "Episode 20 - Clueless",
+    "slug": "episode-20-clueless",
+    "wordCount": 22526,
+    "hasTranscript": true,
+    "filmTitle": "Clueless",
+    "tmdbId": 9603,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "georgia": 6
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "combinedScore": 7.38
+  },
+  "21": {
+    "epNum": 21,
+    "title": "Episode 21 - Toy Story (Crossover with Talking The Mickey)",
+    "slug": "episode-21-toy-story-crossover-with-talking-the-mickey",
+    "wordCount": 21981,
+    "hasTranscript": true,
+    "filmTitle": "Toy Story",
+    "tmdbId": 862,
+    "hosts": {
+      "ian": 8,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7
+      },
+      {
+        "name": "Ethan",
+        "score": 9
+      }
+    ],
+    "combinedScore": 8
+  },
+  "22": {
+    "epNum": 22,
+    "title": "Episode 22 - Dangerous Minds (With Debbie)*",
+    "slug": "episode-22-dangerous-minds-with-debbie",
+    "wordCount": 22073,
+    "hasTranscript": true,
+    "filmTitle": "Dangerous Minds",
+    "tmdbId": 9909,
+    "hosts": {
+      "ian": 7,
+      "liam": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      },
+      {
+        "name": "Debbie",
+        "score": 7
+      }
+    ],
+    "combinedScore": 7.25
+  },
+  "23": {
+    "epNum": 23,
+    "title": "Episode 23 - The Girl With The Dragon Tattoo (2011 - English Language)",
+    "slug": "episode-23-the-girl-with-the-dragon-tattoo-2011-english-language",
+    "wordCount": 22049,
+    "hasTranscript": true,
+    "filmTitle": "The Girl with the Dragon Tattoo",
+    "tmdbId": 65754,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 6
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "combinedScore": 7.17
+  },
+  "24": {
+    "epNum": 24,
+    "title": "Episode 24 - Speed (with Ethan from Talking The Mickey)",
+    "slug": "episode-24-speed-with-ethan-from-talking-the-mickey",
+    "wordCount": 22740,
+    "hasTranscript": true,
+    "filmTitle": "Speed",
+    "tmdbId": 1637,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      },
+      {
+        "name": "Ethan",
+        "score": 8
+      }
+    ],
+    "beetrootPct": 85,
+    "combinedScore": 8.13
+  },
+  "25": {
+    "epNum": 25,
+    "title": "Episode 25 - The Usual Suspects",
+    "slug": "episode-25-the-usual-suspects",
+    "wordCount": 22150,
+    "hasTranscript": true,
+    "filmTitle": "The Usual Suspects",
+    "tmdbId": 629,
+    "hosts": {
+      "ian": 9,
+      "liam": 9.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "combinedScore": 8.83
+  },
+  "26": {
+    "epNum": 26,
+    "title": "Episode 26 - Bill & Ted's Excellent Adventure (w/ Nick & Russ Don't Know Anything)",
+    "slug": "episode-26-bill-and-ted-s-excellent-adventure-w-nick-and-russ-don-t-know-anything",
+    "wordCount": 21540,
+    "hasTranscript": true,
+    "filmTitle": "Bill & Ted's Excellent Adventure",
+    "tmdbId": 1648,
+    "hosts": {
+      "ian": 7,
+      "liam": 7.5,
+      "megan": 6
+    },
+    "guests": [
+      {
+        "name": "Nick",
+        "score": 7
+      },
+      {
+        "name": "Russ",
+        "score": 8.25
+      }
+    ],
+    "fifthSeatAvg": 7,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Drew",
+        "score": 7,
+        "quote": "Bill and Ted's excellent adventure is relatable to some and exciting for others"
+      },
+      {
+        "name": "Ashley",
+        "score": null,
+        "quote": "One of the most underrated lines in the series was long the lines of so what piece of advice would you give to us and the responses just be excellent to each other"
+      }
+    ],
+    "combinedScore": 7.13
+  },
+  "27": {
+    "epNum": 27,
+    "title": "Episode 27 - Braveheart",
+    "slug": "episode-27-braveheart",
+    "wordCount": 24388,
+    "hasTranscript": true,
+    "filmTitle": "Braveheart",
+    "tmdbId": 197,
+    "hosts": {
+      "ian": 9,
+      "liam": 8,
+      "megan": 8.5
+    },
+    "combinedScore": 8.5
+  },
+  "28": {
+    "epNum": 28,
+    "title": "Episode 28 - Iron Man (Crossover with Talking The Mickey)",
+    "slug": "episode-28-iron-man-crossover-with-talking-the-mickey",
+    "wordCount": 22756,
+    "hasTranscript": true,
+    "filmTitle": "Iron Man",
+    "tmdbId": 1726,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "megan": 8.5,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 8.5
+      }
+    ],
+    "combinedScore": 8.1
+  },
+  "29": {
+    "epNum": 29,
+    "title": "Episode 29 - The Hitman's Bodyguard (and James Bond casting news)",
+    "slug": "episode-29-the-hitman-s-bodyguard-and-james-bond-casting-news",
+    "wordCount": 25906,
+    "hasTranscript": true,
+    "filmTitle": "The Hitman's Bodyguard",
+    "tmdbId": 390043,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7.5,
+      "megan": 7,
+      "georgia": 7
+    },
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Drew",
+        "score": null,
+        "quote": "It has its moments, but never fully reaches its potential."
+      },
+      {
+        "name": "Ashley",
+        "score": null,
+        "quote": "I adore this film."
+      }
+    ],
+    "combinedScore": 7
+  },
+  "30": {
+    "epNum": 30,
+    "title": "Episode 30 - Se7en",
+    "slug": "episode-30-se7en",
+    "wordCount": 26414,
+    "hasTranscript": true,
+    "filmTitle": "Se7en",
+    "tmdbId": 807,
+    "hosts": {
+      "ian": 7,
+      "liam": 7,
+      "megan": 8.5
+    },
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Drew",
+        "score": null,
+        "quote": "Seven is simply amazing."
+      },
+      {
+        "name": "Ashley",
+        "score": null,
+        "quote": "The film is genius."
+      }
+    ],
+    "combinedScore": 7.5
+  },
+  "31": {
+    "epNum": 31,
+    "title": "Episode 31 - Rocky",
+    "slug": "episode-31-rocky",
+    "wordCount": 28150,
+    "hasTranscript": true,
+    "filmTitle": "Rocky",
+    "tmdbId": 1366,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "megan": 3,
+      "georgia": 6
+    },
+    "fifthSeatAvg": 7,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Drew",
+        "score": null,
+        "quote": "Rocky is so much more of a boxing movie, or it sequels, there is so much heart and vulnerability to it, plus Stallone is a great actor and writer"
+      },
+      {
+        "name": "Ashley",
+        "score": 7,
+        "quote": "If I could make it seven stars, I would."
+      }
+    ],
+    "combinedScore": 6.5
+  },
+  "32": {
+    "epNum": 32,
+    "title": "Episode 32 - Bridget Jones's Diary",
+    "slug": "episode-32-bridget-jones-s-diary",
+    "wordCount": 25544,
+    "hasTranscript": true,
+    "filmTitle": "Bridget Jones's Diary",
+    "tmdbId": 634,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "megan": 10,
+      "georgia": 6
+    },
+    "fifthSeatAvg": 8.5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Drew",
+        "score": null,
+        "quote": "I love these films so much."
+      },
+      {
+        "name": "Ashley",
+        "score": null,
+        "quote": "The cast are such a brilliant job making this film so enjoyable and timeless."
+      }
+    ],
+    "combinedScore": 8.1
+  },
+  "33": {
+    "epNum": 33,
+    "title": "Episode 33 - A League Of Their Own",
+    "slug": "episode-33-a-league-of-their-own",
+    "wordCount": 23507,
+    "hasTranscript": true,
+    "filmTitle": "A League of Their Own",
+    "tmdbId": 11287,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 9,
+      "georgia": 8
+    },
+    "combinedScore": 8.5
+  },
+  "34": {
+    "epNum": 34,
+    "title": "Episode 34 - The Muppet Movie (Crossover with Talking The Mickey)",
+    "slug": "episode-34-the-muppet-movie-crossover-with-talking-the-mickey",
+    "wordCount": 26340,
+    "hasTranscript": true,
+    "filmTitle": "The Muppet Movie",
+    "tmdbId": 11176,
+    "hosts": {
+      "ian": 9,
+      "liam": 8,
+      "georgia": 9
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 8
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "35": {
+    "epNum": 35,
+    "title": "Episode 35 - GoodFellas",
+    "slug": "episode-35-goodfellas",
+    "wordCount": 22457,
+    "hasTranscript": true,
+    "filmTitle": "GoodFellas",
+    "tmdbId": 769,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 8.5,
+      "georgia": 7.5
+    },
+    "combinedScore": 7.83
+  },
+  "36": {
+    "epNum": 36,
+    "title": "Episode 36 - Scream (Bonus Halloween Episode)",
+    "slug": "episode-36-scream-bonus-halloween-episode",
+    "wordCount": 21194,
+    "hasTranscript": true,
+    "filmTitle": "Scream",
+    "tmdbId": 4232,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "georgia": 7.5
+    },
+    "combinedScore": 7.67
+  },
+  "37": {
+    "epNum": 37,
+    "title": "Episode 37 - The American President & Remembering Sean Connery (with Debbie)",
+    "slug": "episode-37-the-american-president-and-remembering-sean-connery-with-debbie",
+    "wordCount": 27660,
+    "hasTranscript": true,
+    "filmTitle": "The American President",
+    "tmdbId": 9087,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "georgia": 7
+    },
+    "combinedScore": 7.67
+  },
+  "38": {
+    "epNum": 38,
+    "title": "Episode 38 - Spider-Man: Into The Spider-Verse (with Ethan from Talking The Mickey)",
+    "slug": "episode-38-spider-man-into-the-spider-verse-with-ethan-from-talking-the-mickey",
+    "wordCount": 22962,
+    "hasTranscript": true,
+    "filmTitle": "Spider-Man: Into the Spider-Verse",
+    "tmdbId": 324857,
+    "hosts": {
+      "ian": 9,
+      "liam": 7,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 10
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "39": {
+    "epNum": 39,
+    "title": "Episode 39 - GoldenEye (with Richard)",
+    "slug": "episode-39-goldeneye-with-richard",
+    "wordCount": 22927,
+    "hasTranscript": true,
+    "filmTitle": "GoldenEye",
+    "tmdbId": 710,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8,
+      "georgia": 6
+    },
+    "guests": [
+      {
+        "name": "Richard",
+        "score": 8
+      }
+    ],
+    "combinedScore": 7.63
+  },
+  "40": {
+    "epNum": 40,
+    "title": "Episode 40 - Pirates of the Caribbean: The Curse of the Black Pearl (Crossover Ep with Talking The Mickey)",
+    "slug": "episode-40-pirates-of-the-caribbean-the-curse-of-the-black-pearl-crossover-ep-with-talking-the-mickey",
+    "wordCount": 26699,
+    "hasTranscript": true,
+    "filmTitle": "Pirates of the Caribbean: The Curse of the Black Pearl",
+    "tmdbId": 22,
+    "hosts": {
+      "ian": 9.5,
+      "liam": 9,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      },
+      {
+        "name": "Ethan",
+        "score": 8
+      }
+    ],
+    "fifthSeatCount": 6,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul and Griff",
+        "score": null,
+        "quote": "Very enjoyable."
+      },
+      {
+        "name": "musical podcast",
+        "score": null,
+        "quote": "I have to echo this."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I have not seen this since about 2004, so I can't remember much about it."
+      },
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "Absolutely love this film."
+      },
+      {
+        "name": "Nicole",
+        "score": null,
+        "quote": "Where do I begin?"
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "41": {
+    "epNum": 41,
+    "title": "Episode 41 - Pretty Woman",
+    "slug": "episode-41-pretty-woman",
+    "wordCount": 25198,
+    "hasTranscript": true,
+    "filmTitle": "Pretty Woman",
+    "tmdbId": 114,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8,
+      "georgia": 6
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      }
+    ],
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul and Griff",
+        "score": null,
+        "quote": "Classic Julia Robert shines at the necklace she gets to wear."
+      },
+      {
+        "name": "Ray",
+        "score": null,
+        "quote": "Love the film."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "The Smith's love this film, JR and RG."
+      }
+    ],
+    "combinedScore": 7.63
+  },
+  "42": {
+    "epNum": 42,
+    "title": "Episode 42 - Coraline",
+    "slug": "episode-42-coraline",
+    "wordCount": 20088,
+    "hasTranscript": true,
+    "filmTitle": "Coraline",
+    "tmdbId": 14836,
+    "hosts": {
+      "ian": 6,
+      "liam": 5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      }
+    ],
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Ethan",
+        "score": null,
+        "quote": "This might surprise you, but I love this film."
+      },
+      {
+        "name": "Andrew Shefsky",
+        "score": null,
+        "quote": "Haven't watched it in a while, but from what I remember, it's great."
+      },
+      {
+        "name": "Paul and Griff",
+        "score": null,
+        "quote": "We haven't seen it."
+      },
+      {
+        "name": "M",
+        "score": null,
+        "quote": "Coraline is brilliant."
+      }
+    ],
+    "combinedScore": 6.17
+  },
+  "43": {
+    "epNum": 43,
+    "title": "Episode 43 - Trading Places",
+    "slug": "episode-43-trading-places",
+    "wordCount": 24782,
+    "hasTranscript": true,
+    "filmTitle": "Trading Places",
+    "tmdbId": 1621,
+    "hosts": {
+      "ian": 8,
+      "liam": 7
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 5.5
+      }
+    ],
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul and Griff",
+        "score": null,
+        "quote": "Trading Places is a classic comedy."
+      },
+      {
+        "name": "defined in Disney Park",
+        "score": null,
+        "quote": "Producer loves this movie with loves all in caps."
+      }
+    ],
+    "combinedScore": 6.83
+  },
+  "44": {
+    "epNum": 44,
+    "title": "Episode 44 - Home Alone (Crossover w/ Talking The Mickey)",
+    "slug": "episode-44-home-alone-crossover-w-talking-the-mickey",
+    "wordCount": 25553,
+    "hasTranscript": true,
+    "filmTitle": "Home Alone",
+    "tmdbId": 771,
+    "hosts": {
+      "ian": 6,
+      "liam": 7.5,
+      "georgia": 9
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      },
+      {
+        "name": "Ethan",
+        "score": 6
+      }
+    ],
+    "fifthSeatCount": 6,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "Definitely watch this film every Christmas."
+      },
+      {
+        "name": "Andrew McGuire",
+        "score": null,
+        "quote": "Child in danger, knock once, never go back."
+      },
+      {
+        "name": "MC paper stacks",
+        "score": null,
+        "quote": "I think I just noticed it's for the first time when watching this for the family yesterday during the fight in the kitchen with buzz over cheese pizza, Kevin's plane ticket is thrown in the trash can covered up with napkins soaked with marks and no one sees them."
+      },
+      {
+        "name": "civics coffee pod",
+        "score": null,
+        "quote": "One of the most iconic movies of all time."
+      },
+      {
+        "name": "Paul and Griff",
+        "score": null,
+        "quote": "It's not Christmas about home alone."
+      },
+      {
+        "name": "second watch podcast",
+        "score": null,
+        "quote": "The ultimate Christmas movie."
+      }
+    ],
+    "combinedScore": 7.2
+  },
+  "45": {
+    "epNum": 45,
+    "title": "Episode 45 - The Muppet Christmas Carol (Christmas Party with Talking The Mickey & Friends)",
+    "slug": "episode-45-the-muppet-christmas-carol-christmas-party-with-talking-the-mickey-and-friends",
+    "wordCount": 28174,
+    "hasTranscript": true,
+    "filmTitle": "The Muppet Christmas Carol",
+    "tmdbId": 10437,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.5,
+      "georgia": 9
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      },
+      {
+        "name": "Ethan",
+        "score": 8
+      }
+    ],
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "This is my favorite Christmas film."
+      },
+      {
+        "name": "Dwayne",
+        "score": null,
+        "quote": "Scrooge is my fave, but this one comes a close second."
+      },
+      {
+        "name": "Andrew Shefsky",
+        "score": null,
+        "quote": "It's a classic Muppets film."
+      }
+    ],
+    "combinedScore": 8.1
+  },
+  "46": {
+    "epNum": 46,
+    "title": "Episode 46 - Babe",
+    "slug": "episode-46-babe",
+    "wordCount": 19821,
+    "hasTranscript": true,
+    "filmTitle": "Babe",
+    "tmdbId": 9598,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "georgia": 6.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "Haven't seen babe in ages, but remember and joined the film and loved James Cromwell in this, a charming film and a charming story, which she is currently reading with her three year old."
+      }
+    ],
+    "combinedScore": 7.13
+  },
+  "47": {
+    "epNum": 47,
+    "title": "Episode 47 - Wonder Woman",
+    "slug": "episode-47-wonder-woman",
+    "wordCount": 24789,
+    "hasTranscript": true,
+    "filmTitle": "Wonder Woman",
+    "tmdbId": 297762,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7.5,
+      "megan": 5.5,
+      "georgia": 7.5
+    },
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Potato Lady",
+        "score": null,
+        "quote": "The movie was really captivating, but I wish they had established more red hair."
+      },
+      {
+        "name": "Paul",
+        "score": null,
+        "quote": "A rare light in the DC Cinematic Universe has a very Captain America first Avenger field to it."
+      }
+    ],
+    "combinedScore": 6.75
+  },
+  "48": {
+    "epNum": 48,
+    "title": "Episode 48 - Angels With Dirty Faces",
+    "slug": "episode-48-angels-with-dirty-faces",
+    "wordCount": 23674,
+    "hasTranscript": true,
+    "filmTitle": "Angels with Dirty Faces",
+    "tmdbId": 13696,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8,
+      "megan": 5,
+      "georgia": 6.5
+    },
+    "combinedScore": 7
+  },
+  "49": {
+    "epNum": 49,
+    "title": "Episode 49-  Catch Me If You Can (w/ Alex from Main St. Finance)",
+    "slug": "episode-49-catch-me-if-you-can-w-alex-from-main-st-finance",
+    "wordCount": 30928,
+    "hasTranscript": true,
+    "filmTitle": "Catch Me If You Can",
+    "tmdbId": 640,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "megan": 8.5,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Alex",
+        "score": 8.5
+      }
+    ],
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I love this film, one of my favorites, the cinematography is exceptional."
+      },
+      {
+        "name": "Griff (Paul & Griff Show)",
+        "score": null,
+        "quote": "The best cat and mouse film ever leaves you wanting Frank to never get caught."
+      },
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "Haven't seen this one in a while, but really remember and join it."
+      },
+      {
+        "name": "Andrew Shefsky",
+        "score": null,
+        "quote": "I'm about an hour and a half in and I'm incredibly interested."
+      }
+    ],
+    "combinedScore": 8.3
+  },
+  "50": {
+    "epNum": 50,
+    "title": "Episode 50 - Almost Famous (Director's Cut)",
+    "slug": "episode-50-almost-famous-director-s-cut",
+    "wordCount": 29174,
+    "hasTranscript": true,
+    "filmTitle": "Almost Famous",
+    "tmdbId": 786,
+    "hosts": {
+      "ian": 9,
+      "liam": 9,
+      "megan": 7,
+      "georgia": 7
+    },
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul",
+        "score": null,
+        "quote": "This is an all-time classic, best use of an Elton John song in any movie."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I saw this for the first time a few weeks ago."
+      }
+    ],
+    "combinedScore": 8
+  },
+  "51": {
+    "epNum": 51,
+    "title": "Episode 51 - Groundhog Day (w/ Tom from PodJerky)",
+    "slug": "episode-51-groundhog-day-w-tom-from-podjerky",
+    "wordCount": 23580,
+    "hasTranscript": true,
+    "filmTitle": "Groundhog Day",
+    "tmdbId": 137,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "megan": 7.5,
+      "georgia": 6.5
+    },
+    "guests": [
+      {
+        "name": "Tom",
+        "score": 8
+      }
+    ],
+    "fifthSeatCount": 7,
+    "fifthSeatVoters": [
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "Going to the three days of isolation, this was a very welcome sight."
+      },
+      {
+        "name": "Russell Osborne",
+        "score": null,
+        "quote": "A hilarious watch with Murray at the top of his game."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I love Bill Murray. Have since Ghostbusters."
+      },
+      {
+        "name": "Andrew",
+        "score": null,
+        "quote": "Just rewatched it."
+      }
+    ],
+    "combinedScore": 7.5
+  },
+  "52": {
+    "epNum": 52,
+    "title": "Episode 52 - Jurassic Park (with Debbie)",
+    "slug": "episode-52-jurassic-park-with-debbie",
+    "wordCount": 29447,
+    "hasTranscript": true,
+    "filmTitle": "Jurassic Park",
+    "tmdbId": 329,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.5,
+      "megan": 9,
+      "georgia": 8.5
+    },
+    "fifthSeatCount": 8,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul",
+        "score": null,
+        "quote": "The blockbuster of all blockbusters, a film made for the big screen experience."
+      },
+      {
+        "name": "Lestat",
+        "score": null,
+        "quote": "This is the first movie I ever saw in a cinema."
+      },
+      {
+        "name": "Andrew Sheffske",
+        "score": null,
+        "quote": "It uses a spectacular score by John Williams and superb acting by Sam Neil, Jeff Goldblum, and Laura Dern."
+      },
+      {
+        "name": "Russell Osborne",
+        "score": null,
+        "quote": "We watched a couple of months ago and found that this was the first time I saw on the cinema."
+      },
+      {
+        "name": "Ethan",
+        "score": null,
+        "quote": "What a fantastic movie and feat of special effects magic."
+      }
+    ],
+    "combinedScore": 8.38
+  },
+  "53": {
+    "epNum": 53,
+    "title": "Episode 53 - Ten Things I Hate About You",
+    "slug": "episode-53-ten-things-i-hate-about-you",
+    "wordCount": 29221,
+    "hasTranscript": true,
+    "filmTitle": "10 Things I Hate About You",
+    "tmdbId": 4951,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 8.5,
+      "megan": 8,
+      "georgia": 4.5
+    },
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul",
+        "score": null,
+        "quote": "Love this film, kick ass soundtrack and a kick ass story to match."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I watched this again last week. It's so good."
+      },
+      {
+        "name": "Potato Lady",
+        "score": null,
+        "quote": "This movie never in my life have I found Heath Ledger attractive."
+      }
+    ],
+    "combinedScore": 7.13
+  },
+  "54": {
+    "epNum": 54,
+    "title": "Episode 54 - Wall-E (Crossover w/ Talking The Mickey)",
+    "slug": "episode-54-wall-e-crossover-w-talking-the-mickey",
+    "wordCount": 22730,
+    "hasTranscript": true,
+    "filmTitle": "WALL·E",
+    "tmdbId": 10681,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 5
+      },
+      {
+        "name": "Ethan",
+        "score": 9
+      }
+    ],
+    "combinedScore": 7.6
+  },
+  "55": {
+    "epNum": 55,
+    "title": "Episode 55 - Trainspotting",
+    "slug": "episode-55-trainspotting",
+    "wordCount": 22855,
+    "hasTranscript": true,
+    "filmTitle": "Trainspotting",
+    "tmdbId": 627,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8.5,
+      "georgia": 2
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 5.5
+      }
+    ],
+    "combinedScore": 6.13
+  },
+  "56": {
+    "epNum": 56,
+    "title": "Episode 56 - Knives Out",
+    "slug": "episode-56-knives-out",
+    "wordCount": 22539,
+    "hasTranscript": true,
+    "filmTitle": "Knives Out",
+    "tmdbId": 546554,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 9,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 8.5
+      }
+    ],
+    "combinedScore": 8.63
+  },
+  "57": {
+    "epNum": 57,
+    "title": "Episode 57 - The Silence of the Lambs",
+    "slug": "episode-57-the-silence-of-the-lambs",
+    "wordCount": 28251,
+    "hasTranscript": true,
+    "filmTitle": "The Silence of the Lambs",
+    "tmdbId": 274,
+    "hosts": {
+      "ian": 9,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7
+      },
+      {
+        "name": "Ethan",
+        "score": 7.5
+      }
+    ],
+    "combinedScore": 7.88
+  },
+  "58": {
+    "epNum": 58,
+    "title": "Episode 58 - Fargo",
+    "slug": "episode-58-fargo",
+    "wordCount": 24549,
+    "hasTranscript": true,
+    "filmTitle": "Fargo",
+    "tmdbId": 275,
+    "hosts": {
+      "ian": 9,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7.5
+      },
+      {
+        "name": "Ethan",
+        "score": 9.5
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "59": {
+    "epNum": 59,
+    "title": "Episode 59 - Back To The Future Part II (and BFE Birthday Party)",
+    "slug": "episode-59-back-to-the-future-part-ii-and-bfe-birthday-party",
+    "wordCount": 30397,
+    "hasTranscript": true,
+    "filmTitle": "Back to the Future Part II",
+    "tmdbId": 165,
+    "hosts": {
+      "ian": 8,
+      "liam": 8.5,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      },
+      {
+        "name": "Ethan",
+        "score": 8
+      }
+    ],
+    "combinedScore": 7.7
+  },
+  "60": {
+    "epNum": 60,
+    "title": "Ep 60 - Coming To America (1988)",
+    "slug": "ep-60-coming-to-america-1988",
+    "wordCount": 22442,
+    "hasTranscript": true,
+    "filmTitle": "Coming to America",
+    "tmdbId": 9602,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8.5,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "combinedScore": 7.75
+  },
+  "61": {
+    "epNum": 61,
+    "title": "Episode 61 - Paddington",
+    "slug": "episode-61-paddington",
+    "wordCount": 25925,
+    "hasTranscript": true,
+    "filmTitle": "Paddington",
+    "tmdbId": 116149,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 8.5,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 9.5
+      }
+    ],
+    "fifthSeatAvg": 10,
+    "fifthSeatCount": 5,
+    "fifthSeatVoters": [
+      {
+        "name": "100 things we learned from film podcasts",
+        "score": null,
+        "quote": "The child complained to Rachel that I was laughing too loudly."
+      },
+      {
+        "name": "Griff (Paul & Griff Show)",
+        "score": null,
+        "quote": "A very enjoyable charming film. A perfect Sunday afternoon movie."
+      },
+      {
+        "name": "Debbie",
+        "score": 10,
+        "quote": "I laughed out loud to the jokes, quirky references and stunning performances."
+      },
+      {
+        "name": "Russell Osborne",
+        "score": null,
+        "quote": "One of the most charming, hilarious and inventively directed family films ever made."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "Haven't seen this one yet. Should be good."
+      }
+    ],
+    "combinedScore": 8.8
+  },
+  "62": {
+    "epNum": 62,
+    "title": "Episode 62 - Fighting With My Family",
+    "slug": "episode-62-fighting-with-my-family",
+    "wordCount": 26905,
+    "hasTranscript": true,
+    "filmTitle": "Fighting with My Family",
+    "tmdbId": 445629,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 8,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 7
+      }
+    ],
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Ethan",
+        "score": null,
+        "quote": "I absolutely adore this film. It's such a feel-good romp and it's so much heart, humor, and humanity."
+      },
+      {
+        "name": "Grip",
+        "score": null,
+        "quote": "A fun enough entertaining movie about the origins of NXT's first female champion, Paige."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "I totally agree with you about what Grip said."
+      },
+      {
+        "name": "Watching Podcasts",
+        "score": null,
+        "quote": "I'm surprised this movie didn't do a lot better. It's a really good family film."
+      }
+    ],
+    "combinedScore": 7.75
+  },
+  "63": {
+    "epNum": 63,
+    "title": "Episode 63 - Titanic (w/ Debbie)",
+    "slug": "episode-63-titanic-w-debbie",
+    "wordCount": 33470,
+    "hasTranscript": true,
+    "filmTitle": "Titanic",
+    "tmdbId": 597,
+    "hosts": {
+      "ian": 9,
+      "liam": 9,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8
+      },
+      {
+        "name": "Debbie",
+        "score": 9
+      }
+    ],
+    "fifthSeatCount": 12,
+    "fifthSeatVoters": [
+      {
+        "name": "The drinking and dishing podcast",
+        "score": null,
+        "quote": "One of those movies that I'll put on any time I see it on."
+      },
+      {
+        "name": "Film Floggers",
+        "score": null,
+        "quote": "Lies where Rose says I'll never let go."
+      },
+      {
+        "name": "Let's talk about this podcast",
+        "score": null,
+        "quote": "Most importantly, though, there is definitely room for Jack."
+      },
+      {
+        "name": "PM",
+        "score": null,
+        "quote": "I still think they both could have fit on that piece of wood."
+      },
+      {
+        "name": "Alex",
+        "score": null,
+        "quote": "Mythbusters dedicated an entire episode to this. The result was that yes, they both could have fit."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "Jack says, could you walk the valley a little faster?"
+      },
+      {
+        "name": "Ethan",
+        "score": null,
+        "quote": "Music is stellar and the chemistry of Winslet and Decaprio is fantastic."
+      },
+      {
+        "name": "Ray from Not Before Coffee",
+        "score": null,
+        "quote": "I loved it, but since I've grown to dislike it."
+      },
+      {
+        "name": "Griff (Paul & Griff Show)",
+        "score": null,
+        "quote": "Everything about this film screams blockbuster."
+      },
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": null,
+        "quote": "Cameron's attention to detail... the whole set design production is impressive."
+      },
+      {
+        "name": "The film effect podcast",
+        "score": null,
+        "quote": "The movie that drove all my fellow female classmates to theaters roughly six to seven times each."
+      },
+      {
+        "name": "Chance Whitmore",
+        "score": null,
+        "quote": "I have honestly never seen it. I know the history and I have no interest at all."
+      }
+    ],
+    "combinedScore": 8.5
+  },
+  "64": {
+    "epNum": 64,
+    "title": "Episode 64 - Parasite",
+    "slug": "episode-64-parasite",
+    "wordCount": 23650,
+    "hasTranscript": true,
+    "filmTitle": "Parasite",
+    "tmdbId": 496243,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 6,
+      "georgia": 6.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 8.5
+      }
+    ],
+    "fifthSeatCount": 6,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I was mesmerized. That so many twists and turns."
+      },
+      {
+        "name": "A musical podcast",
+        "score": null,
+        "quote": "It was so well made and just exhilarating to be a part of."
+      },
+      {
+        "name": "Film Floggers",
+        "score": null,
+        "quote": "Fantastic movie, which helps proves the language of cinema transcends borders."
+      },
+      {
+        "name": "The Ratchet book club",
+        "score": null,
+        "quote": "An amazing film. My wife and I loved every minute of it."
+      },
+      {
+        "name": "The partial credit pod",
+        "score": null,
+        "quote": "I love how all the marketing made it look like a horror film when it definitely is a comedy."
+      },
+      {
+        "name": "Your next favorite movie",
+        "score": null,
+        "quote": "Parasite was definitely in my top five of 2019."
+      }
+    ],
+    "combinedScore": 7.38
+  },
+  "65": {
+    "epNum": 65,
+    "title": "Episode 65 - Howl's Moving Castle (w/ Ethan)",
+    "slug": "episode-65-howl-s-moving-castle-w-ethan",
+    "wordCount": 25783,
+    "hasTranscript": true,
+    "filmTitle": "Howl's Moving Castle",
+    "tmdbId": 4935,
+    "hosts": {
+      "ian": 4,
+      "liam": 6.5,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 6.5
+      }
+    ],
+    "fifthSeatCount": 9,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I have not gotten around to seeing this yet and so we'll have to defer listening."
+      },
+      {
+        "name": "Drew",
+        "score": null,
+        "quote": "It's my favorite Ghibli film and it caters to everything I love about magic worlds."
+      },
+      {
+        "name": "M",
+        "score": null,
+        "quote": "I adore it. It's just so much heart and soul."
+      },
+      {
+        "name": "Film Floggers",
+        "score": null,
+        "quote": "Visually up there with his prettiest."
+      },
+      {
+        "name": "The Paul and Griffin Show",
+        "score": null,
+        "quote": "Looks like a fancy version of Pixar's up."
+      },
+      {
+        "name": "Russell Osborne",
+        "score": null,
+        "quote": "I liked the story, it was stunning visuals, however, I thought it was slightly too long."
+      },
+      {
+        "name": "Bradley",
+        "score": null,
+        "quote": "Stunning animation, but I wasn't too keen on the overall plot."
+      },
+      {
+        "name": "The Ants Human Stars podcast",
+        "score": null,
+        "quote": "I've always had a crush on how."
+      },
+      {
+        "name": "Danny",
+        "score": null,
+        "quote": "I tend to opt for the dubbed version of jibbly."
+      }
+    ],
+    "combinedScore": 6.38
+  },
+  "66": {
+    "epNum": 66,
+    "title": "Episode 66 - The Empire Strikes Back",
+    "slug": "episode-66-the-empire-strikes-back",
+    "wordCount": 27806,
+    "hasTranscript": true,
+    "filmTitle": "The Empire Strikes Back",
+    "tmdbId": 1891,
+    "hosts": {
+      "ian": 8,
+      "liam": 3.5,
+      "georgia": 6
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 6
+      }
+    ],
+    "fifthSeatCount": 10,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "It is the best one. All the characters are set and Han Solo is badass."
+      },
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "The Death Star is just full of British actors opening doors."
+      },
+      {
+        "name": "Andrew Ashevsky",
+        "score": null,
+        "quote": "Everything about this movie builds on and somehow improves on the original."
+      },
+      {
+        "name": "Let's talk about this podcast",
+        "score": null,
+        "quote": "It would be the best Star Wars film if the Christmas special didn't exist."
+      },
+      {
+        "name": "The Pongor Show",
+        "score": null,
+        "quote": "Not being a Star Wars fan can appreciate this is top tier to fans."
+      },
+      {
+        "name": "Bradley",
+        "score": null,
+        "quote": "Incredible to look at, but I still prefer a new hope."
+      },
+      {
+        "name": "Film Floggers",
+        "score": null,
+        "quote": "Smooth."
+      },
+      {
+        "name": "PM",
+        "score": null,
+        "quote": "It is my opinion best hours from all time."
+      },
+      {
+        "name": "Carlos",
+        "score": null,
+        "quote": "Empire is great. I love the gray areas in this one."
+      },
+      {
+        "name": "Dan Mackelt",
+        "score": null,
+        "quote": "I love his movie in so many ways. It's going to kill me to hear the girls dismiss it."
+      }
+    ],
+    "combinedScore": 5.88
+  },
+  "67": {
+    "epNum": 67,
+    "title": "Episode 67 - Twister",
+    "slug": "episode-67-twister",
+    "wordCount": 28709,
+    "hasTranscript": true,
+    "filmTitle": "Twister",
+    "tmdbId": 664,
+    "hosts": {
+      "ian": 7,
+      "liam": 6.5,
+      "georgia": 6.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 5.5
+      }
+    ],
+    "fifthSeatCount": 16,
+    "fifthSeatVoters": [
+      {
+        "name": "Film Floggers",
+        "score": null,
+        "quote": "I enjoyed it back in the day, but I'd like to revisit to see how the CG holds up."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "It's over the top. Unrealistic brilliant."
+      },
+      {
+        "name": "A musical podcast",
+        "score": null,
+        "quote": "I was obsessed with the flying cow and thought it was the height of comedy."
+      },
+      {
+        "name": "How not to summon a podcast",
+        "score": null,
+        "quote": "The only thing I can remember for this movie is bad acting and something about Pepsi hands."
+      },
+      {
+        "name": "Alex from Main Street Finance",
+        "score": null,
+        "quote": "I haven't seen Twister in Forever, but I remember my mom and I used to love it."
+      },
+      {
+        "name": "The MCU in Me podcast",
+        "score": null,
+        "quote": "Love this film as a kid as I loved all disaster movies for some reason."
+      },
+      {
+        "name": "Ray from Not Before Coffee",
+        "score": null,
+        "quote": "I love the chemistry between Helen Hunt and Bill Paxton."
+      },
+      {
+        "name": "100 things we learned from film podcasts",
+        "score": null,
+        "quote": "It still lives rent free in my head."
+      },
+      {
+        "name": "Carlos",
+        "score": null,
+        "quote": "It's dumb fun and it's some pretty cool set pieces."
+      },
+      {
+        "name": "Jorge L. Giavanetti",
+        "score": null,
+        "quote": "The finger of God scene is pretty memorable."
+      },
+      {
+        "name": "Podcast Father",
+        "score": null,
+        "quote": "Whenever it's on TV, which is constantly, I find myself watching it every single time."
+      },
+      {
+        "name": "The drinking and dishing podcast",
+        "score": null,
+        "quote": "I always thought it was a decent movie, not the best, but certainly not the worst."
+      },
+      {
+        "name": "The Dual Sense podcast",
+        "score": null,
+        "quote": "A love twister will stop and watch it if I come across it on TV."
+      },
+      {
+        "name": "Disasterist History",
+        "score": null,
+        "quote": "It's the defining movie of the 90s and I will hear no slander."
+      },
+      {
+        "name": "Civics and Coffee",
+        "score": null,
+        "quote": "One of the best movies of all time."
+      },
+      {
+        "name": "Rebecca",
+        "score": null,
+        "quote": "Fantastic film, one of my all time favorite, so many amazing and strange lines."
+      }
+    ],
+    "combinedScore": 6.38
+  },
+  "68": {
+    "epNum": 68,
+    "title": "Episode 68 - Shrek",
+    "slug": "episode-68-shrek",
+    "wordCount": 25334,
+    "hasTranscript": true,
+    "filmTitle": "Shrek",
+    "tmdbId": 808,
+    "hosts": {
+      "ian": 8,
+      "liam": 9,
+      "georgia": 8.5
+    },
+    "combinedScore": 8.5
+  },
+  "69": {
+    "epNum": 69,
+    "title": "Episode 69 - Mission: Impossible",
+    "slug": "episode-69-mission-impossible",
+    "wordCount": 29983,
+    "hasTranscript": true,
+    "filmTitle": "Mission: Impossible",
+    "tmdbId": 954,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 6.5,
+      "kevin": 7
+    },
+    "combinedScore": 7
+  },
+  "70": {
+    "epNum": 70,
+    "title": "Episode 70 - Citizen Kane",
+    "slug": "episode-70-citizen-kane",
+    "wordCount": 27125,
+    "hasTranscript": true,
+    "filmTitle": "Citizen Kane",
+    "tmdbId": 15,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7,
+      "georgia": 9
+    },
+    "combinedScore": 8.17
+  },
+  "71": {
+    "epNum": 71,
+    "title": "Episode 71 - The Rock",
+    "slug": "episode-71-the-rock",
+    "wordCount": 28689,
+    "hasTranscript": true,
+    "filmTitle": "The Rock",
+    "tmdbId": 9802,
+    "hosts": {
+      "ian": 8,
+      "liam": 7
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 5.5
+      }
+    ],
+    "fifthSeatCount": 6,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I have not seen this, but I'm willing to bet Sean Connery is a Scottish accent and Nicholas Cage has some funny lines."
+      },
+      {
+        "name": "Russell Osborne",
+        "score": null,
+        "quote": "Though, it features one of my least favorite actors of all time in Connery."
+      },
+      {
+        "name": "Ed",
+        "score": null,
+        "quote": "The Rock is a film that I admire so much."
+      },
+      {
+        "name": "Carlos",
+        "score": null,
+        "quote": "I'll just save this as easily Bay's best."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "Yes, you had me at Connery, but had to throw in Cage and its BFE content."
+      },
+      {
+        "name": "Colin Griffith",
+        "score": null,
+        "quote": "It's a grunge thing."
+      }
+    ],
+    "combinedScore": 6.83
+  },
+  "73": {
+    "epNum": 73,
+    "title": "Episode 73 - Ferris Bueller's Day Off",
+    "slug": "episode-73-ferris-bueller-s-day-off",
+    "wordCount": 25815,
+    "hasTranscript": true,
+    "filmTitle": "Ferris Bueller's Day Off",
+    "tmdbId": 9377,
+    "hosts": {
+      "ian": 6,
+      "liam": 7,
+      "georgia": 6
+    },
+    "combinedScore": 6.33
+  },
+  "74": {
+    "epNum": 74,
+    "title": "Episode 74 - Grease",
+    "slug": "episode-74-grease",
+    "wordCount": 34196,
+    "hasTranscript": true,
+    "filmTitle": "Grease",
+    "tmdbId": 621,
+    "hosts": {
+      "ian": 6,
+      "liam": 10,
+      "georgia": 6
+    },
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Debbie",
+        "score": null,
+        "quote": "I have never really liked Grease the film."
+      }
+    ],
+    "combinedScore": 7.33
+  },
+  "75": {
+    "epNum": 75,
+    "title": "Episode 75 - Terminator 2: Judgment Day",
+    "slug": "episode-75-terminator-2-judgment-day",
+    "wordCount": 31147,
+    "hasTranscript": true,
+    "filmTitle": "Terminator 2: Judgment Day",
+    "tmdbId": 280,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 9,
+      "georgia": 8.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 4.5
+      }
+    ],
+    "fifthSeatAvg": 9.5,
+    "fifthSeatCount": 16,
+    "fifthSeatVoters": [
+      {
+        "name": "Fred",
+        "score": null,
+        "quote": "I was 15 in 1991, so the perfect age. I was blown away by the special effects. The T-1000 is awesome."
+      },
+      {
+        "name": "Dan Mackels",
+        "score": 9.5,
+        "quote": "This movie is important on so many levels from the quantum leap forward of CGI to cementing Arnie's place as one of the greatest action heroes."
+      },
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": null,
+        "quote": "Overall, I prefer the first one, but this is an excellent sequel."
+      },
+      {
+        "name": "Ed",
+        "score": null,
+        "quote": "If anything, watch the film for the filmmaking itself, everything from the effects to the production design."
+      },
+      {
+        "name": "Danny",
+        "score": null,
+        "quote": "I never truly experienced this one. I went in knowing Terminator was a good guy now and not here to kill John Connor."
+      },
+      {
+        "name": "The Paul and Griff Show",
+        "score": null,
+        "quote": "The special effects of the T-1000 for its time were ground-breaking. Cool soundtrack, amazing plot."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "This is my favorite Terminator film. All the catchphrases and the story wasn't confusing."
+      },
+      {
+        "name": "The Jury Room Podcast",
+        "score": null,
+        "quote": "This was by far one of my most favorite movies as a kid. Just so good."
+      },
+      {
+        "name": "Overpriced Concessions",
+        "score": null,
+        "quote": "It's my favorite movie of all time and the perfect action movie."
+      },
+      {
+        "name": "Film Vloggers",
+        "score": null,
+        "quote": "Robert Patrick was so good as the T-1000."
+      },
+      {
+        "name": "Ethan",
+        "score": null,
+        "quote": "I was amazed by how well the effects have held up, especially in the jail cell."
+      },
+      {
+        "name": "The Backlogs of a Podcast",
+        "score": null,
+        "quote": "The best Terminator of them all."
+      },
+      {
+        "name": "Alex",
+        "score": null,
+        "quote": "T2 was one of my favorite movies as a kid. The graphics were amazing for the time period and still hold up."
+      },
+      {
+        "name": "Josh",
+        "score": null,
+        "quote": "One of the greatest action films of all time, if not for The Dark Knight, probably the best sequel of all time as well."
+      },
+      {
+        "name": "That Effing Show",
+        "score": null,
+        "quote": "Dare I say, flawless movie? This is one of those where everything just hit perfectly."
+      },
+      {
+        "name": "Chance Withmore",
+        "score": null,
+        "quote": "Great action movie, groundbreaking effects. It should have been the last Terminator."
+      }
+    ],
+    "combinedScore": 8
+  },
+  "76": {
+    "epNum": 76,
+    "title": "Episode 76 - Independence Day",
+    "slug": "episode-76-independence-day",
+    "wordCount": 35070,
+    "hasTranscript": true,
+    "filmTitle": "Independence Day",
+    "tmdbId": 602,
+    "hosts": {
+      "ian": 8,
+      "liam": 9,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "fifthSeatCount": 10,
+    "fifthSeatVoters": [
+      {
+        "name": "Paul and Griff Show",
+        "score": null,
+        "quote": "It was a must-see film when it came out, but rewatchability-wise, it's just not there. Special effects to blow up the White House were way ahead of its time."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "I put good because it's not a cinematic masterpiece, but Will Smith is funny and come on, Jeff Goldblum."
+      },
+      {
+        "name": "Josh",
+        "score": null,
+        "quote": "Great time in a theater, but I don't find myself wanting to revisit it, like ever."
+      },
+      {
+        "name": "Danny",
+        "score": null,
+        "quote": "I haven't watched this film since the year of the sequel, but I do really like the spectacle of it."
+      },
+      {
+        "name": "Ratchet Book Club",
+        "score": null,
+        "quote": "I don't think it holds up to the test of time, but it wasn't supposed to. This was sort of a blockbuster at its finest."
+      },
+      {
+        "name": "Kids What Are We Watching Tonight",
+        "score": null,
+        "quote": "I think it's great. At the time, there was nothing like it."
+      },
+      {
+        "name": "Dan Gurr Mackels",
+        "score": null,
+        "quote": "It's enjoyable trash, very memorable garbage. I loved it as a guy in my 20s."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "Proper blockbuster. Will Smith dialed up to a hundred punching aliens, Bill Pullman being presidential, and discovering Area 51 is real."
+      },
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": null,
+        "quote": "The teaser trailer got me hooked, but unfortunately the film failed to deliver."
+      },
+      {
+        "name": "Festive Flix Podcast",
+        "score": null,
+        "quote": "Great film."
+      }
+    ],
+    "combinedScore": 7.75,
+    "randomWord": "kick the tires and light the fires"
+  },
+  "77": {
+    "epNum": 77,
+    "title": "Episode 77 - Point Break (w/ Em from Verbal Diorama)",
+    "slug": "episode-77-point-break-w-em-from-verbal-diorama",
+    "wordCount": 26380,
+    "hasTranscript": true,
+    "filmTitle": "Point Break",
+    "tmdbId": 1089,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 7,
+      "georgia": 6
+    },
+    "guests": [
+      {
+        "name": "Em",
+        "score": 7.5
+      },
+      {
+        "name": "Ellie",
+        "score": 6.5
+      }
+    ],
+    "fifthSeatAvg": 6.5,
+    "fifthSeatCount": 8,
+    "fifthSeatVoters": [
+      {
+        "name": "Josh",
+        "score": null,
+        "quote": "I watched this for the first time in about five years ago and loved it. Is Johnny the best Keanu character name? Probably so."
+      },
+      {
+        "name": "Shoot the Flick",
+        "score": null,
+        "quote": "Point Break is a fun action movie and it's Keanu's first attempt to become the action star we know today."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I love this film. Utah is one of Keanu's best characters and Patrick Swayze is so good."
+      },
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": 6,
+        "quote": "It has all the ingredients to fail—bad performance from Keanu, a stupid and contrived plot—but somehow it kind of works."
+      },
+      {
+        "name": "Holmes Movie Podcast",
+        "score": 7,
+        "quote": "It's brilliant, directed with such ferocity and kinetic energy from Kathryn Bigelow."
+      },
+      {
+        "name": "The Paul and Griff Show",
+        "score": null,
+        "quote": "The film that made Keanu an action movie star. Great film, Keanu and Patrick shine."
+      },
+      {
+        "name": "Ed",
+        "score": null,
+        "quote": "We're covering the same film this week, might be a first."
+      },
+      {
+        "name": "Kids What Are We Watching Tonight",
+        "score": null,
+        "quote": "I showed it to my kids and they said it was slow, rubbish, boring."
+      }
+    ],
+    "combinedScore": 6.83
+  },
   "78": {
     "epNum": 78,
     "title": "Episode 78 - To Sir, With Love",
@@ -1587,6 +3952,66 @@
     ],
     "combinedScore": 7.25
   },
+  "121": {
+    "epNum": 121,
+    "title": "Austin Powers: International Man of Mystery",
+    "slug": "austin-powers-international-man-of-mystery",
+    "wordCount": 40725,
+    "hasTranscript": true,
+    "filmTitle": "Austin Powers: International Man of Mystery",
+    "tmdbId": 816,
+    "hosts": {
+      "ian": 7,
+      "liam": 7,
+      "georgia": 5.5
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 6
+      }
+    ],
+    "fifthSeatAvg": 6.2,
+    "fifthSeatCount": 46,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I used to watch the Austin Powers films all the time in my 20s."
+      },
+      {
+        "name": "Chris Peterson",
+        "score": null,
+        "quote": "Austin Powers had a massive impact on pop culture when it was released."
+      },
+      {
+        "name": "Enz and Ian Davies",
+        "score": null,
+        "quote": "I haven't seen this one for years, but loved it when it came out."
+      },
+      {
+        "name": "Kate",
+        "score": null,
+        "quote": "I haven't seen it in years, but it's still pretty funny."
+      },
+      {
+        "name": "Katie McCray",
+        "score": 2,
+        "quote": "I know a lot of people find this movie hilarious in a classic, but I now know why I never watched it."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": 2,
+        "quote": "I had not seen this before."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "This film and the second one were probably the most quoted film between me and my friends at middle school."
+      }
+    ],
+    "combinedScore": 6.34
+  },
   "122": {
     "epNum": 122,
     "title": "Episode 122 - The Hate U Give (w/ BFF of the BFE: Juleen)",
@@ -1705,6 +4130,344 @@
       }
     ],
     "combinedScore": 7
+  },
+  "124": {
+    "epNum": 124,
+    "title": "Episode 124 - The Gentlemen (with BFF of the BFE: Hermes)",
+    "slug": "episode-124-the-gentlemen-with-bff-of-the-bfe-hermes",
+    "wordCount": 44532,
+    "hasTranscript": true,
+    "filmTitle": "The Gentlemen",
+    "tmdbId": 522627,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 9,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Hermes Auslander",
+        "score": 10
+      },
+      {
+        "name": "Ethan",
+        "score": 9.5
+      }
+    ],
+    "fifthSeatAvg": 9,
+    "fifthSeatCount": 5,
+    "fifthSeatVoters": [
+      {
+        "name": "Reverend Bruce",
+        "score": null,
+        "quote": "Despite having all our shots and being very careful because of our jobs this week, we both have COVID a second time."
+      },
+      {
+        "name": "Cheesy",
+        "score": 10,
+        "quote": "In my opinion, this is one of the best films to come out over the last few years. The story is cleverly told through Fletcher pitching a film whilst also bragging about what he knows."
+      },
+      {
+        "name": "Nate the Great",
+        "score": 9,
+        "quote": "What a joyful surprise this was, fun, funny and had a phenomenal cast and interesting twist ending."
+      },
+      {
+        "name": "Chris Peterson",
+        "score": 9,
+        "quote": "The gentleman is definitely bringing it back to the same likes as lock stock and snatch. The gentleman is a near perfect film for me."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": 8,
+        "quote": "I love a gangster film. Guy Ritchie has his own unique style, which I am very much a fan of."
+      }
+    ],
+    "combinedScore": 9
+  },
+  "125": {
+    "epNum": 125,
+    "title": "Episode 125 - Jurassic World (w/ Special Guest, Jay Salahi)",
+    "slug": "episode-125-jurassic-world-w-special-guest-jay-salahi",
+    "wordCount": 42272,
+    "hasTranscript": true,
+    "filmTitle": "Jurassic World",
+    "tmdbId": 135397,
+    "hosts": {
+      "ian": 7
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 5
+      },
+      {
+        "name": "Jay Salahi",
+        "score": 7
+      }
+    ],
+    "fifthSeatAvg": 4.3,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Reverend Bruce",
+        "score": 6,
+        "quote": "You think of Jurassic Park and humankind would have learned that making extinct carnivores unextinct to make loads of money might not be a good idea. Not much plot or character development, but who cares? It's fun."
+      },
+      {
+        "name": "Nate the Great",
+        "score": 2,
+        "quote": "I'm going to keep this short this week because I don't like to be negative about film when I can avoid it. I'm just going to say I enjoyed Chris Pratt in this movie."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": 5
+      }
+    ],
+    "combinedScore": 5.83
+  },
+  "126": {
+    "epNum": 126,
+    "title": "Episode 126 - E.T.",
+    "slug": "episode-126-e-t",
+    "wordCount": 41843,
+    "hasTranscript": true,
+    "filmTitle": "E.T. the Extra-Terrestrial",
+    "tmdbId": 601,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 7.5,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Ethan",
+        "score": 9
+      }
+    ],
+    "fifthSeatAvg": 7.75,
+    "fifthSeatCount": 8,
+    "fifthSeatVoters": [
+      {
+        "name": "Ian Davies",
+        "score": 10,
+        "quote": "I was hoping to watch this with my kids this week, but they've been way too busy getting ready to go on holiday. This film is such a classic, the music is superb, and the bikes passing in front of the moon is an iconic scene."
+      },
+      {
+        "name": "Katie McCray",
+        "score": null,
+        "quote": "Keeping this concise, classic groundbreaking Spielberg, great child actors, good story with both laughter and tears, definitely a feel good movie and very family friendly as well."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "I remember when I was a child, I was never too keen on this film, but as an adult, I really enjoy E.T. every time I've watched it."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": null,
+        "quote": "E.T. was the fourth movie in an incredible Spielberg run following Jaws, Close Encounters, and Raiders of the Lost Ark. E.T. is such a true classic, a fun blast from the past to re-watch."
+      },
+      {
+        "name": "Nate the Great",
+        "score": 4,
+        "quote": "I hadn't seen it before, and I didn't know if it would live up to the nostalgia hype or not. It did not, it was a rough watch."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "There was a huge amount of nostalgia attached to this film for me. Loved E.T. and the kids and the go home scene made me cry."
+      },
+      {
+        "name": "Chris Peterson",
+        "score": 10,
+        "quote": "E.T. was one of my favorite films from my childhood. The ending always makes me cry, and John Williams score is perfect."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "Love the rewatch, Elliot constantly breaks my heart in the film, practical effects were so cool, and I loved the score."
+      }
+    ],
+    "combinedScore": 8.15
+  },
+  "127": {
+    "epNum": 127,
+    "title": "Episode 127 - Bonnie and Clyde",
+    "slug": "episode-127-bonnie-and-clyde",
+    "wordCount": 32319,
+    "hasTranscript": true,
+    "filmTitle": "Bonnie and Clyde",
+    "tmdbId": 475,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7,
+      "georgia": 4.5
+    },
+    "beetrootPct": 89,
+    "fifthSeatAvg": 6,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Cheesy",
+        "score": 4,
+        "quote": "I've never seen this film before, but it really struggled to hold my attention."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": 8,
+        "quote": "This film was before my time, but I really enjoyed it as a groundbreaking film."
+      }
+    ],
+    "combinedScore": 6
+  },
+  "128": {
+    "epNum": 128,
+    "title": "Episode 128 - Blade Runner",
+    "slug": "episode-128-blade-runner",
+    "wordCount": 32065,
+    "hasTranscript": true,
+    "filmTitle": "Blade Runner",
+    "tmdbId": 78,
+    "hosts": {
+      "ian": 8
+    },
+    "guests": [
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": 9
+      }
+    ],
+    "beetrootPct": 89,
+    "fifthSeatAvg": 7,
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": 9,
+        "quote": "One of the best sci-fi films ever in my opinion."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": 5,
+        "quote": "I saw Blade Runner in the theater when it first came out and was massively disappointed."
+      },
+      {
+        "name": "Juleen",
+        "score": 6,
+        "quote": "To be honest, I had a really hard time watching this film and really did not enjoy it."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": 8,
+        "quote": "The visuals and cinematography brilliantly immerse you in the world and it totally holds up."
+      }
+    ],
+    "combinedScore": 8
+  },
+  "129": {
+    "epNum": 129,
+    "title": "Episode 129 - Thor: Ragnarok (Live & Uncensored)",
+    "slug": "episode-129-thor-ragnarok-live-and-uncensored",
+    "wordCount": 31525,
+    "hasTranscript": true,
+    "filmTitle": "Thor: Ragnarok",
+    "tmdbId": 284053,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "georgia": 8
+    },
+    "beetrootPct": 93,
+    "fifthSeatAvg": 8.8,
+    "fifthSeatCount": 6,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "Wasn't a fan of Thor until this one came out, so that was a plus."
+      },
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "Ragnarok was leaps and bounds better than The Dark World, so full of adventure, fun, and action."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "This film is just fun from start to finish and definitely up there in my top five Marvel films."
+      },
+      {
+        "name": "Juleen",
+        "score": null,
+        "quote": "This is my all-time favorite Thor movie."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "Ragnarok came at precisely the right time for me and felt so different to Dark World."
+      },
+      {
+        "name": "Chris Peterson",
+        "score": null,
+        "quote": "Thor Ragnarok is a masterpiece compared to the first two Thor films."
+      }
+    ],
+    "combinedScore": 8.2
+  },
+  "130": {
+    "epNum": 130,
+    "title": "Episode 130 - Men In Black (Live & Uncensored)",
+    "slug": "episode-130-men-in-black-live-and-uncensored",
+    "wordCount": 29219,
+    "hasTranscript": true,
+    "filmTitle": "Men in Black",
+    "tmdbId": 607,
+    "hosts": {
+      "ian": 7,
+      "liam": 7,
+      "georgia": 7.5
+    },
+    "fifthSeatAvg": 7.1,
+    "fifthSeatCount": 7,
+    "fifthSeatVoters": [
+      {
+        "name": "Andy Dixon",
+        "score": null,
+        "quote": "Love Men in Black, Will Smith and Tommy Lee Jones are excellent in it and work well as opposites."
+      },
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "This is one of those classics that was fun for me growing up."
+      },
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "Upon a rewatch, I didn't like it as much because they rely so much on jokes that don't land."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "This film always reminds me of my dad and I will always love this film."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "The idea that there are aliens living among us and a secret division policing them is very clever."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": null,
+        "quote": "Tommy Lee Jones was superb, Will Smith was average at best, and I love that it is 98 minutes."
+      },
+      {
+        "name": "Ian Davies",
+        "score": null,
+        "quote": "Tommy Lee Jones was a standout for me and Will Smith is perfect in his role."
+      }
+    ],
+    "combinedScore": 7.15
   },
   "131": {
     "epNum": 131,
@@ -2524,6 +5287,437 @@
     ],
     "combinedScore": 7.2
   },
+  "152": {
+    "epNum": 152,
+    "title": "Episode 152 - Avatar",
+    "slug": "episode-152-avatar",
+    "wordCount": 35041,
+    "hasTranscript": true,
+    "filmTitle": "Avatar",
+    "tmdbId": 19995,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 5,
+      "georgia": 7
+    },
+    "fifthSeatAvg": 5.25,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Nate the Great",
+        "score": 2,
+        "quote": "This movie is proof that just because it makes a lot of money doesn't make it good."
+      }
+    ],
+    "combinedScore": 6.19
+  },
+  "153": {
+    "epNum": 153,
+    "title": "Episode 153 - Scrooged (with Kirsti)",
+    "slug": "episode-153-scrooged-with-kirsti",
+    "wordCount": 29488,
+    "hasTranscript": true,
+    "filmTitle": "Scrooged",
+    "tmdbId": 9647,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7
+    },
+    "guests": [
+      {
+        "name": "Kirsti",
+        "score": 5.5
+      }
+    ],
+    "beetrootPct": 69,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Katie McCray",
+        "score": null,
+        "quote": "One of my favorite Christmas movies is A Christmas Carol, but this is one I do not care for."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": null,
+        "quote": "I hate to be a Grinch at Advent, but Scrooged is a dreadful film."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "This is Bill Murray's film, he drives it with all his energy and wit."
+      }
+    ],
+    "combinedScore": 6.33
+  },
+  "154": {
+    "epNum": 154,
+    "title": "Episode 154 - Rocky IV (and BFE Xmas Party)",
+    "slug": "episode-154-rocky-iv-and-bfe-xmas-party",
+    "wordCount": 32177,
+    "hasTranscript": true,
+    "filmTitle": "Rocky IV",
+    "tmdbId": 1374,
+    "hosts": {
+      "ian": 7,
+      "liam": 7.5,
+      "georgia": 5.5
+    },
+    "beetrootPct": 37,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "It's been quite the year for the BFE crew and we've loved being BFFs to see it all."
+      },
+      {
+        "name": "Katie and Reverend Bruce",
+        "score": null,
+        "quote": "Wishing you a very Merry Christmas and a Happy New Year."
+      }
+    ],
+    "combinedScore": 6.67
+  },
+  "155": {
+    "epNum": 155,
+    "title": "Episode 155 - Good Morning, Vietnam",
+    "slug": "episode-155-good-morning-vietnam",
+    "wordCount": 28710,
+    "hasTranscript": true,
+    "filmTitle": "Good Morning, Vietnam",
+    "tmdbId": 801,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "kevin": 7,
+      "georgia": 7.5
+    },
+    "fifthSeatAvg": 7.5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "Where to begin?"
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I've not seen good morning Vietnam for a while."
+      }
+    ],
+    "combinedScore": 7.5
+  },
+  "156": {
+    "epNum": 156,
+    "title": "Episode 156 - Glass Onion: A Knives Out Mystery (w/ BFF of the BFE: James DeGuzman)",
+    "slug": "episode-156-glass-onion-a-knives-out-mystery-w-bff-of-the-bfe-james-deguzman",
+    "wordCount": 46072,
+    "hasTranscript": true,
+    "filmTitle": "Glass Onion: A Knives Out Mystery",
+    "tmdbId": 661374,
+    "hosts": {
+      "ian": 7.5,
+      "liam": 7,
+      "kevin": 8.5,
+      "georgia": 7.5
+    },
+    "guests": [
+      {
+        "name": "James DeGuzman",
+        "score": 8
+      }
+    ],
+    "fifthSeatAvg": 7,
+    "fifthSeatCount": 5,
+    "fifthSeatVoters": [
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "I went into this film with high hopes after knives out, had blown me away."
+      },
+      {
+        "name": "Lena",
+        "score": null,
+        "quote": "As a mystery aficionado, I always get excited when a new murder mystery comes out."
+      },
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "A very fun film from Jump and an Interesting Story, entertaining characters and a nice twist."
+      },
+      {
+        "name": "Anthony Davies",
+        "score": null,
+        "quote": "I enjoyed this film, less of a mystery than the first film, as Blanc says, it's in plain sight."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "Not seeing this yet, so I can't give a score."
+      }
+    ],
+    "combinedScore": 7.58
+  },
+  "157": {
+    "epNum": 157,
+    "title": "Episode 157 - Up in the Air (w/ BFF of the BFE: Rev. Bruce)",
+    "slug": "episode-157-up-in-the-air-w-bff-of-the-bfe-rev-bruce",
+    "wordCount": 42431,
+    "hasTranscript": true,
+    "filmTitle": "Up in the Air",
+    "tmdbId": 22947,
+    "hosts": {
+      "ian": 9,
+      "liam": 7,
+      "kevin": 9,
+      "georgia": 7
+    },
+    "guests": [
+      {
+        "name": "Reverend Bruce",
+        "score": 8
+      }
+    ],
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Richard",
+        "score": null,
+        "quote": "Ever watch a movie and feel absolutely nothing?"
+      }
+    ],
+    "combinedScore": 8
+  },
+  "158": {
+    "epNum": 158,
+    "title": "Episode 158 - Spice World (w/ Megan)",
+    "slug": "episode-158-spice-world-w-megan",
+    "wordCount": 32914,
+    "hasTranscript": true,
+    "filmTitle": "Spice World",
+    "tmdbId": 6116,
+    "hosts": {
+      "ian": 5,
+      "liam": 7,
+      "georgia": 6.5,
+      "megan": 6
+    },
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Ian Davies",
+        "score": null,
+        "quote": "It's a cheesy, of its time cameo fest, and I still love it."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "This choice came totally out of left field for me, I'm actually still a little shocked."
+      }
+    ],
+    "combinedScore": 6.13
+  },
+  "159": {
+    "epNum": 159,
+    "title": "Episode 159 - Joe Versus The Volcano",
+    "slug": "episode-159-joe-versus-the-volcano",
+    "wordCount": 32099,
+    "hasTranscript": true,
+    "filmTitle": "Joe Versus the Volcano",
+    "tmdbId": 2565,
+    "hosts": {
+      "ian": 7,
+      "liam": 5,
+      "georgia": 6
+    },
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "Neither have I."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "It's been on my list for decades, not seen it."
+      }
+    ],
+    "combinedScore": 6
+  },
+  "160": {
+    "epNum": 160,
+    "title": "Episode 160 - How to Lose a Guy in 10 Days",
+    "slug": "episode-160-how-to-lose-a-guy-in-10-days",
+    "wordCount": 29672,
+    "hasTranscript": true,
+    "filmTitle": "How to Lose a Guy in 10 Days",
+    "tmdbId": 9919,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7,
+      "kevin": 7.5,
+      "georgia": 7
+    },
+    "fifthSeatAvg": 5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": 5,
+        "quote": "I didn't think this one was your standard chick flick."
+      },
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "Never seen it, as he knows, I haven't seen aimed to keep it that way."
+      }
+    ],
+    "combinedScore": 6.6
+  },
+  "161": {
+    "epNum": 161,
+    "title": "Episode 161 - Serendipity (Valentine’s Day Patreon Vote Winner)",
+    "slug": "episode-161-serendipity-valentine-s-day-patreon-vote-winner",
+    "wordCount": 37899,
+    "hasTranscript": true,
+    "filmTitle": "Serendipity",
+    "tmdbId": 9778,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7,
+      "kevin": 8
+    },
+    "fifthSeatAvg": 7.06,
+    "fifthSeatCount": 7,
+    "fifthSeatVoters": [
+      {
+        "name": "Ryan Kuketz",
+        "score": null,
+        "quote": "I'd never seen or heard of this movie before, and after watching, I realized I wasn't missing much."
+      },
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "Even when it out against there's something about Mary, sorry, Russell, it was meant to be."
+      },
+      {
+        "name": "Davey",
+        "score": null,
+        "quote": "I hadn't heard of this before my wife introduced me to it, but now it's my favorite rom-com."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I like this film, did I have issues with it, certainly, but overall, it's well-written, well-acted and enjoyable watch."
+      },
+      {
+        "name": "David Wyatt",
+        "score": null,
+        "quote": "I always enjoyed it as an easy rom-com, I'm not a huge Qsec fan, but that was a nice film."
+      },
+      {
+        "name": "Chuck",
+        "score": null,
+        "quote": "It's been years, but I do recall enjoying the film."
+      },
+      {
+        "name": "Carlo (The Movie Loot)",
+        "score": null,
+        "quote": "BFE listeners and Patreon backers, you could have gone with the best rom-com ever and could have gone with one of the best recent ones or one of the best comedies out there."
+      }
+    ],
+    "combinedScore": 7.14
+  },
+  "162": {
+    "epNum": 162,
+    "title": "Episode 162 - The Wedding Singer",
+    "slug": "episode-162-the-wedding-singer",
+    "wordCount": 36646,
+    "hasTranscript": true,
+    "filmTitle": "The Wedding Singer",
+    "tmdbId": 11003,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 7,
+      "georgia": 5
+    },
+    "fifthSeatAvg": 5.5,
+    "combinedScore": 6
+  },
+  "163": {
+    "epNum": 163,
+    "title": "Episode 163 - Everything Everywhere All At Once (w/ BFF of the BFE: Juleen)",
+    "slug": "episode-163-everything-everywhere-all-at-once-w-bff-of-the-bfe-juleen",
+    "wordCount": 38888,
+    "hasTranscript": true,
+    "filmTitle": "Everything Everywhere All at Once",
+    "tmdbId": 545611,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Juleen",
+        "score": 7
+      }
+    ],
+    "fifthSeatAvg": 6.25,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Nate the Great",
+        "score": 10,
+        "quote": "I saw this not really knowing much about it and had no expectations after I was so blown away, I still think it will be a long time before any movie comes close to touching it."
+      }
+    ],
+    "combinedScore": 7.35
+  },
+  "164": {
+    "epNum": 164,
+    "title": "Episode 164 - The Big Lebowski (feat. Kevin from The Podcast That Wouldn’t Die)",
+    "slug": "episode-164-the-big-lebowski-feat-kevin-from-the-podcast-that-wouldn-t-die",
+    "wordCount": 30632,
+    "hasTranscript": true,
+    "filmTitle": "The Big Lebowski",
+    "tmdbId": 115,
+    "hosts": {
+      "ian": 6.5,
+      "liam": 6,
+      "georgia": 4.5,
+      "kevin": 8
+    },
+    "beetrootPct": 63,
+    "fifthSeatAvg": 8,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "This one might be the ultimate absurd stone or comedy mystery of all time and I love it for all it's worth."
+      }
+    ],
+    "combinedScore": 6.6
+  },
+  "165": {
+    "epNum": 165,
+    "title": "Episode 165 - The Man in the Iron Mask",
+    "slug": "episode-165-the-man-in-the-iron-mask",
+    "wordCount": 30850,
+    "hasTranscript": true,
+    "filmTitle": "The Man in the Iron Mask",
+    "tmdbId": 9313,
+    "hosts": {
+      "ian": 7,
+      "liam": 6.5,
+      "georgia": 6.5
+    },
+    "combinedScore": 6.67
+  },
   "166": {
     "epNum": 166,
     "title": "Episode 166 - John Wick (w/ Antony)",
@@ -2771,6 +5965,239 @@
       }
     ],
     "combinedScore": 6.35
+  },
+  "173": {
+    "epNum": 173,
+    "title": "Episode 173 - Guardians of the Galaxy (2014)",
+    "slug": "episode-173-guardians-of-the-galaxy-2014",
+    "wordCount": 44471,
+    "hasTranscript": true,
+    "filmTitle": "Guardians of the Galaxy",
+    "tmdbId": 118340,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "georgia": 8
+    },
+    "beetrootPct": 51,
+    "fifthSeatAvg": 9.1,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "James Smith",
+        "score": null,
+        "quote": "Like a lot of people, I hadn't heard of the Guardians of the Galaxy when it was announced."
+      }
+    ],
+    "combinedScore": 8.28
+  },
+  "174": {
+    "epNum": 174,
+    "title": "Episode 174 - The Boondock Saints (w/ BFF of the BFE: Juleen)",
+    "slug": "episode-174-the-boondock-saints-w-bff-of-the-bfe-juleen",
+    "wordCount": 44764,
+    "hasTranscript": true,
+    "filmTitle": "The Boondock Saints",
+    "tmdbId": 8374,
+    "hosts": {
+      "ian": 7,
+      "liam": 7,
+      "georgia": 5
+    },
+    "guests": [
+      {
+        "name": "Juleen",
+        "score": 7
+      }
+    ],
+    "beetrootPct": 35,
+    "fifthSeatAvg": 1,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Richard",
+        "score": 1,
+        "quote": "This is like if the edgy guys dorm room wall was a movie, I don't know what was more upsetting the thudding, cringe-inducing dialogue or the blunt, bone-headed editing."
+      }
+    ],
+    "combinedScore": 5.4
+  },
+  "175": {
+    "epNum": 175,
+    "title": "Episode 175 - The Lord of the Rings: The Two Towers",
+    "slug": "episode-175-the-lord-of-the-rings-the-two-towers",
+    "wordCount": 31548,
+    "hasTranscript": true,
+    "filmTitle": "The Lord of the Rings: The Two Towers",
+    "tmdbId": 121,
+    "hosts": {
+      "ian": 8,
+      "liam": 7.5
+    },
+    "guests": [
+      {
+        "name": "James",
+        "score": 8
+      }
+    ],
+    "beetrootPct": 74,
+    "fifthSeatAvg": 7.33,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "I saw all of the Lord of the Rings in the theaters with my dad. Remember this one?"
+      },
+      {
+        "name": "Nate the Great",
+        "score": 6,
+        "quote": "I tried rewatching this recently and it was a snooze fast 40 minutes longer than it should be relatively boring and just as many a logical decisions as the first one."
+      },
+      {
+        "name": "Richard",
+        "score": 8,
+        "quote": "Big, epic, earnest blockbusters that look beautiful and blend the use of CGI with smart practical techniques and robust filmmaking."
+      }
+    ],
+    "combinedScore": 7.71
+  },
+  "176": {
+    "epNum": 176,
+    "title": "Episode 176 - Big",
+    "slug": "episode-176-big",
+    "wordCount": 39489,
+    "hasTranscript": true,
+    "filmTitle": "Big",
+    "tmdbId": 2280,
+    "hosts": {
+      "ian": 7,
+      "liam": 7.5,
+      "georgia": 5
+    },
+    "guests": [
+      {
+        "name": "James",
+        "score": 6.6
+      }
+    ],
+    "beetrootPct": 87,
+    "fifthSeatAvg": 6.6,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "I'll just come out and say it, although Tom Hanks isn't icky, I never found him to be a particularly good actor either."
+      },
+      {
+        "name": "Richard",
+        "score": null,
+        "quote": "This is aged a bit weirdly to say the least, ignoring the strangely dark tone of the kidnapping stuff."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": 9,
+        "quote": "Big that has a massive or big place in my life."
+      }
+    ],
+    "combinedScore": 6.54
+  },
+  "177": {
+    "epNum": 177,
+    "title": "Episode 177 - The Truman Show",
+    "slug": "episode-177-the-truman-show",
+    "wordCount": 43779,
+    "hasTranscript": true,
+    "filmTitle": "The Truman Show",
+    "tmdbId": 37165,
+    "hosts": {
+      "ian": 9,
+      "liam": 8
+    },
+    "guests": [
+      {
+        "name": "James",
+        "score": 8.5
+      }
+    ],
+    "beetrootPct": 94,
+    "fifthSeatAvg": 8,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Andy Dixon",
+        "score": null,
+        "quote": "It's strange to think when the film was released that it will be seen as futuristic when in fact in 2023, there are channels dedicated to reality's television."
+      },
+      {
+        "name": "Nate the Great",
+        "score": 9,
+        "quote": "The Truman show such a triumph for Jim Carrey as far as I'm concerned."
+      }
+    ],
+    "combinedScore": 8.38
+  },
+  "178": {
+    "epNum": 178,
+    "title": "Episode 178 - Sleepless in Seattle",
+    "slug": "episode-178-sleepless-in-seattle",
+    "wordCount": 47786,
+    "hasTranscript": true,
+    "filmTitle": "Sleepless in Seattle",
+    "tmdbId": 858,
+    "hosts": {
+      "ian": 8,
+      "liam": 7,
+      "georgia": 7
+    },
+    "beetrootPct": 61,
+    "fifthSeatAvg": 5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I'm not entirely sure I've seen this movie all the way through, certainly not confident to put it in a fifth chair."
+      },
+      {
+        "name": "Ed",
+        "score": null,
+        "quote": "didn't folks, I've never seen it."
+      }
+    ],
+    "combinedScore": 6.75,
+    "randomWord": "Private investigator P.I."
+  },
+  "179": {
+    "epNum": 179,
+    "title": "Episode 179 - Carrie (1976)",
+    "slug": "episode-179-carrie-1976",
+    "wordCount": 44195,
+    "hasTranscript": true,
+    "filmTitle": "Carrie",
+    "tmdbId": 7340,
+    "hosts": {
+      "ian": 8.5,
+      "liam": 8,
+      "georgia": 8
+    },
+    "beetrootPct": 78,
+    "fifthSeatAvg": 6,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "The ending is iconic for sure, but it crawls its way to the end."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": null,
+        "quote": "I can say without a shadow of a doubt that Georgia hated this film."
+      }
+    ],
+    "combinedScore": 7.63
   },
   "180": {
     "epNum": 180,
@@ -3135,6 +6562,244 @@
     "combinedScore": 8.5,
     "randomWord": "Nutshot"
   },
+  "194": {
+    "epNum": 194,
+    "title": "Episode 194 - School of Rock",
+    "slug": "episode-194-school-of-rock",
+    "wordCount": 37163,
+    "hasTranscript": true,
+    "filmTitle": "The School of Rock",
+    "tmdbId": 1584,
+    "hosts": {
+      "ian": 8,
+      "liam": 6,
+      "megan": 6,
+      "georgia": 8.5
+    },
+    "beetrootPct": 78,
+    "fifthSeatAvg": 8.25,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "AJ",
+        "score": 10,
+        "quote": "Incredible film, this movie pushed all the right feel good buttons."
+      }
+    ],
+    "combinedScore": 7.35
+  },
+  "195": {
+    "epNum": 195,
+    "title": "Episode 195 - Rudy",
+    "slug": "episode-195-rudy",
+    "wordCount": 26651,
+    "hasTranscript": true,
+    "filmTitle": "Rudy",
+    "tmdbId": 14534,
+    "hosts": {
+      "ian": 7,
+      "liam": 6.5,
+      "georgia": 7
+    },
+    "beetrootPct": 50,
+    "fifthSeatAvg": 5.5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "AJ",
+        "score": null,
+        "quote": "good film, exclamation mark"
+      },
+      {
+        "name": "Ryan",
+        "score": null,
+        "quote": "He was Tom Brady before Tom Brady was Tom Brady."
+      }
+    ],
+    "combinedScore": 6.5
+  },
+  "196": {
+    "epNum": 196,
+    "title": "Episode 196 - The Last Samurai (w/ BFF of the BFE: Hermes Auslander)",
+    "slug": "episode-196-the-last-samurai-w-bff-of-the-bfe-hermes-auslander",
+    "wordCount": 53301,
+    "hasTranscript": true,
+    "filmTitle": "The Last Samurai",
+    "tmdbId": 616,
+    "hosts": {
+      "ian": 8,
+      "liam": 8,
+      "megan": 8,
+      "kevin": 8
+    },
+    "guests": [
+      {
+        "name": "Hermes Auslander",
+        "score": 8
+      }
+    ],
+    "beetrootPct": 82,
+    "fifthSeatAvg": 5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Shai Bergerfroind",
+        "score": 7,
+        "quote": "I'll start by saying this is a good movie."
+      },
+      {
+        "name": "Nate the Great",
+        "score": 3,
+        "quote": "I almost felt like I feel like I'm being harsh, but I did not really enjoy any of it."
+      }
+    ],
+    "combinedScore": 7.5,
+    "randomWord": "Tom Cruise"
+  },
+  "197": {
+    "epNum": 197,
+    "title": "Episode 197 - Life Is Beautiful",
+    "slug": "episode-197-life-is-beautiful",
+    "wordCount": 37044,
+    "hasTranscript": true,
+    "filmTitle": "Life Is Beautiful",
+    "tmdbId": 637,
+    "hosts": {
+      "ian": 9,
+      "kevin": 9.5
+    },
+    "beetrootPct": 63,
+    "fifthSeatAvg": 4,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Shai Bergerfroind",
+        "score": 4,
+        "quote": "I can't stand this movie being Jewish with close family members who survived the Holocaust this movie to me laughs in the face of what they have been through."
+      }
+    ],
+    "combinedScore": 7.5
+  },
+  "198": {
+    "epNum": 198,
+    "title": "Episode 198 - Shaun of the Dead (and remembering Matthew Perry)",
+    "slug": "episode-198-shaun-of-the-dead-and-remembering-matthew-perry",
+    "wordCount": 45963,
+    "hasTranscript": true,
+    "filmTitle": "Shaun of the Dead",
+    "tmdbId": 747,
+    "hosts": {
+      "ian": 8,
+      "liam": 6,
+      "megan": 7.5,
+      "kevin": 8
+    },
+    "beetrootPct": 88,
+    "fifthSeatAvg": 8.53,
+    "fifthSeatCount": 3,
+    "fifthSeatVoters": [
+      {
+        "name": "Norfolk Domus",
+        "score": 10,
+        "quote": "Amazing film, second favorite in the Cornetto trilogy, the first being hot fuzz..."
+      },
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "One of the few comedies I've ever seen that I'd actually call brilliant."
+      },
+      {
+        "name": "Richard",
+        "score": null,
+        "quote": "Nothing interesting to add really horror comedy to me is one of the most contemptible genres."
+      }
+    ],
+    "combinedScore": 7.61,
+    "randomWord": "Cricket bat"
+  },
+  "199": {
+    "epNum": 199,
+    "title": "Episode 199 - Elemental (w/ BFF of the BFE: Juleen)",
+    "slug": "episode-199-elemental-w-bff-of-the-bfe-juleen",
+    "wordCount": 37992,
+    "hasTranscript": true,
+    "filmTitle": "Elemental",
+    "tmdbId": 976573,
+    "hosts": {
+      "ian": 7,
+      "liam": 5,
+      "megan": 6,
+      "kevin": 7,
+      "georgia": 7
+    },
+    "beetrootPct": 63,
+    "fifthSeatAvg": 5,
+    "fifthSeatCount": 2,
+    "fifthSeatVoters": [
+      {
+        "name": "Nate the Great",
+        "score": null,
+        "quote": "Endearing and had some funny moments, but it's just like the last Samurai and Tuna Tom, we've seen this story done a hundred times before."
+      },
+      {
+        "name": "Dwayne Smith",
+        "score": 5,
+        "quote": "I watched this for the first time today."
+      }
+    ],
+    "combinedScore": 6.17
+  },
+  "200": {
+    "epNum": 200,
+    "title": "Episode 200 - No Country For Old Men",
+    "slug": "episode-200-no-country-for-old-men",
+    "wordCount": 48614,
+    "hasTranscript": true,
+    "filmTitle": "No Country for Old Men",
+    "tmdbId": 6977,
+    "hosts": {
+      "ian": 10,
+      "liam": 8,
+      "kevin": 10,
+      "georgia": 8
+    },
+    "guests": [
+      {
+        "name": "Hermes Auslander",
+        "score": 10
+      }
+    ],
+    "fifthSeatAvg": 9.5,
+    "fifthSeatCount": 5,
+    "fifthSeatVoters": [
+      {
+        "name": "Norfolk Domus",
+        "score": null,
+        "quote": "No country is a good film."
+      },
+      {
+        "name": "Hermes Auslander",
+        "score": null,
+        "quote": "The sound or lack thereof in this film is deafening."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "I'd heard this film but never got round to watching it and had no idea what it was even about."
+      },
+      {
+        "name": "Shai Bergerfroind",
+        "score": null,
+        "quote": "This is a phenomenal, I don't even know why it's a phenomenal movie."
+      },
+      {
+        "name": "Richard",
+        "score": 9.1,
+        "quote": "This just turned 30 year old is going for nine 10 polls out of 10, but so close to a full set."
+      }
+    ],
+    "combinedScore": 9.25
+  },
   "201": {
     "epNum": 201,
     "title": "Episode 201 - Enemy of the State",
@@ -3357,6 +7022,32 @@
       }
     ],
     "combinedScore": 5.83
+  },
+  "210": {
+    "epNum": 210,
+    "title": "Episode 210 - She's All That (and taste testing Canadian snacks)",
+    "slug": "episode-210-she-s-all-that-and-taste-testing-canadian-snacks",
+    "wordCount": 35462,
+    "hasTranscript": true,
+    "filmTitle": "She's All That",
+    "tmdbId": 10314,
+    "hosts": {
+      "ian": 7,
+      "liam": 7,
+      "megan": 6.5,
+      "kevin": 7,
+      "georgia": 7.5
+    },
+    "beetrootPct": 26,
+    "fifthSeatCount": 1,
+    "fifthSeatVoters": [
+      {
+        "name": "Cara",
+        "score": null,
+        "quote": "This film is just okay."
+      }
+    ],
+    "combinedScore": 7
   },
   "211": {
     "epNum": 211,
@@ -4664,6 +8355,48 @@
     ],
     "combinedScore": 8.03
   },
+  "246": {
+    "epNum": 246,
+    "title": "Episode 246 - Gone Girl",
+    "slug": "episode-246-gone-girl",
+    "wordCount": 58415,
+    "hasTranscript": true,
+    "filmTitle": "Gone Girl",
+    "tmdbId": 210577,
+    "hosts": {
+      "ian": 9,
+      "liam": 7,
+      "megan": 8.5,
+      "kevin": 8,
+      "georgia": 8.5
+    },
+    "beetrootPct": 90,
+    "fifthSeatCount": 4,
+    "fifthSeatVoters": [
+      {
+        "name": "Ariannah",
+        "score": null,
+        "quote": "I really enjoyed this movie and the way it was adapted from the book, the villain of the story was creepy and I liked that acting."
+      },
+      {
+        "name": "Richard",
+        "score": null,
+        "quote": "Good I like this movie succinct."
+      },
+      {
+        "name": "Reverend Bruce",
+        "score": null,
+        "quote": "This is one of my favorite movies, a nice psychological thriller based on the great book by Julian Flynn."
+      },
+      {
+        "name": "Cheesy",
+        "score": null,
+        "quote": "I love how the story keeps twisting and turning and how it got me flipping and flopping between who I believed and supported throughout."
+      }
+    ],
+    "combinedScore": 8.2,
+    "randomWord": "bottle"
+  },
   "247": {
     "epNum": 247,
     "title": "Episode 247 - American Beauty",
@@ -5680,6 +9413,50 @@
       }
     ],
     "combinedScore": 7.13
+  },
+  "274": {
+    "epNum": 274,
+    "title": "Episode 274 - Predator",
+    "slug": "episode-274-predator",
+    "wordCount": 38470,
+    "hasTranscript": true,
+    "filmTitle": "Predator",
+    "tmdbId": 106,
+    "hosts": {
+      "ian": 7,
+      "liam": 6.5
+    },
+    "beetrootPct": 94,
+    "fifthSeatAvg": 9,
+    "fifthSeatCount": 5,
+    "fifthSeatVoters": [
+      {
+        "name": "Ariannah",
+        "score": 8,
+        "quote": "Is that nothing nothing but gives it a score nothing."
+      },
+      {
+        "name": "Shai Bergerfroind",
+        "score": 10,
+        "quote": "Predator is the perfect action film I thought that was I thought that when I was 10 or 11 the first time I watched it to you and I still think so today."
+      },
+      {
+        "name": "Chris Peterson",
+        "score": null,
+        "quote": "Don't always have to give a thought no."
+      },
+      {
+        "name": "Richard",
+        "score": 9,
+        "quote": "Thanks a lot for chipping in buddy cheesy with a fish on a choppa."
+      },
+      {
+        "name": "Cheesy",
+        "score": 7,
+        "quote": "Fun 80s action sci-fi but never takes itself too seriously even if some of the actors do."
+      }
+    ],
+    "combinedScore": 7.5
   },
   "275": {
     "epNum": 275,

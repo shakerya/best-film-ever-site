@@ -83,10 +83,13 @@ function makeSlug(rawTitle) {
 }
 
 function parseEpNum(title) {
-  const m = String(title || "")
-    .trim()
-    .match(/^(?:episode|ep\.?)\s*(\d{1,4})\s*[-:–—]/i);
-  return m ? Number(m[1]) : null;
+  const clean = String(title || "").trim();
+  const m = clean.match(/^(?:episode|ep\.?)\s*(\d{1,4})\s*[-:–—]/i);
+  if (m) return Number(m[1]);
+  if (/^austin\s+powers:\s*international\s+man\s+of\s+mystery\b/i.test(clean)) {
+    return 121;
+  }
+  return null;
 }
 
 function parseDurationSec(raw) {
@@ -510,7 +513,7 @@ export async function runSync({
 
   if (!queue.length) {
     console.log("Nothing new to transcribe in selected range — library is up to date!");
-    return { completed: 0, remaining: 0 };
+    return { completed: 0, remaining: missing.length };
   }
 
   fs.mkdirSync(SYNCED_DIR, { recursive: true });
